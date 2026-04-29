@@ -52,18 +52,29 @@ padding:10px 20px;
 text-decoration:none;
 }
 
-.whatsapp {
-position:fixed;
-bottom:110px;
-left:20px;
-background:#25D366;
-padding:15px;
-border-radius:50%;
-color:white;
-text-decoration:none;
-font-size:20px;
+.whatsapp-btn {
+    position: fixed;
+    bottom: 15px; /* colado no final da tela */
+    right: 15px; /* lado direito */
+    z-index: 10000;
 }
 
+.whatsapp-btn img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.whatsapp-btn img {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+    
 .player-pro {
 .player-pro .info {
     position: relative;
@@ -96,7 +107,9 @@ body {
 <nav>
 <a href="#">Início</a>
 <a href="#">Programas</a>
-<a href="https://wa.me/SEUNUMERO" target="_blank">Anuncie</a>
+<a href="https://wa.me/61991057795" target="_blank" class="whatsapp-btn">
+    <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" alt="WhatsApp">
+</a>
 </nav>
 </header>
 
