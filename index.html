@@ -8,98 +8,122 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body {margin:0;font-family:Montserrat;background:#0a0a0a;color:#fff;}
-header {display:flex;justify-content:space-between;padding:15px;background:#000;border-bottom:2px solid red;}
-.logo {color:white;font-weight:bold;}
-nav a {margin-left:15px;color:#fff;text-decoration:none;}
+body {
+    margin:0;
+    font-family:Montserrat;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+/* FUNDO COM EFEITO 3D */
+.bg-flag {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: url("bd.jpg") no-repeat center center;
+    background-size: cover;
+    z-index:-2;
+}
+
+/* CAMADA DE ONDA REALISTA */
+.bg-flag::before {
+    content:"";
+    position:absolute;
+    width:200%;
+    height:100%;
+    background: inherit;
+    animation: wave 8s ease-in-out infinite;
+    opacity:0.8;
+}
+
+/* SOMBRA DE PROFUNDIDADE */
+.bg-flag::after {
+    content:"";
+    position:absolute;
+    width:100%;
+    height:100%;
+    background: linear-gradient(120deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2));
+}
+
+/* ANIMAÇÃO REALISTA */
+@keyframes wave {
+    0%   { transform: translateX(0) skewY(0deg); }
+    25%  { transform: translateX(-5%) skewY(2deg); }
+    50%  { transform: translateX(-10%) skewY(0deg); }
+    75%  { transform: translateX(-5%) skewY(-2deg); }
+    100% { transform: translateX(0) skewY(0deg); }
+}
+
+header {
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:rgba(0,0,0,0.8);
+    border-bottom:2px solid red;
+}
+
+.logo {
+    font-weight:bold;
+}
+
+nav a {
+    margin-left:15px;
+    color:#fff;
+    text-decoration:none;
+}
 
 .hero {
-height:60vh;
-position: relative;
-overflow: hidden;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
+    height:60vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
 }
 
-/* camada da bandeira */
-.hero::before {
-content: "";
-position: absolute;
-top: 0;
-left: 0;
-width: 200%;
-height: 100%;
-background: <img src="bd.jpg" />
-background-size: cover;
-animation: waveFlag 10s linear infinite;
-z-index: 0;
-}
-
-/* camada escura por cima */
-.hero::after {
-content: "";
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-
-z-index: 1;
-}
-
-/* conteúdo na frente */
 .hero h1 {
-position: relative;
-z-index: 2;
-font-size: 40px;
-}
-
-
+    font-size:40px;
 }
 
 .section {padding:40px 20px;}
 
 .cards {
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
 }
 
 .card {
-background:#1a1a1a;
-padding:20px;
-border-radius:10px;
+    background:rgba(0,0,0,0.7);
+    padding:20px;
+    border-radius:10px;
 }
 
 .cta {
-background:#111;
-padding:30px;
-text-align:center;
+    background:rgba(0,0,0,0.8);
+    padding:30px;
+    text-align:center;
 }
 
 .cta a {
-background:red;
-color:white;
-padding:10px 20px;
-text-decoration:none;
+    background:red;
+    color:white;
+    padding:10px 20px;
+    text-decoration:none;
+    border-radius:8px;
 }
 
+/* WHATSAPP */
 .whatsapp-btn {
     position: fixed;
-    bottom: 15px; /* colado no final da tela */
-    right: 15px; /* lado direito */
+    bottom: 15px;
+    right: 15px;
     z-index: 10000;
 }
 
 .whatsapp-btn img {
     width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-.whatsapp-btn img {
     animation: pulse 1.5s infinite;
 }
 
@@ -108,42 +132,39 @@ text-decoration:none;
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
-    
+
+/* PLAYER */
 .player-pro {
-.player-pro .info {
-    position: relative;
-    z-index: 2;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    padding: 20px;
     text-align: center;
-    color: white;
 }
 
 #btn {
-    display: inline-block;
-    margin-top: 10px;
-    background: #7b2cff; /* roxo bonito */
-    padding: 14px 35px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    border-radius: 10px;
+    margin-top:10px;
+    background:#7b2cff;
+    padding:14px 35px;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
 }
-{
-    padding-bottom: 160px;
-}
-
 </style>
 </head>
 
 <body>
+
+<div class="bg-flag"></div>
 
 <header>
 <div class="logo">NTP RÁDIO WEB</div>
 <nav>
 <a href="#">Início</a>
 <a href="#">Programas</a>
-<a href="https://wa.me/61991057795" target="_blank" class="whatsapp-btn">
-    <img src="https://cdn-icons-png.flaticon.com/512/220/220236.png" alt="WhatsApp">
-</a>
 </nav>
 </header>
 
@@ -162,48 +183,38 @@ text-decoration:none;
 </section>
 
 <section class="cta">
-<h2>📢 Quer divulgar sua marca ou música?</h2>
-<a href="https://wa.me/SEUNUMERO" target="_blank">Fale comigo agora</a>
+<h2>📢 Quer divulgar?</h2>
+<a href="https://wa.me/5561991057795" target="_blank">Fale comigo</a>
 </section>
 
-<a href="https://wa.me/SEUNUMERO" target="_blank" class="whatsapp">📲</a>
+<a href="https://wa.me/5561991057795" target="_blank" class="whatsapp-btn">
+<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
+</a>
 
-<!-- PLAYER ZENO FIXO -->
 <div class="player-pro">
-
-    <img src="banner.png" class="bg">
-
-    <div class="info">
-        <h2>NTP RÁDIO WEB</h2>
-        <p>🔴 AO VIVO • Classic Rock 24h</p>
-
-        <button id="btn">▶️ TOCAR AGORA</button>
-    </div>
-
+<h2>NTP RÁDIO WEB</h2>
+<p>🔴 AO VIVO • Classic Rock</p>
+<button id="btn">▶️ TOCAR AGORA</button>
 </div>
 
-<audio id="radio" preload="none" playsinline>
-    <source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
+<audio id="radio">
+<source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
 </audio>
+
 <script>
-document.addEventListener("DOMContentLoaded", function(){
+const radio = document.getElementById("radio");
+const btn = document.getElementById("btn");
 
-    const radio = document.getElementById("radio");
-    const btn = document.getElementById("btn");
-
-    btn.addEventListener("click", function(){
-
-        if(radio.paused){
-            radio.play();
-            btn.innerText = "⏸ PARAR";
-        } else {
-            radio.pause();
-            btn.innerText = "▶️ TOCAR AGORA";
-        }
-
-    });
-
-});
+btn.onclick = () => {
+    if(radio.paused){
+        radio.play();
+        btn.innerText = "⏸ PARAR";
+    } else {
+        radio.pause();
+        btn.innerText = "▶️ TOCAR AGORA";
+    }
+}
 </script>
+
 </body>
 </html>
