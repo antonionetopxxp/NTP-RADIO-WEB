@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTP RÁDIO WEB</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin:0;
+    font-family: 'Montserrat', sans-serif;
+    background:#0a0a0a;
+    color:#fff;
+}
+
+/* HEADER */
+header {
+    display:flex;
+    justify-content:space-between;
+    padding:15px 20px;
+    background:#000;
+    border-bottom:2px solid red;
+}
+
+.logo { color:red; font-weight:bold; }
+
+nav a {
+    margin-left:15px;
+    color:white;
+    text-decoration:none;
+}
+
+/* HERO */
+.hero {
+    height:60vh;
+    background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.9)),
+    url('https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2') center/cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.hero h1 {
+    font-size:40px;
+}
+
+/* PLAYER FIXO */
+.player {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#111;
+    padding:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:2px solid red;
+}
+
+button {
+    background:red;
+    border:none;
+    color:#fff;
+    padding:10px 20px;
+    cursor:pointer;
+}
+
+/* SEÇÕES */
+.section {
+    padding:40px 20px;
+}
+
+.cards {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+}
+
+.card {
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:10px;
+}
+
+/* ANÚNCIOS */
+.ads {
+    background:#111;
+    padding:20px;
+    text-align:center;
+    margin-top:20px;
+}
+
+/* CHAT */
+.chat {
+    position:fixed;
+    right:20px;
+    bottom:80px;
+    width:250px;
+    background:#1a1a1a;
+    border-radius:10px;
+    padding:10px;
+}
+
+.chat input {
+    width:100%;
+    padding:5px;
+    margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">NTP RÁDIO WEB</div>
+<nav>
+<a href="#">Início</a>
+<a href="#">Programas</a>
+<a href="#">Contato</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>O SOM QUE NUNCA MORRE 🎸</h1>
+</section>
+
+<section class="section">
+<h2>🔥 Programação</h2>
+<div class="cards">
+<div class="card">08h - Despertar Rock</div>
+<div class="card">14h - Clássicos Eternos</div>
+<div class="card">20h - Rock Legends</div>
+<div class="card">00h - Midnight Rock</div>
+</div>
+</section>
+
+<section class="ads">
+<h3>📢 Anuncie aqui</h3>
+<p>Entre em contato para divulgar sua marca</p>
+</section>
+
+<!-- CHAT SIMPLES -->
+<div class="chat">
+<b>Chat</b>
+<div id="messages"></div>
+<input type="text" id="msg" placeholder="Digite..." onkeypress="send(event)">
+</div>
+
+<!-- PLAYER -->
+<div class="player">
+<div>
+🔴 AO VIVO<br>
+<span id="music">Carregando...</span>
+</div>
+
+<button onclick="toggle()">▶️ Play</button>
+</div>
+
+<audio id="radio" src="COLOQUE_SEU_STREAM_AQUI"></audio>
+
+<script>
+let audio = document.getElementById("radio");
+
+function toggle(){
+    audio.paused ? audio.play() : audio.pause();
+}
+
+/* NOME DA MÚSICA (ZENO API) */
+async function getMusic(){
+    try{
+        let res = await fetch("https://api.zeno.fm/mounts/metadata/SEU_ID_AQUI");
+        let data = await res.json();
+        document.getElementById("music").innerText = data.now_playing.song;
+    }catch{
+        document.getElementById("music").innerText = "No ar...";
+    }
+}
+setInterval(getMusic,5000);
+
+/* CHAT SIMPLES */
+function send(e){
+    if(e.key === "Enter"){
+        let msg = document.getElementById("msg").value;
+        let div = document.createElement("div");
+        div.innerText = msg;
+        document.getElementById("messages").appendChild(div);
+        document.getElementById("msg").value="";
+    }
+}
+</script>
+
+</body>
+</html>
