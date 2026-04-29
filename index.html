@@ -8,106 +8,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-    margin:0;
-    font-family: 'Montserrat', sans-serif;
-    background:#0a0a0a;
-    color:#fff;
-}
+body {margin:0;font-family:Montserrat;background:#0a0a0a;color:#fff;}
+header {display:flex;justify-content:space-between;padding:15px;background:#000;border-bottom:2px solid red;}
+.logo {color:red;font-weight:bold;}
+nav a {margin-left:15px;color:#fff;text-decoration:none;}
+.hero {height:60vh;background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)),url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f') center/cover;display:flex;justify-content:center;align-items:center;text-align:center;}
+.hero h1 {font-size:40px;}
 
-/* HEADER */
-header {
-    display:flex;
-    justify-content:space-between;
-    padding:15px 20px;
-    background:#000;
-    border-bottom:2px solid red;
-}
+.player {position:fixed;bottom:0;width:100%;background:#111;padding:10px;display:flex;justify-content:space-between;align-items:center;border-top:2px solid red;}
+button {background:red;border:none;color:#fff;padding:10px 20px;cursor:pointer;}
 
-.logo { color:red; font-weight:bold; }
+.section {padding:40px 20px;}
+.cards {display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;}
+.card {background:#1a1a1a;padding:20px;border-radius:10px;}
 
-nav a {
-    margin-left:15px;
-    color:white;
-    text-decoration:none;
-}
+.cta {background:#111;padding:30px;text-align:center;}
+.cta a {background:red;color:white;padding:10px 20px;text-decoration:none;}
 
-/* HERO */
-.hero {
-    height:60vh;
-    background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.9)),
-    url('https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2') center/cover;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
-
-.hero h1 {
-    font-size:40px;
-}
-
-/* PLAYER FIXO */
-.player {
-    position:fixed;
-    bottom:0;
-    width:100%;
-    background:#111;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-top:2px solid red;
-}
-
-button {
-    background:red;
-    border:none;
-    color:#fff;
-    padding:10px 20px;
-    cursor:pointer;
-}
-
-/* SEÇÕES */
-.section {
-    padding:40px 20px;
-}
-
-.cards {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
-}
-
-.card {
-    background:#1a1a1a;
-    padding:20px;
-    border-radius:10px;
-}
-
-/* ANÚNCIOS */
-.ads {
-    background:#111;
-    padding:20px;
-    text-align:center;
-    margin-top:20px;
-}
-
-/* CHAT */
-.chat {
-    position:fixed;
-    right:20px;
-    bottom:80px;
-    width:250px;
-    background:#1a1a1a;
-    border-radius:10px;
-    padding:10px;
-}
-
-.chat input {
-    width:100%;
-    padding:5px;
-    margin-top:5px;
+.whatsapp {
+position:fixed;
+bottom:90px;
+left:20px;
+background:#25D366;
+padding:15px;
+border-radius:50%;
+color:white;
+text-decoration:none;
+font-size:20px;
 }
 </style>
 </head>
@@ -119,7 +46,7 @@ button {
 <nav>
 <a href="#">Início</a>
 <a href="#">Programas</a>
-<a href="#">Contato</a>
+<a href="https://wa.me/SEUNUMERO" target="_blank">Anuncie</a>
 </nav>
 </header>
 
@@ -137,71 +64,25 @@ button {
 </div>
 </section>
 
-<section class="ads">
-<h3>📢 Anuncie aqui</h3>
-<p>Entre em contato para divulgar sua marca</p>
+<section class="cta">
+<h2>📢 Quer divulgar sua marca ou música?</h2>
+<a href="https://wa.me/SEUNUMERO" target="_blank">Fale comigo agora</a>
 </section>
 
-<!-- CHAT SIMPLES -->
-<div class="chat">
-<b>Chat</b>
-<div id="messages"></div>
-<input type="text" id="msg" placeholder="Digite..." onkeypress="send(event)">
-</div>
+<a href="https://wa.me/61991057795" target="_blank" class="whatsapp">📲</a>
 
-<!-- PLAYER -->
 <div class="player">
-<div>
-🔴 AO VIVO<br>
-<span id="music">Carregando...</span>
-</div>
-
+<div>🔴 AO VIVO</div>
 <button onclick="toggle()">▶️ Play</button>
 </div>
 
-<audio id="radio" src="<iframe src="https://zeno.fm/player/ntp-radio-web-ejyg" width="300" height="250" frameborder="0" scrolling="no"></iframe><a href="https://zeno.fm/" target="_blank" style="display: block; font-size: 0.9em; line-height: 10px;">A Zeno.FM Station</a>"></audio>
-<a href="https://wa.me/61991057795" target="_blank" style="
-position:fixed;
-bottom:100px;
-left:20px;
-background:#25D366;
-color:white;
-padding:12px;
-border-radius:50%;
-text-decoration:none;
-font-size:20px;">
-📲
-    </a>
+<audio id="radio" src="https://stream.zeno.fm/SEU-L" preload="none"></audio>
 
-    
-    <script>
+<script>
 let audio = document.getElementById("radio");
 
 function toggle(){
     audio.paused ? audio.play() : audio.pause();
-}
-
-/* NOME DA MÚSICA (ZENO API) */
-async function getMusic(){
-    try{
-        let res = await fetch("https://api.zeno.fm/mounts/metadata/SEU_ID_AQUI");
-        let data = await res.json();
-        document.getElementById("music").innerText = data.now_playing.song;
-    }catch{
-        document.getElementById("music").innerText = "No ar...";
-    }
-}
-setInterval(getMusic,5000);
-
-/* CHAT SIMPLES */
-function send(e){
-    if(e.key === "Enter"){
-        let msg = document.getElementById("msg").value;
-        let div = document.createElement("div");
-        div.innerText = msg;
-        document.getElementById("messages").appendChild(div);
-        document.getElementById("msg").value="";
-    }
 }
 </script>
 
