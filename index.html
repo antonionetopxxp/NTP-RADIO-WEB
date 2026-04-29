@@ -5,179 +5,190 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NTP RÁDIO WEB</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body {
+*{
     margin:0;
-    font-family:Montserrat;
-    color:#fff;
-    overflow-x:hidden;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Montserrat',sans-serif;
 }
 
-/* FUNDO COM EFEITO 3D */
-.bg-flag {
-    position: fixed;
-    top:0;
-    left:0;
+body{
+    color:#fff;
+    background:url('bd.jpg') no-repeat center center fixed;
+    background-size:cover;
+}
+
+/* overlay escuro */
+body::before{
+    content:"";
+    position:fixed;
     width:100%;
     height:100%;
-    background: url("bd.jpg") no-repeat center center;
-    background-size: cover;
-    z-index:-2;
+    background:rgba(0,0,0,0.75);
+    z-index:-1;
 }
 
-
-
-
-
-/* ANIMAÇÃO REALISTA */
-@keyframes wave {
-    0%   { transform: translateX(0) skewY(0deg); }
-    25%  { transform: translateX(-5%) skewY(2deg); }
-    50%  { transform: translateX(-10%) skewY(0deg); }
-    75%  { transform: translateX(-5%) skewY(-2deg); }
-    100% { transform: translateX(0) skewY(0deg); }
-}
-
-header {
+/* HEADER */
+header{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     padding:15px;
-    background:rgba(0,0,0,0.8);
-    border-bottom:2px solid red;
+    background:#000;
+    border-bottom:2px solid #7b2cff;
 }
 
-.logo {
-    font-weight:bold;
+.logo{
+    font-size:22px;
+    font-weight:900;
+    color:#fff;
 }
 
-nav a {
+nav a{
     margin-left:15px;
     color:#fff;
     text-decoration:none;
 }
 
-.hero {
-    height:60vh;
+/* HERO */
+.hero{
+    height:70vh;
     display:flex;
     justify-content:center;
     align-items:center;
     text-align:center;
+    animation:fadeIn 2s ease;
 }
 
-.hero h1 {
-    font-size:40px;
+.hero h1{
+    font-size:42px;
+    text-shadow:0 0 20px #7b2cff;
 }
 
-.section {padding:40px 20px;}
-
-.cards {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
+/* VIDEOS */
+.videos{
+    padding:40px 20px;
 }
 
-.card {
-    background:rgba(0,0,0,0.7);
-    padding:20px;
-    border-radius:10px;
-}
-
-.cta {
-    background:rgba(0,0,0,0.8);
-    padding:30px;
+.videos h2{
+    margin-bottom:20px;
     text-align:center;
 }
 
-.cta a {
-    background:red;
-    color:white;
-    padding:10px 20px;
-    text-decoration:none;
-    border-radius:8px;
+.video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
 }
 
-/* WHATSAPP */
-.whatsapp-btn {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    z-index: 10000;
-}
-
-.whatsapp-btn img {
-    width: 55px;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+.video iframe{
+    width:100%;
+    height:200px;
+    border-radius:10px;
 }
 
 /* PLAYER */
-.player-pro {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.85);
-    padding: 20px;
-    text-align: center;
+.player{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#000;
+    padding:15px;
+    text-align:center;
+    border-top:2px solid #7b2cff;
 }
 
-#btn {
+#btn{
     margin-top:10px;
     background:#7b2cff;
-    padding:14px 35px;
-    color:#fff;
+    padding:12px 30px;
     border:none;
+    color:#fff;
     border-radius:10px;
-    cursor:pointer;
     font-weight:bold;
+    cursor:pointer;
 }
+
+/* BOTÕES FLUTUANTES */
+.float{
+    position:fixed;
+    right:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:999;
+}
+
+.whatsapp{
+    bottom:80px;
+}
+
+.instagram{
+    bottom:150px;
+}
+
+.float img{
+    width:55px;
+    border-radius:50%;
+    box-shadow:0 0 10px #000;
+    animation:pulse 1.5s infinite;
+}
+
+/* animações */
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="bg-flag"></div>
-
 <header>
-<div class="logo">NTP RÁDIO WEB</div>
+<div class="logo">📻 NTP RÁDIO WEB</div>
 <nav>
 <a href="#">Início</a>
-<a href="#">Programas</a>
+<a href="#videos">Vídeos</a>
 </nav>
 </header>
 
 <section class="hero">
-<h1>O SOM QUE NUNCA MORRE 🎸</h1>
+<h1>🔥 O SOM QUE NUNCA PARA 🔥</h1>
 </section>
 
-<section class="section">
-<h2>🔥 Programação</h2>
-<div class="cards">
-<div class="card">08h - Despertar Rock</div>
-<div class="card">14h - Clássicos Eternos</div>
-<div class="card">20h - Rock Legends</div>
-<div class="card">00h - Midnight Rock</div>
+<section class="videos" id="videos">
+<h2>🎥 Transmissões & Conteúdos</h2>
+
+<div class="video-grid">
+
+<div class="video">
+<iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" allowfullscreen></iframe>
+</div>
+
+<div class="video">
+<iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" allowfullscreen></iframe>
+</div>
+
+<div class="video">
+<iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" allowfullscreen></iframe>
+</div>
+
 </div>
 </section>
 
-<section class="cta">
-<h2>📢 Quer divulgar?</h2>
-<a href="https://wa.me/5561991057795" target="_blank">Fale comigo</a>
-</section>
-
-<a href="https://wa.me/5561991057795" target="_blank" class="whatsapp-btn">
-<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
-</a>
-
-<div class="player-pro">
-<h2>NTP RÁDIO WEB</h2>
-<p>🔴 AO VIVO • Classic Rock</p>
+<!-- PLAYER -->
+<div class="player">
+<h3>🔴 AO VIVO • NTP RÁDIO WEB</h3>
 <button id="btn">▶️ TOCAR AGORA</button>
 </div>
 
@@ -185,11 +196,24 @@ nav a {
 <source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
 </audio>
 
+<!-- BOTÕES -->
+<div class="float whatsapp">
+<a href="https://wa.me/5561991057795" target="_blank">
+<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
+</a>
+</div>
+
+<div class="float instagram">
+<a href="https://instagram.com/" target="_blank">
+<img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+</a>
+</div>
+
 <script>
 const radio = document.getElementById("radio");
 const btn = document.getElementById("btn");
 
-btn.onclick = () => {
+btn.addEventListener("click", () => {
     if(radio.paused){
         radio.play();
         btn.innerText = "⏸ PARAR";
@@ -197,7 +221,7 @@ btn.onclick = () => {
         radio.pause();
         btn.innerText = "▶️ TOCAR AGORA";
     }
-}
+});
 </script>
 
 </body>
