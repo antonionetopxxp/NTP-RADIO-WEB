@@ -11,130 +11,126 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
 
 body{
+    background:#0a0a0a;
     color:#fff;
-    background: url('bd.jpg') no-repeat center center fixed;
-    background-size: cover;
 }
 
-body::before{
-    content:"";
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.75);
-    z-index:-1;
-}
-
-/* HEADER */
+/* HEADER PROFISSIONAL */
 header{
     display:flex;
     justify-content:space-between;
-    padding:15px;
+    align-items:center;
+    padding:15px 20px;
     background:#000;
     border-bottom:2px solid #7b2cff;
 }
 
-.logo{font-size:20px;font-weight:700;}
-nav a{margin-left:10px;color:#fff;text-decoration:none;}
+.logo{
+    font-weight:900;
+    font-size:18px;
+    color:#fff;
+}
+
+nav a{
+    margin-left:15px;
+    color:#ccc;
+    text-decoration:none;
+    font-size:14px;
+}
 
 /* HERO */
 .hero{
-    height:50vh;
+    height:60vh;
     display:flex;
     justify-content:center;
     align-items:center;
     text-align:center;
+    background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)), url('bd.jpg') center/cover;
 }
 
 .hero h1{
-    font-size:35px;
-    text-shadow:0 0 15px #7b2cff;
+    font-size:38px;
+    font-weight:900;
 }
 
-/* BOTÕES PADRÃO */
-.btn, #btnPlayer{
-    display:block;
-    margin:15px auto;
-    padding:12px 25px;
+/* BOTÕES */
+.btn{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 22px;
     background:#7b2cff;
+    border-radius:6px;
     color:#fff;
-    border-radius:8px;
     text-decoration:none;
     font-weight:bold;
-    min-width:180px;
-    text-align:center;
-    border:none;
 }
 
 /* SEÇÕES */
-.section{padding:40px 20px;text-align:center;}
+.section{
+    padding:40px 20px;
+    text-align:center;
+}
 
 .cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
+    gap:15px;
 }
 
 .card{
-    background: rgba(255,255,255,0.05);
+    background:#111;
     padding:20px;
     border-radius:10px;
 }
 
 /* ANÚNCIO */
-.anuncio-container{
-    position: relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin-top:20px;
-}
-
-.anuncio-img{
-    width:90%;
+.anuncio{
     max-width:500px;
-    border-radius:15px;
-    animation: zoom 8s ease-in-out infinite;
+    margin:20px auto;
+    position:relative;
 }
 
-/* BOTÃO MENOR */
-.anuncio-btn{
+.anuncio img{
+    width:100%;
+    border-radius:10px;
+}
+
+.anuncio span{
     position:absolute;
-    bottom:5px;
+    bottom:8px;
     left:50%;
     transform:translateX(-50%);
     background:#7b2cff;
-    padding:5px 12px;
-    font-size:11px;
-    border-radius:6px;
-    color:#fff;
-    animation:pulse 1.5s infinite;
+    padding:5px 10px;
+    border-radius:5px;
+    font-size:12px;
 }
 
-/* EFEITOS */
-@keyframes zoom{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.05);}
-    100%{transform:scale(1);}
-}
-
-@keyframes pulse{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.1);}
-    100%{transform:scale(1);}
-}
-
-/* PLAYER */
+/* PLAYER PROFISSIONAL */
 .player{
     position:fixed;
     bottom:0;
     width:100%;
     background:#000;
-    padding:15px;
-    text-align:center;
     border-top:2px solid #7b2cff;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.live{
+    color:#ff2d2d;
+    font-weight:bold;
+}
+
+#btnPlayer{
+    background:#7b2cff;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    color:#fff;
+    font-weight:bold;
 }
 
 /* FLOAT */
@@ -144,16 +140,14 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     display:flex;
     flex-direction:column;
     gap:10px;
-    z-index:1000;
 }
 
-.whatsapp{bottom:100px;}
-.instagram{bottom:170px;}
+.whatsapp{bottom:90px;}
+.instagram{bottom:150px;}
 
 .float img{
-    width:50px;
+    width:45px;
     border-radius:50%;
-    animation:pulse 1.5s infinite;
 }
 </style>
 </head>
@@ -161,69 +155,53 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <body>
 
 <header>
-<div class="logo">📻 NTP RÁDIO WEB</div>
+<div class="logo">NTP RÁDIO WEB</div>
 <nav>
 <a href="#">Início</a>
-<a href="#ganhar">Ganhar Dinheiro</a>
+<a href="#">Programação</a>
 </nav>
 </header>
 
 <section class="hero">
 <div>
-<h1>🔥 A RÁDIO QUE NÃO PARA 🔥</h1>
-<a href="https://wa.me/61991057795" class="btn">📲 Entrar no Grupo VIP</a>
+<h1>O SOM QUE NUNCA MORRE 🎸</h1>
+<a href="#" class="btn">OUVIR AGORA</a>
 </div>
 </section>
 
 <section class="section">
-<h2>💰 Apoie a Rádio</h2>
-<p>Ajude a manter a rádio no ar</p>
-<a href="mailto:cjddot+nubank@gmail.com" class="btn">💜 Doar via PIX</a>
-</section>
-
-<section class="section" id="ganhar">
-<h2>💸 Produtos Recomendados</h2>
+<h2>🔥 Programação</h2>
 <div class="cards">
-    <div class="card">
-        <h3>🔥 Ganhar Dinheiro Online</h3>
-        <a href="#" class="btn">Comprar</a>
-    </div>
-    <div class="card">
-        <h3>📱 Curso TikTok Viral</h3>
-        <a href="#" class="btn">Comprar</a>
-    </div>
+<div class="card">08h - Despertar Rock</div>
+<div class="card">14h - Clássicos</div>
+<div class="card">20h - Rock Legends</div>
 </div>
 </section>
 
-<section class="section" style="margin-bottom: 100px;">
-<h2>📢 Anuncie na Rádio</h2>
-<p>Divulgue sua empresa aqui!</p>
+<section class="section">
+<h2>📢 Anuncie</h2>
 
-<div class="anuncio-container">
-<a href="https://wa.me/61991057795" target="_blank">
-    <img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
-    <div class="anuncio-btn">📲 Fale Agora</div>
-</a>
+<div class="anuncio">
+<img src="a_wide_horizontal_marketing_banner_digital_adver.png">
+<span>📲 Chame no Zap</span>
 </div>
 
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
 
 <div class="player">
-<h3>🔴 AO VIVO • NTP RÁDIO WEB</h3>
-<button id="btnPlayer">▶️ TOCAR RÁDIO</button>
+<div>
+<span class="live">● AO VIVO</span> NTP RÁDIO WEB
+</div>
+<button id="btnPlayer">▶ TOCAR</button>
 </div>
 
 <div class="float whatsapp">
-<a href="https://wa.me/61991057795" target="_blank">
-<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
-</a>
+<a href="#"><img src="https://cdn-icons-png.flaticon.com/512/220/220236.png"></a>
 </div>
 
 <div class="float instagram">
-<a href="https://instagram.com/SEUINSTAGRAM" target="_blank">
-<img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
-</a>
+<a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"></a>
 </div>
 
 </body>
