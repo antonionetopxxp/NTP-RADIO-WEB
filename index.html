@@ -183,6 +183,11 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
 </audio>
 
+<!-- VINHETAS -->
+<audio id="vinheta">
+<source src="vinheta.mp3" type="audio/mpeg">
+</audio>
+
 <!-- BOTÕES -->
 <div class="float whatsapp">
 <a href="https://wa.me/61991057795" target="_blank">
@@ -199,6 +204,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <script>
 const radio = document.getElementById("radio");
 const btn = document.getElementById("btnPlayer");
+const vinheta = document.getElementById("vinheta");
 
 btn.onclick = () => {
     if(radio.paused){
@@ -209,6 +215,11 @@ btn.onclick = () => {
         btn.innerText="▶️ TOCAR";
     }
 };
+
+// Evento para tocar a vinhetas após a música
+radio.addEventListener("ended", () => {
+    vinheta.play();
+});
 </script>
 
 </body>
