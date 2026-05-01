@@ -74,7 +74,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 }
 
 .card{
-    background:#111;
+    background:;
     padding:20px;
     border-radius:10px;
 }
@@ -180,7 +180,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 
 <audio id="radio">
-<source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mp3">
+<source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
 </audio>
 
 <!-- VINHETAS -->
@@ -202,22 +202,23 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 
 <script>
-const vinhetaId = "VINHETA"; // Substitua pelo ID real da vinheta
-const token = "TOKEN_DE_AUTORIZACAO"; // Substitua pelo token de autorização real
+const radio = document.getElementById("radio");
+const btn = document.getElementById("btnPlayer");
+const vinheta = document.getElementById("vinheta");
+
+btn.onclick = () => {
+    if(radio.paused){
+        radio.play();
+        btn.innerText="⏸ PARAR";
+    } else {
+        radio.pause();
+        btn.innerText="▶️ TOCAR";
+    }
+};
 
 // Evento para tocar a vinhetas após a música
 radio.addEventListener("ended", () => {
-    fetch(`https://api.zenofm.com/tracks/${vinhetaId}`, {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-        },
-    }).then(res => res.json()).then(data => {
-        // Tocar a vinheta
-        vinheta.src = vinheta.mp3;
-        vinheta.play: vinheta;
-    });
-});
+    vinheta.play();
 });
 </script>
 
