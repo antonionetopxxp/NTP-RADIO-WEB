@@ -12,7 +12,6 @@
 
 body{
     color:#fff;
-    /* FUNDO ESTÁTICO FIXO */
     background: url('bd.jpg') no-repeat center center fixed;
     background-size: cover;
 }
@@ -80,6 +79,15 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     background: rgba(255,255,255,0.05);
     padding:20px;
     border-radius:10px;
+}
+
+/* ANÚNCIO COM ANIMAÇÃO */
+.anuncio-img{
+    margin-top:20px;
+    width:100%;
+    max-width:600px;
+    border-radius:15px;
+    animation:pulse 1.5s infinite;
 }
 
 /* PLAYER FIXO */
@@ -169,9 +177,13 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 </section>
 
+<!-- SEÇÃO DE ANÚNCIO COM IMAGEM ANIMADA -->
 <section class="section" style="margin-bottom: 100px;">
 <h2>📢 Anuncie na Rádio</h2>
 <p>Divulgue sua empresa aqui!</p>
+
+<img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
+
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
 
@@ -208,7 +220,6 @@ const statusTxt = document.getElementById("status");
 
 btn.onclick = () => {
     if(radio.paused && vinheta.paused){
-        // Inicia tocando a vinheta primeiro
         statusTxt.innerText = "🔈 TOCANDO VINHETA...";
         vinheta.play();
         btn.innerText = "⏸ PARAR";
@@ -221,7 +232,6 @@ btn.onclick = () => {
     }
 };
 
-// Quando a vinheta terminar, a rádio entra automaticamente
 vinheta.onended = () => {
     statusTxt.innerText = "🔴 AO VIVO • NTP RÁDIO WEB";
     radio.play();
