@@ -54,7 +54,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     text-shadow:0 0 15px #7b2cff;
 }
 
-/* BOTÕES PADRÃO */
+/* BOTÕES */
 .btn{
     display:inline-block;
     margin-top:15px;
@@ -64,39 +64,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     border-radius:10px;
     text-decoration:none;
     font-weight:bold;
-    text-align:center;
     min-width:200px;
-}
-
-/* BOTÃO MENOR (Fale Agora) */
-.anuncio-btn{
-    position:absolute;
-    bottom:10px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#7b2cff;
-    padding:8px 18px;
-    border-radius:8px;
-    font-weight:bold;
-    color:#fff;
-    text-decoration:none;
-    font-size:13px;
-    animation:pulse 1.5s infinite;
-}
-
-/* SEÇÕES */
-.section{padding:40px 20px;text-align:center;}
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.card{
-    background: rgba(255,255,255,0.05);
-    padding:20px;
-    border-radius:10px;
 }
 
 /* ANÚNCIO */
@@ -109,11 +77,32 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     margin-top:20px;
 }
 
+/* LINK ENVOLVENDO TUDO */
+.anuncio-link{
+    position:relative;
+    display:inline-block;
+}
+
+/* IMAGEM */
 .anuncio-img{
     width:100%;
     max-width:650px;
     border-radius:15px;
     animation: zoom 8s ease-in-out infinite;
+}
+
+/* BOTÃO MENOR */
+.anuncio-btn{
+    position:absolute;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7b2cff;
+    padding:8px 18px;
+    border-radius:8px;
+    font-size:13px;
+    color:#fff;
+    animation:pulse 1.5s infinite;
 }
 
 /* EFEITOS */
@@ -174,16 +163,16 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     color:#fff;
     border-radius:10px;
     font-weight:bold;
-    cursor: pointer;
 }
 
-/* FLOAT */
+/* FLOAT BOTÕES */
 .float{
     position:fixed;
     right:15px;
     display:flex;
     flex-direction:column;
     gap:10px;
+    z-index:1000;
 }
 
 .whatsapp{bottom:100px;}
@@ -240,16 +229,19 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 </section>
 
+<!-- ANÚNCIO -->
 <section class="section" style="margin-bottom: 100px;">
 <h2>📢 Anuncie na Rádio</h2>
 <p>Divulgue sua empresa aqui!</p>
 
 <div class="anuncio-container">
+
+<a href="https://wa.me/61991057795" target="_blank" class="anuncio-link" onclick="trackAd()">
     <img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
     
-    <a href="https://wa.me/61991057795" target="_blank" class="anuncio-btn">
-        📲 Fale Agora
-    </a>
+    <div class="anuncio-btn">📲 Fale Agora</div>
+</a>
+
 </div>
 
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
@@ -260,5 +252,25 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <button id="btnPlayer">▶️ TOCAR RÁDIO</button>
 </div>
 
+<!-- BOTÕES FLUTUANTES -->
+<div class="float whatsapp">
+<a href="https://wa.me/61991057795" target="_blank">
+<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
+</a>
+</div>
+
+<div class="float instagram">
+<a href="https://instagram.com/SEUINSTAGRAM" target="_blank">
+<img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
+</a>
+</div>
+
+<script>
+// Rastreamento simples
+function trackAd(){
+    console.log("Anúncio clicado!");
+}
+</script>
+
 </body>
-    </html>
+</html>
