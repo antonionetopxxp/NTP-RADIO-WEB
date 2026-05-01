@@ -54,16 +54,34 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     text-shadow:0 0 15px #7b2cff;
 }
 
-/* BOTÕES */
+/* BOTÕES PADRÃO */
 .btn{
     display:inline-block;
     margin-top:15px;
-    padding:12px 25px;
+    padding:14px 30px;
     background:#7b2cff;
     color:#fff;
-    border-radius:8px;
+    border-radius:10px;
     text-decoration:none;
     font-weight:bold;
+    text-align:center;
+    min-width:200px;
+}
+
+/* BOTÃO MENOR (Fale Agora) */
+.anuncio-btn{
+    position:absolute;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7b2cff;
+    padding:8px 18px;
+    border-radius:8px;
+    font-weight:bold;
+    color:#fff;
+    text-decoration:none;
+    font-size:13px;
+    animation:pulse 1.5s infinite;
 }
 
 /* SEÇÕES */
@@ -81,8 +99,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     border-radius:10px;
 }
 
-/* ANÚNCIO COM ANIMAÇÃO */
-/* CONTAINER */
+/* ANÚNCIO */
 .anuncio-container{
     position: relative;
     display:flex;
@@ -92,36 +109,14 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     margin-top:20px;
 }
 
-/* IMAGEM */
 .anuncio-img{
     width:100%;
     max-width:650px;
     border-radius:15px;
     animation: zoom 8s ease-in-out infinite;
-    transition: transform 0.3s;
 }
 
-/* HOVER (quando toca/clica) */
-.anuncio-container:hover .anuncio-img{
-    transform: scale(1.08);
-}
-
-/* BOTÃO DENTRO DO BANNER */
-.anuncio-btn{
-    position:absolute;
-    bottom:10px;
-    left:40%;
-    transform:translateX(-50%);
-    background:#7b2cff;
-    padding:9px 20px;
-    border-radius:8px;
-    font-weight:bold;
-    color:#fff;
-    text-decoration:none;
-    animation:pulse 1.5s infinite;
-}
-
-/* BRILHO PASSANDO */
+/* EFEITOS */
 .anuncio-container::after{
     content:"";
     position:absolute;
@@ -133,7 +128,6 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     animation: brilho 3s infinite;
 }
 
-/* PARTÍCULAS (CAFÉ) */
 .anuncio-container::before{
     content:"";
     position:absolute;
@@ -145,7 +139,6 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     animation: particles 25s linear infinite;
 }
 
-/* ANIMAÇÕES */
 @keyframes zoom{
     0%{transform:scale(1);}
     50%{transform:scale(1.05);}
@@ -162,7 +155,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     100%{transform:translate(-200px,-200px);}
 }
 
-/* PLAYER FIXO */
+/* PLAYER */
 .player{
     position:fixed;
     bottom:0;
@@ -171,13 +164,12 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     padding:15px;
     text-align:center;
     border-top:2px solid #7b2cff;
-    z-index: 999;
 }
 
 #btnPlayer{
     margin-top:10px;
     background:#7b2cff;
-    padding:12px 30px;
+    padding:14px 30px;
     border:none;
     color:#fff;
     border-radius:10px;
@@ -192,7 +184,6 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     display:flex;
     flex-direction:column;
     gap:10px;
-    z-index: 1000;
 }
 
 .whatsapp{bottom:100px;}
@@ -249,7 +240,6 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 </section>
 
-<!-- SEÇÃO DE ANÚNCIO COM IMAGEM ANIMADA -->
 <section class="section" style="margin-bottom: 100px;">
 <h2>📢 Anuncie na Rádio</h2>
 <p>Divulgue sua empresa aqui!</p>
@@ -260,9 +250,9 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     <a href="https://wa.me/61991057795" target="_blank" class="anuncio-btn">
         📲 Fale Agora
     </a>
-</div>>
-    
-<a href="https://wa.me/61991057795" class="btn"Quero Anunciar</a>
+</div>
+
+<a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
 
 <div class="player">
@@ -270,51 +260,5 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <button id="btnPlayer">▶️ TOCAR RÁDIO</button>
 </div>
 
-<audio id="radio">
-    <source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
-</audio>
-
-<audio id="vinheta">
-    <source src="vinheta.mp3" type="audio/mp3">
-</audio>
-
-<div class="float whatsapp">
-<a href="https://wa.me/61991057795" target="_blank">
-<img src="https://cdn-icons-png.flaticon.com/512/220/220236.png">
-</a>
-</div>
-
-<div class="float instagram">
-<a href="https://instagram.com/SEUINSTAGRAM" target="_blank">
-<img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">
-</a>
-</div>
-
-<script>
-const radio = document.getElementById("radio");
-const btn = document.getElementById("btnPlayer");
-const vinheta = document.getElementById("vinheta");
-const statusTxt = document.getElementById("status");
-
-btn.onclick = () => {
-    if(radio.paused && vinheta.paused){
-        statusTxt.innerText = "🔈 TOCANDO VINHETA...";
-        vinheta.play();
-        btn.innerText = "⏸ PARAR";
-    } else {
-        radio.pause();
-        vinheta.pause();
-        vinheta.currentTime = 0;
-        btn.innerText = "▶️ TOCAR RÁDIO";
-        statusTxt.innerText = "🔴 AO VIVO • NTP RÁDIO WEB";
-    }
-};
-
-vinheta.onended = () => {
-    statusTxt.innerText = "🔴 AO VIVO • NTP RÁDIO WEB";
-    radio.play();
-};
-</script>
-
 </body>
-</html>
+    </html>
