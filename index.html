@@ -241,7 +241,254 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
     
     <div class="anuncio-btn">📲 Fale Agora</div>
 </a>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTP RÁDIO WEB</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+
+body{
+    color:#fff;
+    background: url('bd.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.75);
+    z-index:-1;
+}
+
+/* HEADER */
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:#000;
+    border-bottom:2px solid #7b2cff;
+}
+
+.logo{font-size:20px;font-weight:700;}
+
+nav a{margin-left:10px;color:#fff;text-decoration:none;}
+
+/* HERO */
+.hero{
+    height:50vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:35px;
+    text-shadow:0 0 15px #7b2cff;
+}
+
+/* BOTÕES PADRÃO */
+.btn, #btnPlayer{
+    display:block;
+    margin:15px auto;
+    padding:14px 30px;
+    background:#7b2cff;
+    color:#fff;
+    border-radius:10px;
+    text-decoration:none;
+    font-weight:bold;
+    width:220px;
+    text-align:center;
+    border:none;
+}
+
+/* SEÇÕES */
+.section{padding:40px 20px;text-align:center;}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background: rgba(255,255,255,0.05);
+    padding:20px;
+    border-radius:10px;
+}
+
+/* ANÚNCIO */
+.anuncio-container{
+    position: relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    margin-top:20px;
+}
+
+.anuncio-link{
+    position:relative;
+    display:inline-block;
+}
+
+/* IMAGEM AJUSTADA */
+.anuncio-img{
+    width:90%;
+    max-width:550px;
+    border-radius:15px;
+    animation: zoom 8s ease-in-out infinite;
+    display:block;
+    margin:auto;
+}
+
+/* BOTÃO MENOR CENTRALIZADO */
+.anuncio-btn{
+    position:absolute;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7b2cff;
+    padding:6px 16px;
+    font-size:12px;
+    border-radius:6px;
+    color:#fff;
+    animation:pulse 1.5s infinite;
+}
+
+/* EFEITOS */
+.anuncio-container::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: brilho 3s infinite;
+}
+
+.anuncio-container::before{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:url('https://pngimg.com/uploads/coffee_beans/coffee_beans_PNG9298.png') repeat;
+    background-size:120px;
+    opacity:0.06;
+    animation: particles 25s linear infinite;
+}
+
+@keyframes zoom{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+}
+
+@keyframes brilho{
+    0%{left:-100%;}
+    100%{left:100%;}
+}
+
+@keyframes particles{
+    0%{transform:translate(0,0);}
+    100%{transform:translate(-200px,-200px);}
+}
+
+/* PLAYER */
+.player{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#000;
+    padding:15px;
+    text-align:center;
+    border-top:2px solid #7b2cff;
+}
+
+/* FLOAT BOTÕES */
+.float{
+    position:fixed;
+    right:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:1000;
+}
+
+.whatsapp{bottom:100px;}
+.instagram{bottom:170px;}
+
+.float img{
+    width:50px;
+    border-radius:50%;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">📻 NTP RÁDIO WEB</div>
+<nav>
+<a href="#">Início</a>
+<a href="#ganhar">Ganhar Dinheiro</a>
+</nav>
+</header>
+
+<section class="hero">
+<div>
+<h1>🔥 A RÁDIO QUE NÃO PARA 🔥</h1>
+<a href="https://wa.me/61991057795" class="btn">📲 Entrar no Grupo VIP</a>
+</div>
+</section>
+
+<section class="section">
+<h2>💰 Apoie a Rádio</h2>
+<p>Ajude a manter a rádio no ar</p>
+<a href="mailto:cjddot+nubank@gmail.com" class="btn">💜 Doar via PIX</a>
+</section>
+
+<section class="section" id="ganhar">
+<h2>💸 Produtos Recomendados</h2>
+<div class="cards">
+    <div class="card">
+        <h3>🔥 Ganhar Dinheiro Online</h3>
+        <a href="#" class="btn">Comprar</a>
+    </div>
+    <div class="card">
+        <h3>📱 Curso TikTok Viral</h3>
+        <a href="#" class="btn">Comprar</a>
+    </div>
+</div>
+</section>
+
+<section class="section" style="margin-bottom: 100px;">
+<h2>📢 Anuncie na Rádio</h2>
+<p>Divulgue sua empresa aqui!</p>
+
+<div class="anuncio-container">
+<a href="https://wa.me/61991057795" target="_blank" class="anuncio-link" onclick="trackAd()">
+    <img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
+    <div class="anuncio-btn">📲 Fale Agora</div>
+</a>
 </div>
 
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
@@ -266,7 +513,6 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 
 <script>
-// Rastreamento simples
 function trackAd(){
     console.log("Anúncio clicado!");
 }
