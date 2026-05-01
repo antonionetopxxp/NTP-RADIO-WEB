@@ -15,7 +15,7 @@ body{
     color:#fff;
 }
 
-/* HEADER PROFISSIONAL */
+/* HEADER */
 header{
     display:flex;
     justify-content:space-between;
@@ -25,17 +25,12 @@ header{
     border-bottom:2px solid #7b2cff;
 }
 
-.logo{
-    font-weight:900;
-    font-size:18px;
-    color:#fff;
-}
+.logo{font-weight:900;font-size:18px;}
 
 nav a{
     margin-left:15px;
     color:#ccc;
     text-decoration:none;
-    font-size:14px;
 }
 
 /* HERO */
@@ -53,7 +48,7 @@ nav a{
     font-weight:900;
 }
 
-/* BOTÕES */
+/* BOTÃO */
 .btn{
     display:inline-block;
     margin-top:15px;
@@ -88,11 +83,24 @@ nav a{
     max-width:500px;
     margin:20px auto;
     position:relative;
+    overflow:hidden;
 }
 
 .anuncio img{
     width:100%;
     border-radius:10px;
+    animation: zoom 8s ease-in-out infinite;
+}
+
+.anuncio::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: brilho 3s infinite;
 }
 
 .anuncio span{
@@ -106,7 +114,19 @@ nav a{
     font-size:12px;
 }
 
-/* PLAYER PROFISSIONAL */
+/* ANIMAÇÕES */
+@keyframes zoom{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+}
+
+@keyframes brilho{
+    0%{left:-100%;}
+    100%{left:100%;}
+}
+
+/* PLAYER */
 .player{
     position:fixed;
     bottom:0;
@@ -115,7 +135,7 @@ nav a{
     border-top:2px solid #7b2cff;
     padding:12px;
     display:flex;
-    justify-content:space-between;
+    flex-direction:column;
     align-items:center;
 }
 
@@ -124,7 +144,15 @@ nav a{
     font-weight:bold;
 }
 
+/* NOME DA MÚSICA */
+.music{
+    font-size:13px;
+    margin-top:5px;
+    color:#ccc;
+}
+
 #btnPlayer{
+    margin-top:8px;
     background:#7b2cff;
     border:none;
     padding:10px 20px;
@@ -140,14 +168,22 @@ nav a{
     display:flex;
     flex-direction:column;
     gap:10px;
+    z-index:1000;
 }
 
-.whatsapp{bottom:90px;}
-.instagram{bottom:150px;}
+.whatsapp{bottom:130px;}
+.instagram{bottom:190px;}
 
 .float img{
     width:45px;
     border-radius:50%;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
 }
 </style>
 </head>
@@ -189,20 +225,63 @@ nav a{
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
 
+<!-- PLAYER -->
 <div class="player">
 <div>
 <span class="live">● AO VIVO</span> NTP RÁDIO WEB
 </div>
+
+<div class="music" id="music">🎵 Carregando música...</div>
+
 <button id="btnPlayer">▶ TOCAR</button>
 </div>
 
+<!-- AUDIO -->
+<audio id="radio" src="https://stream.zeno.fm/elhz4znig9wuv"></audio>
+
+<!-- FLOAT -->
 <div class="float whatsapp">
-<a href="#"><img src="https://cdn-icons-png.flaticon.com/512/220/220236.png"></a>
+<a href="https://wa.me/61991057795"><img src="https://cdn-icons-png.flaticon.com/512/220/220236.png"></a>
 </div>
 
 <div class="float instagram">
 <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"></a>
 </div>
+
+<script>
+const radio = document.getElementById("radio");
+const btn = document.getElementById("btnPlayer");
+const music = document.getElementById("music");
+
+btn.onclick = () => {
+    if(radio.paused){
+        radio.play();
+        btn.innerText = "⏸ PARAR";
+    } else {
+        radio.pause();
+        btn.innerText = "▶ TOCAR";
+    }
+};
+
+/* PUXA NOME DA MÚSICA (ZENO) */
+async function getMusic(){
+    try{
+        const res = await fetch("https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv");
+        const text = await res.text();
+        const match = text.match(/StreamTitle='(.*?)';/);
+        if(match && match[1]){
+            music.innerText = "🎵 " + match[1];
+        } else {
+            music.innerText = "🎵 AO VIVO";
+        }
+    }catch{
+        music.innerText = "🎵 AO VIVO";
+    }
+}
+
+setInterval(getMusic, 10000);
+getMusic();
+</script>
 
 </body>
 </html>
