@@ -202,23 +202,22 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 
 <script>
-const radio = document.getElementById("radio");
-const btn = document.getElementById("btnPlayer");
-const vh = document.getElementById("vh");
-
-btn.onclick = () => {
-    if(radio.paused){
-        radio.play();
-        btn.innerText="⏸ PARAR";
-    } else {
-        radio.pause();
-        btn.innerText="▶️ TOCAR";
-    }
-};
+const vinhetaId = "VINHETA"; // Substitua pelo ID real da vinheta
+const token = "TOKEN_DE_AUTORIZACAO"; // Substitua pelo token de autorização real
 
 // Evento para tocar a vinhetas após a música
 radio.addEventListener("ended", () => {
-    vh.play();
+    fetch(`https://api.zenofm.com/tracks/${vinhetaId}`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
+    }).then(res => res.json()).then(data => {
+        // Tocar a vinheta
+        vinheta.src = vinheta.mp3;
+        vinheta.play();
+    });
+});
 });
 </script>
 
