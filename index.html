@@ -82,52 +82,85 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 }
 
 /* ANÚNCIO COM ANIMAÇÃO */
-.anuncio-img{
-    .anuncio-container{
+/* CONTAINER */
+.anuncio-container{
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    margin-top:20px;
 }
 
+/* IMAGEM */
 .anuncio-img{
-    margin-top:20px;
     width:100%;
-    max-width:600px;
+    max-width:650px;
     border-radius:15px;
     animation: zoom 8s ease-in-out infinite;
+    transition: transform 0.3s;
 }
 
-/* partículas (grãos simulados) */
-.anuncio-container::before,
+/* HOVER (quando toca/clica) */
+.anuncio-container:hover .anuncio-img{
+    transform: scale(1.08);
+}
+
+/* BOTÃO DENTRO DO BANNER */
+.anuncio-btn{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7b2cff;
+    padding:12px 25px;
+    border-radius:30px;
+    font-weight:bold;
+    color:#fff;
+    text-decoration:none;
+    animation:pulse 1.5s infinite;
+}
+
+/* BRILHO PASSANDO */
 .anuncio-container::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: brilho 4s infinite;
+}
+
+/* PARTÍCULAS (CAFÉ) */
+.anuncio-container::before{
     content:"";
     position:absolute;
     width:200%;
     height:200%;
-    background: url('https://pngimg.com/uploads/coffee_beans/coffee_beans_PNG9298.png') repeat;
+    background:url('https://pngimg.com/uploads/coffee_beans/coffee_beans_PNG9298.png') repeat;
     background-size:120px;
-    opacity:0.08;
-    animation: moveParticles 25s linear infinite;
+    opacity:0.06;
+    animation: particles 25s linear infinite;
 }
 
-.anuncio-container::after{
-    animation-direction: reverse;
-    opacity:0.05;
-}
-
+/* ANIMAÇÕES */
 @keyframes zoom{
     0%{transform:scale(1);}
     50%{transform:scale(1.05);}
     100%{transform:scale(1);}
 }
 
-@keyframes moveParticles{
+@keyframes brilho{
+    0%{left:-100%;}
+    100%{left:100%;}
+}
+
+@keyframes particles{
     0%{transform:translate(0,0);}
     100%{transform:translate(-200px,-200px);}
 }
-
 
 /* PLAYER FIXO */
 .player{
@@ -223,7 +256,11 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 
 <div class="anuncio-container">
     <img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
-</div>
+    
+    <a href="https://wa.me/61991057795" target="_blank" class="anuncio-btn">
+        📲 Fale Agora
+    </a>
+</div>>
     
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
