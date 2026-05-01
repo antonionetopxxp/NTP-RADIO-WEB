@@ -180,12 +180,12 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 </div>
 
 <audio id="radio">
-<source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mpeg">
+<source src="https://stream.zeno.fm/elhz4znig9wuv" type="audio/mp3">
 </audio>
 
 <!-- VINHETAS -->
-<audio id="vinheta">
-<source src="vinheta.mp3" type="audio/mp3">
+<audio id="vh">
+<source src="vh.mp3" type="audio/mp3">
 </audio>
 
 <!-- BOTÕES -->
@@ -204,7 +204,7 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <script>
 const radio = document.getElementById("radio");
 const btn = document.getElementById("btnPlayer");
-const vinheta = document.getElementById("vinheta");
+const vh = document.getElementById("vh");
 
 btn.onclick = () => {
     if(radio.paused){
@@ -218,7 +218,7 @@ btn.onclick = () => {
 
 // Evento para tocar a vinhetas após a música
 radio.addEventListener("ended", () => {
-    vinheta.play();
+    vh.play();
 });
 </script>
 
