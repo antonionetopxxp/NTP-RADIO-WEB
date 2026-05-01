@@ -83,12 +83,51 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 
 /* ANÚNCIO COM ANIMAÇÃO */
 .anuncio-img{
+    .anuncio-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.anuncio-img{
     margin-top:20px;
     width:100%;
     max-width:600px;
     border-radius:15px;
-    animation:pulse 1.5s infinite;
+    animation: zoom 8s ease-in-out infinite;
 }
+
+/* partículas (grãos simulados) */
+.anuncio-container::before,
+.anuncio-container::after{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    background: url('https://pngimg.com/uploads/coffee_beans/coffee_beans_PNG9298.png') repeat;
+    background-size:120px;
+    opacity:0.08;
+    animation: moveParticles 25s linear infinite;
+}
+
+.anuncio-container::after{
+    animation-direction: reverse;
+    opacity:0.05;
+}
+
+@keyframes zoom{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+}
+
+@keyframes moveParticles{
+    0%{transform:translate(0,0);}
+    100%{transform:translate(-200px,-200px);}
+}
+
 
 /* PLAYER FIXO */
 .player{
@@ -182,8 +221,10 @@ nav a{margin-left:10px;color:#fff;text-decoration:none;}
 <h2>📢 Anuncie na Rádio</h2>
 <p>Divulgue sua empresa aqui!</p>
 
-<img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
-
+<div class="anuncio-container">
+    <img src="a_wide_horizontal_marketing_banner_digital_adver.png" class="anuncio-img">
+</div>
+    
 <a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
 </section>
 
