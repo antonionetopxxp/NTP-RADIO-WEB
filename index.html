@@ -5,109 +5,185 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NTP RÁDIO WEB</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body {
-    margin:0;
-    font-family: 'Montserrat', sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+
+body{
     background:#0a0a0a;
     color:#fff;
 }
 
 /* HEADER */
-header {
+header{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     padding:15px 20px;
     background:#000;
-    border-bottom:2px solid red;
+    border-bottom:2px solid #7b2cff;
 }
 
-.logo { color:red; font-weight:bold; }
+.logo{font-weight:900;font-size:18px;}
 
-nav a {
+nav a{
     margin-left:15px;
-    color:white;
+    color:#ccc;
     text-decoration:none;
 }
 
 /* HERO */
-.hero {
+.hero{
     height:60vh;
-    background:linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.9)),
-    url('https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2') center/cover;
     display:flex;
     justify-content:center;
     align-items:center;
     text-align:center;
+    background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.9)), url('bd.jpg') center/cover;
 }
 
-.hero h1 {
-    font-size:40px;
+.hero h1{
+    font-size:38px;
+    font-weight:900;
 }
 
-/* PLAYER FIXO */
-.player {
-    position:fixed;
-    bottom:0;
-    width:100%;
-    background:#111;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-top:2px solid red;
-}
-
-button {
-    background:red;
-    border:none;
+/* BOTÃO */
+.btn{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 22px;
+    background:#7b2cff;
+    border-radius:6px;
     color:#fff;
-    padding:10px 20px;
-    cursor:pointer;
+    text-decoration:none;
+    font-weight:bold;
 }
 
 /* SEÇÕES */
-.section {
+.section{
     padding:40px 20px;
+    text-align:center;
 }
 
-.cards {
+.cards{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
 }
 
-.card {
-    background:#1a1a1a;
-    padding:20px;
-    border-radius:10px;
-}
-
-/* ANÚNCIOS */
-.ads {
+.card{
     background:#111;
     padding:20px;
-    text-align:center;
-    margin-top:20px;
-}
-
-/* CHAT */
-.chat {
-    position:fixed;
-    right:20px;
-    bottom:80px;
-    width:250px;
-    background:#1a1a1a;
     border-radius:10px;
-    padding:10px;
 }
 
-.chat input {
+/* ANÚNCIO */
+.anuncio{
+    max-width:500px;
+    margin:20px auto;
+    position:relative;
+    overflow:hidden;
+}
+
+.anuncio img{
     width:100%;
-    padding:5px;
+    border-radius:10px;
+    animation: zoom 8s ease-in-out infinite;
+}
+
+.anuncio::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: brilho 3s infinite;
+}
+
+.anuncio span{
+    position:absolute;
+    bottom:8px;
+    left:50%;
+    transform:translateX(-50%);
+    background:#7b2cff;
+    padding:5px 10px;
+    border-radius:5px;
+    font-size:12px;
+}
+
+/* ANIMAÇÕES */
+@keyframes zoom{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+}
+
+@keyframes brilho{
+    0%{left:-100%;}
+    100%{left:100%;}
+}
+
+/* PLAYER */
+.player{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#000;
+    border-top:2px solid #7b2cff;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.live{
+    color:#ff2d2d;
+    font-weight:bold;
+}
+
+/* NOME DA MÚSICA */
+.music{
+    font-size:13px;
     margin-top:5px;
+    color:#ccc;
+}
+
+#btnPlayer{
+    margin-top:8px;
+    background:#7b2cff;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    color:#fff;
+    font-weight:bold;
+}
+
+/* FLOAT */
+.float{
+    position:fixed;
+    right:15px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:1000;
+}
+
+.whatsapp{bottom:130px;}
+.instagram{bottom:190px;}
+
+.float img{
+    width:45px;
+    border-radius:50%;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.1);}
+    100%{transform:scale(1);}
 }
 </style>
 </head>
@@ -118,78 +194,93 @@ button {
 <div class="logo">NTP RÁDIO WEB</div>
 <nav>
 <a href="#">Início</a>
-<a href="#">Programas</a>
-<a href="#">Contato</a>
+<a href="#">Programação</a>
 </nav>
 </header>
 
 <section class="hero">
+<div>
 <h1>O SOM QUE NUNCA MORRE 🎸</h1>
+<a href="#" class="btn">OUVIR AGORA</a>
+</div>
 </section>
 
 <section class="section">
 <h2>🔥 Programação</h2>
 <div class="cards">
 <div class="card">08h - Despertar Rock</div>
-<div class="card">14h - Clássicos Eternos</div>
+<div class="card">14h - Clássicos</div>
 <div class="card">20h - Rock Legends</div>
-<div class="card">00h - Midnight Rock</div>
 </div>
 </section>
 
-<section class="ads">
-<h3>📢 Anuncie aqui</h3>
-<p>Entre em contato para divulgar sua marca</p>
-</section>
+<section class="section">
+<h2>📢 Anuncie</h2>
 
-<!-- CHAT SIMPLES -->
-<div class="chat">
-<b>Chat</b>
-<div id="messages"></div>
-<input type="text" id="msg" placeholder="Digite..." onkeypress="send(event)">
+<div class="anuncio">
+<img src="a_wide_horizontal_marketing_banner_digital_adver.png">
+<span>📲 Chame no Zap</span>
 </div>
+
+<a href="https://wa.me/61991057795" class="btn">Quero Anunciar</a>
+</section>
 
 <!-- PLAYER -->
 <div class="player">
 <div>
-🔴 AO VIVO<br>
-<span id="music">Carregando...</span>
+<span class="live">● AO VIVO</span> NTP RÁDIO WEB
 </div>
 
-<button onclick="toggle()">▶️ Play</button>
+<div class="music" id="music">🎵 Carregando música...</div>
+
+<button id="btnPlayer">▶ TOCAR</button>
 </div>
 
-<audio id="radio" src="COLOQUE_SEU_STREAM_AQUI"></audio>
+<!-- AUDIO -->
+<audio id="radio" src="https://stream.zeno.fm/elhz4znig9wuv"></audio>
+
+<!-- FLOAT -->
+<div class="float whatsapp">
+<a href="https://wa.me/61991057795"><img src="https://cdn-icons-png.flaticon.com/512/220/220236.png"></a>
+</div>
+
+<div class="float instagram">
+<a href="#"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"></a>
+</div>
 
 <script>
-let audio = document.getElementById("radio");
+const radio = document.getElementById("radio");
+const btn = document.getElementById("btnPlayer");
+const music = document.getElementById("music");
 
-function toggle(){
-    audio.paused ? audio.play() : audio.pause();
-}
+btn.onclick = () => {
+    if(radio.paused){
+        radio.play();
+        btn.innerText = "⏸ PARAR";
+    } else {
+        radio.pause();
+        btn.innerText = "▶ TOCAR";
+    }
+};
 
-/* NOME DA MÚSICA (ZENO API) */
+/* PUXA NOME DA MÚSICA (ZENO) */
 async function getMusic(){
     try{
-        let res = await fetch("https://api.zeno.fm/mounts/metadata/SEU_ID_AQUI");
-        let data = await res.json();
-        document.getElementById("music").innerText = data.now_playing.song;
+        const res = await fetch("https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv");
+        const text = await res.text();
+        const match = text.match(/StreamTitle='(.*?)';/);
+        if(match && match[1]){
+            music.innerText = "🎵 " + match[1];
+        } else {
+            music.innerText = "🎵 AO VIVO";
+        }
     }catch{
-        document.getElementById("music").innerText = "No ar...";
+        music.innerText = "🎵 AO VIVO";
     }
 }
-setInterval(getMusic,5000);
 
-/* CHAT SIMPLES */
-function send(e){
-    if(e.key === "Enter"){
-        let msg = document.getElementById("msg").value;
-        let div = document.createElement("div");
-        div.innerText = msg;
-        document.getElementById("messages").appendChild(div);
-        document.getElementById("msg").value="";
-    }
-}
+setInterval(getMusic, 10000);
+getMusic();
 </script>
 
 </body>
