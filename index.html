@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https://stream.zeno.fm https://*.surfernetwork.com; connect-src 'self' https://api.zeno.fm; base-uri 'self'; form-action 'self'">
+<title>NTP RÁDIO WEB | Rádio Online ao Vivo</title>
+<meta name="description" content="NTP RÁDIO WEB: música ao vivo 24h. Rock, clássicos e muito mais. Ouça a nossa programação agora, gratuita e direto da internet.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#7b2cff">
+<link rel="canonical" href="https://ntpradioweb.netlify.app/">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NTP RÁDIO WEB | Ao Vivo">
+<meta property="og:description" content="O som que nunca morre. Ouça NTP RÁDIO WEB ao vivo.">
+<meta property="og:url" content="https://ntpradioweb.netlify.app/">
+<meta property="og:image" content="https://ntpradioweb.netlify.app/ntp1.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NTP RÁDIO WEB | Ao Vivo">
+<meta name="twitter:description" content="O som que nunca morre. Ouça ao vivo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="orb orb-a" aria-hidden="true"></div>
+<div class="orb orb-b" aria-hidden="true"></div>
+
+<header class="site-header">
+<nav class="nav">
+<a class="logo" href="#inicio">NTP <b>RÁDIO WEB</b></a>
+<button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+<div class="nav-links" id="navLinks">
+<a href="#inicio">Início</a>
+<a href="#ao-vivo">Ao Vivo</a>
+<a href="#programacao">Programação</a>
+<a href="#anuncie">Anuncie</a>
+<a href="#contato">Contato</a>
+</div>
+</nav>
+</header>
+
+<main>
+
+<section class="hero" id="inicio">
+<div class="hero-bg" aria-hidden="true"></div>
+<div class="hero-inner">
+<span class="hero-badge"><i class="dot" aria-hidden="true"></i> AO VIVO 24H</span>
+<h1>O SOM QUE<br>NUNCA <em>MORRE</em></h1>
+<p>Rock, clássicos e as melhores músicas sem parar. Sintonize na NTP RÁDIO WEB e curta a vibe de qualquer lugar.</p>
+<div class="hero-actions">
+<a class="btn btn-primary btn-lg" href="#ao-vivo">▶ OUVIR AGORA</a>
+<a class="btn btn-ghost btn-lg" href="#anuncie">Anuncie na Rádio</a>
+</div>
+<div class="hero-ticker">
+<span class="ticker-label">TOCOU AGORA</span>
+<span class="ticker-track" data-now>🎵 Carregando música...</span>
+</div>
+</div>
+</section>
+
+<section class="section" id="ao-vivo">
+<div class="section-head reveal">
+<span class="section-label">AO VIVO</span>
+<h2>No ar agora</h2>
+<p>Player oficial da NTP RÁDIO WEB. Aperte o play e boa música.</p>
+</div>
+<div class="live-card reveal">
+<div class="eq" data-eq aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+<div class="live-meta">
+<span class="live-badge"><i class="dot" aria-hidden="true"></i> AO VIVO</span>
+<h3>NTP RÁDIO WEB</h3>
+<p data-now>🎵 Carregando música...</p>
+</div>
+<button class="play-btn" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play" aria-hidden="true"></span><span class="pb-pause" aria-hidden="true"></span></button>
+<div class="volume">
+<svg class="vol-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"></path><path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+<input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+</div>
+<button class="pip-btn" data-pip aria-label="Abrir mini player em segundo plano">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7h-2V6H5v7h11v2H5a2 2 0 0 1-2-2V6zm14 4h4v7h-4v-7z"></path></svg>
+<span>MINI PLAYER</span>
+</button>
+</div>
+</section>
+
+<section class="section" id="programacao">
+<div class="section-head reveal">
+<span class="section-label">PROGRAMAÇÃO</span>
+<h2>Confira a grade</h2>
+<p>Nossos horários fixos de destaque durante a semana.</p>
+</div>
+<div class="schedule-grid">
+<article class="schedule-card reveal"><span class="time">08h</span><h3>Despertar Rock</h3><p>Comece o dia com energia e os melhores riffs.</p></article>
+<article class="schedule-card reveal"><span class="time">14h</span><h3>Clássicos</h3><p>Sucessos que marcaram época, direto do arquivo.</p></article>
+<article class="schedule-card reveal"><span class="time">20h</span><h3>Rock Legends</h3><p>As lendas do rock em uma seleção imperdível.</p></article>
+</div>
+</section>
+
+<section class="section section-dark" id="anuncie">
+<div class="section-head reveal">
+<span class="section-label">ANUNCIE</span>
+<h2>Sua marca no ar</h2>
+</div>
+<div class="ad-layout">
+<div class="anuncio reveal">
+<img src="a_wide_horizontal_marketing_banner_digital_adver.png" alt="Banner de anúncio NTP Rádio Web" loading="lazy">
+<span class="ad-badge">📲 Chame no Zap</span>
+</div>
+<div class="ad-cta reveal">
+<h3>Divulgue para milhares de ouvintes</h3>
+<p>Espaços patrocinados, vinhetas e banners para a sua empresa crescer. Fale com a gente e garanta o seu horário.</p>
+<a class="btn btn-primary" href="https://wa.me/61991057795" rel="noopener noreferrer">Quero Anunciar</a>
+</div>
+</div>
+</section>
+
+<section class="section" id="sobre">
+<div class="section-head reveal">
+<span class="section-label">SOBRE</span>
+<h2>O som que nunca morre</h2>
+</div>
+<div class="about-layout">
+<div class="about-media reveal"><img src="bd.jpg" alt="Palco de shows" loading="lazy"></div>
+<div class="about-text reveal">
+<p>A NTP RÁDIO WEB nasceu para celebrar a boa música. Somos uma rádio online que toca rock, clássicos e novidades sem interrupções, de qualquer lugar do mundo.</p>
+<p>Estamos no ar 24 horas por dia, 7 dias por semana, direto pela internet.</p>
+<a class="btn btn-ghost" href="#ao-vivo">▶ Ouvir agora</a>
+</div>
+</div>
+</section>
+
+<section class="section section-dark" id="contato">
+<div class="section-head reveal">
+<span class="section-label">CONTATO</span>
+<h2>Fale com a gente</h2>
+</div>
+<div class="contact-grid">
+<a class="contact-card reveal" href="https://wa.me/61991057795" rel="noopener noreferrer">
+<img src="icons/whatsapp.svg" alt="WhatsApp" width="40" height="40">
+<b>WhatsApp</b><span>Mensagens e parcerias</span>
+</a>
+<a class="contact-card reveal" href="https://www.instagram.com/" rel="noopener noreferrer">
+<img src="icons/instagram.svg" alt="Instagram" width="40" height="40">
+<b>Instagram</b><span>Siga e fique por dentro</span>
+</a>
+</div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+<div class="footer-inner">
+<div class="footer-brand">
+<a class="logo" href="#inicio">NTP <b>RÁDIO WEB</b></a>
+<p>Música, cultura e informação 24h por dia.</p>
+</div>
+<div class="footer-col">
+<b>NAVEGAÇÃO</b>
+<a href="#inicio">Início</a>
+<a href="#ao-vivo">Ao Vivo</a>
+<a href="#programacao">Programação</a>
+</div>
+<div class="footer-col">
+<b>INSTITUCIONAL</b>
+<a href="#anuncie">Anuncie</a>
+<a href="#sobre">Sobre</a>
+<a href="#contato">Contato</a>
+</div>
+</div>
+<small class="copyright">© 2026 NTP RÁDIO WEB · Transmissão via <a href="https://zeno.fm/" rel="noopener noreferrer">Zeno.fm</a></small>
+</footer>
+
+<a class="whatsapp-float" href="https://wa.me/61991057795" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
+<img src="icons/whatsapp.svg" alt="WhatsApp">
+</a>
+
+<div class="player" id="player">
+<div class="eq eq-mini" data-eq aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+<div class="player-meta">
+<span class="live-badge"><i class="dot" aria-hidden="true"></i> AO VIVO</span>
+<span class="track" data-now>🎵 Carregando música...</span>
+</div>
+<button class="pip-btn pip-btn-icon" data-pip aria-label="Abrir mini player em segundo plano"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7h-2V6H5v7h11v2H5a2 2 0 0 1-2-2V6zm14 4h4v7h-4v-7z"></path></svg></button>
+<button class="play-btn play-btn-mini" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play" aria-hidden="true"></span><span class="pb-pause" aria-hidden="true"></span></button>
+</div>
+
+<audio id="radio" preload="none" src="https://stream.zeno.fm/elhz4znig9wuv"></audio>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+</html>
