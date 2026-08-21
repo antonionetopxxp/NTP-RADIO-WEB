@@ -1,5 +1,0 @@
-Contact: https://wa.me/61991057795
-Preferred-Languages: pt, en
-Canonical: https://ntpradioweb.netlify.app/security.txt
-Policy: https://ntpradioweb.netlify.app/
-Expires: 2027-08-18T00:00:00.000Z
