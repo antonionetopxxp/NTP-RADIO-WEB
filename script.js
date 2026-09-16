@@ -1194,87 +1194,433 @@ function syncPipVolume(value) {
    ========================================================= */
 
 async function openPip() {
+  // Verifica se o navegador suporta Document Picture-in-Picture
+  if (!('documentPictureInPicture' in window)) {
+    console.warn('Picture-in-Picture não é suportado neste navegador.');
+    
+    // Alternativa: informa ao usuário que o áudio pode continuar
+    // em segundo plano usando o player normal.
+    alert(
+      'O mini player flutuante não é suportado neste navegador. ' +
+      'Você ainda pode ouvir a rádio em segundo plano pelo player normal.'
+    );
+    
+    return;
+  }
 
-  if (!isPipSupported()) {
+  // Evita abrir várias janelas PiP
+  if (window.__ntpPipWindow && !window.__ntpPipWindow.closed) {
+    window.__ntpPipWindow.focus();
+    return;
+  }
 
-    const live =
-      document.getElementById(
-        'ao-vivo'
-      );
+  try {
+    const pipWindow = await documentPictureInPicture.requestWindow({
+      width: 360,
+      height: 220
+    });
 
-    if (live) {
+    window.__ntpPipWindow = pipWindow;
 
-      live.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+    // ==================================================
+    // ESTILO DO MINI PLAYER
+    // ==================================================
+
+    const style = pipWindow.document.createElement('style');
+
+    style.textContent = `
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: #0b1020;
+        color: #ffffff;
+      }
+
+      .ntp-pip {
+        width: 100%;
+        height: 100%;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+          radial-gradient(circle at top right, #26345f 0%, transparent 45%),
+          #0b1020;
+      }
+
+      .ntp-pip-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .ntp-pip-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #151d35;
+      }
+
+      .ntp-pip-info {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .ntp-pip-title {
+        font-size: 16px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .ntp-pip-artist {
+        margin-top: 5px;
+        font-size: 13px;
+        opacity: .72;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .ntp-pip-live {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 7px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .8px;
+        color: #ff4d6d;
+      }
+
+      .ntp-pip-live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #ff4d6d;
+        animation: ntpPulse 1.2s infinite;
+      }
+
+      @keyframes ntpPulse {
+        0%, 100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: .35;
+        }
+      }
+
+      .ntp-pip-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .ntp-pip-button {
+        width: 52px;
+        height: 52px;
+        border: 0;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #0b1020;
+        font-size: 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ntp-pip-button:active {
+        transform: scale(.94);
+      }
+
+      .ntp-pip-close {
+        width: 38px;
+        height: 38px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,.12);
+        color: #ffffff;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      .ntp-pip-status {
+        text-align: center;
+        font-size: 11px;
+        opacity: .55;
+      }
+    `;
+
+    pipWindow.document.head.appendChild(style);
+
+    // ==================================================
+    // HTML DO MINI PLAYER
+    // ==================================================
+
+    const container = pipWindow.document.createElement('div');
+
+    container.className = 'ntp-pip';
+
+    container.innerHTML = `
+      <div class="ntp-pip-header">
+
+        <img
+          class="ntp-pip-logo"
+          src="favicon.svg"
+          alt="NTP Rádio Web"
+        >
+
+        <div class="ntp-pip-info">
+
+          <div class="ntp-pip-title">
+            NTP RÁDIO WEB
+          </div>
+
+          <div class="ntp-pip-artist">
+            Ao vivo
+          </div>
+
+          <div class="ntp-pip-live">
+            <span class="ntp-pip-live-dot"></span>
+            AO VIVO
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="ntp-pip-controls">
+
+        <button
+          class="ntp-pip-close"
+          id="ntpPipClose"
+          aria-label="Fechar mini player">
+          ✕
+        </button>
+
+        <button
+          class="ntp-pip-button"
+          id="ntpPipPlay"
+          aria-label="Reproduzir rádio">
+          ▶
+        </button>
+
+      </div>
+
+      <div
+        class="ntp-pip-status"
+        id="ntpPipStatus">
+        Rádio online
+      </div>
+    `;
+
+    pipWindow.document.body.appendChild(container);
+
+    // ==================================================
+    // ELEMENTOS
+    // ==================================================
+
+    const pipPlay = pipWindow.document.getElementById('ntpPipPlay');
+    const pipClose = pipWindow.document.getElementById('ntpPipClose');
+    const pipTitle = pipWindow.document.querySelector('.ntp-pip-title');
+    const pipArtist = pipWindow.document.querySelector('.ntp-pip-artist');
+    const pipStatus = pipWindow.document.getElementById('ntpPipStatus');
+
+    // ==================================================
+    // ATUALIZA O BOTÃO PLAY/PAUSE
+    // ==================================================
+
+    function updatePipButton() {
+      if (!pipPlay) return;
+
+      if (radio.paused) {
+        pipPlay.textContent = '▶';
+        pipPlay.setAttribute(
+          'aria-label',
+          'Reproduzir rádio'
+        );
+      } else {
+        pipPlay.textContent = '❚❚';
+        pipPlay.setAttribute(
+          'aria-label',
+          'Pausar rádio'
+        );
+      }
+    }
+
+    // ==================================================
+    // PLAY / PAUSE
+    // ==================================================
+
+    pipPlay.addEventListener('click', async () => {
+
+      try {
+
+        if (radio.paused) {
+
+          await radio.play();
+
+          if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'playing';
+          }
+
+          pipStatus.textContent = 'Reproduzindo ao vivo';
+
+        } else {
+
+          radio.pause();
+
+          if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'paused';
+          }
+
+          pipStatus.textContent = 'Pausado';
+
+        }
+
+        updatePipButton();
+
+      } catch (error) {
+
+        console.error(
+          'Erro no mini player:',
+          error
+        );
+
+        pipStatus.textContent =
+          'Não foi possível reproduzir';
+
+      }
+
+    });
+
+    // ==================================================
+    // FECHAR
+    // ==================================================
+
+    pipClose.addEventListener('click', () => {
+
+      try {
+        pipWindow.close();
+      } catch (error) {
+        console.error(error);
+      }
+
+    });
+
+    // ==================================================
+    // SINCRONIZAÇÃO COM O PLAYER PRINCIPAL
+    // ==================================================
+
+    function syncPip() {
+
+      updatePipButton();
+
+      if (!radio.paused) {
+        pipStatus.textContent =
+          'Reproduzindo ao vivo';
+      } else {
+        pipStatus.textContent =
+          'Pausado';
+      }
 
     }
 
-    toast(
-      'O mini player não é compatível com este navegador.'
-    );
+    radio.addEventListener('play', syncPip);
+    radio.addEventListener('playing', syncPip);
+    radio.addEventListener('pause', syncPip);
 
-    return;
+    // ==================================================
+    // ATUALIZA METADATA NO MINI PLAYER
+    // ==================================================
 
-  }
+    function updatePipMetadata(track) {
 
-  if (pipWindow) {
+      if (!track) return;
 
-    toast(
-      'O mini player já está aberto.'
-    );
+      const title =
+        track.title ||
+        track.name ||
+        'NTP RÁDIO WEB';
 
-    return;
+      const artist =
+        track.artist ||
+        track.author ||
+        'Ao vivo';
 
-  }
+      if (pipTitle) {
+        pipTitle.textContent = title;
+      }
 
-  if (
-    radio &&
-    radio.paused
-  ) {
+      if (pipArtist) {
+        pipArtist.textContent = artist;
+      }
 
-    radio
-      .play()
-      .catch(() => {});
+    }
 
-  }
+    // Tenta mostrar a faixa atual
+    if (typeof currentTrack !== 'undefined' && currentTrack) {
+      updatePipMetadata(currentTrack);
+    }
 
-  let windowRef;
+    // Observa alterações da metadata existente
+    const originalUpdateMediaSession =
+      window.updateMediaSession;
 
-  try {
+    if (typeof originalUpdateMediaSession === 'function') {
+      // O player principal continua funcionando normalmente.
+      // A metadata do PiP será atualizada pelos eventos abaixo.
+    }
 
-    windowRef =
-      await documentPictureInPicture
-        .requestWindow({
+    // ==================================================
+    // QUANDO A JANELA PiP FOR FECHADA
+    // ==================================================
 
-          width: 340,
-          height: 300
+    pipWindow.addEventListener('pagehide', () => {
 
-        });
+      window.__ntpPipWindow = null;
+
+      // Remove listeners associados ao mini player
+      radio.removeEventListener('play', syncPip);
+      radio.removeEventListener('playing', syncPip);
+      radio.removeEventListener('pause', syncPip);
+
+    });
+
+    // ==================================================
+    // ESTADO INICIAL
+    // ==================================================
+
+    syncPip();
 
   } catch (error) {
 
-    pipWindow = null;
-
-    toast(
-      'Não foi possível abrir o mini player.'
+    console.error(
+      'Erro ao abrir o mini player PiP:',
+      error
     );
 
-    return;
+    window.__ntpPipWindow = null;
 
+    alert(
+      'Não foi possível abrir o mini player neste navegador.'
+    );
   }
-
-  pipWindow =
-    windowRef;
-
-  copyStyleSheets(
-    pipWindow.document
-  );
-
-  pipWindow.document.body.appendChild(
-    buildPipContent()
-  );
+}
 
   /* -----------------------------------------
      Botão fechar
