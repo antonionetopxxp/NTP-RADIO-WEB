@@ -56,3 +56,326 @@ input[type=range]{accent-color:#9d62ff}
   .btn-primary{box-shadow:0 8px 28px rgba(109,40,255,.38)}
   .live-card{box-shadow:0 16px 45px rgba(0,0,0,.48)}
 }
+/* =========================================================
+   NTP RÁDIO WEB — GALAXY PRO PLAYER
+   ========================================================= */
+
+:root {
+  --radio-purple: #7c3cff;
+  --radio-violet: #a855f7;
+  --radio-blue: #5b21ff;
+  --radio-bg: #03030a;
+}
+
+/* PLAYER PRINCIPAL */
+.live-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(124, 60, 255, .35);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(124, 60, 255, .20), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(168, 85, 247, .14), transparent 35%),
+    linear-gradient(145deg, rgba(10, 8, 22, .96), rgba(3, 3, 10, .98));
+  box-shadow:
+    0 0 35px rgba(124, 60, 255, .12),
+    inset 0 0 40px rgba(124, 60, 255, .04);
+}
+
+/* brilho interno */
+.live-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(124,60,255,.18), transparent 25%),
+    radial-gradient(circle at 80% 50%, rgba(168,85,247,.12), transparent 25%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* BADGE AO VIVO */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-shadow: 0 0 12px rgba(168,85,247,.6);
+}
+
+.live-badge .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow:
+    0 0 6px #a855f7,
+    0 0 18px rgba(168,85,247,.9);
+  animation: livePulse 1.4s infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.45);
+    opacity: .55;
+  }
+}
+
+/* TEXTO DA MÚSICA */
+.live-meta p {
+  min-height: 24px;
+  color: rgba(255,255,255,.78);
+  transition: opacity .3s ease;
+}
+
+/* EQUALIZADOR */
+.eq {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  height: 52px;
+}
+
+.eq span {
+  display: block;
+  width: 5px;
+  height: 12px;
+  border-radius: 10px;
+  background: linear-gradient(
+    to top,
+    #6d28ff,
+    #a855f7
+  );
+  box-shadow:
+    0 0 8px rgba(124,60,255,.7);
+  transform-origin: bottom;
+}
+
+.eq.on span:nth-child(1) {
+  animation: eq1 .75s ease-in-out infinite alternate;
+}
+
+.eq.on span:nth-child(2) {
+  animation: eq2 .55s ease-in-out infinite alternate;
+}
+
+.eq.on span:nth-child(3) {
+  animation: eq3 .85s ease-in-out infinite alternate;
+}
+
+.eq.on span:nth-child(4) {
+  animation: eq2 .65s ease-in-out infinite alternate-reverse;
+}
+
+.eq.on span:nth-child(5) {
+  animation: eq1 .50s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes eq1 {
+  from { height: 8px; }
+  to { height: 42px; }
+}
+
+@keyframes eq2 {
+  from { height: 14px; }
+  to { height: 50px; }
+}
+
+@keyframes eq3 {
+  from { height: 10px; }
+  to { height: 34px; }
+}
+
+/* PLAY BUTTON */
+.play-btn {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,85,247,.6);
+  background:
+    radial-gradient(circle at 35% 30%,
+      #a855f7 0%,
+      #7c3cff 35%,
+      #351078 100%);
+  box-shadow:
+    0 0 0 6px rgba(124,60,255,.08),
+    0 0 25px rgba(124,60,255,.45),
+    0 0 55px rgba(168,85,247,.18);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.play-btn:hover {
+  transform: scale(1.07);
+  box-shadow:
+    0 0 0 8px rgba(124,60,255,.08),
+    0 0 35px rgba(124,60,255,.65),
+    0 0 70px rgba(168,85,247,.25);
+}
+
+.play-btn:active {
+  transform: scale(.96);
+}
+
+/* player tocando */
+.is-playing .play-btn {
+  animation: playerGlow 2s ease-in-out infinite;
+}
+
+@keyframes playerGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 6px rgba(124,60,255,.08),
+      0 0 25px rgba(124,60,255,.45);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(124,60,255,.05),
+      0 0 45px rgba(168,85,247,.7);
+  }
+}
+
+/* MINI PLAYER */
+.player {
+  background:
+    radial-gradient(circle at 10% 50%, rgba(124,60,255,.18), transparent 30%),
+    radial-gradient(circle at 90% 50%, rgba(168,85,247,.12), transparent 30%),
+    rgba(4,4,12,.96);
+  border-top: 1px solid rgba(124,60,255,.4);
+  box-shadow:
+    0 -10px 40px rgba(0,0,0,.45),
+    0 -2px 25px rgba(124,60,255,.12);
+  backdrop-filter: blur(18px);
+}
+
+/* música atual no player */
+.player .track {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+/* VOLUME */
+.volume input[type="range"] {
+  accent-color: #8b5cf6;
+  cursor: pointer;
+}
+
+/* BOTÃO MINI PLAYER */
+.pip-btn {
+  transition: all .2s ease;
+}
+
+.pip-btn:hover {
+  color: #a855f7;
+  filter: drop-shadow(0 0 8px rgba(168,85,247,.7));
+}
+
+/* BARRA DE PROGRESSO DECORATIVA */
+.player::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #6d28ff,
+    #a855f7,
+    #6d28ff,
+    transparent
+  );
+  opacity: .8;
+}
+
+/* HERO — TOCOU AGORA */
+.hero-ticker {
+  border-color: rgba(124,60,255,.25);
+  background: rgba(8,5,18,.65);
+  box-shadow:
+    inset 0 0 20px rgba(124,60,255,.04),
+    0 0 20px rgba(124,60,255,.05);
+}
+
+.ticker-label {
+  color: #a855f7;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+
+  .live-card {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+
+  .live-card .eq {
+    margin-bottom: 12px;
+  }
+
+  .play-btn {
+    width: 66px;
+    height: 66px;
+  }
+
+  .player {
+    padding:
+      10px
+      max(12px, env(safe-area-inset-right))
+      calc(10px + env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .player .eq-mini {
+    display: none;
+  }
+
+  .volume-mini {
+    display: none;
+  }
+
+  .player-meta {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .player .track {
+    max-width: 46vw;
+    font-size: 12px;
+  }
+
+  .player .live-badge {
+    font-size: 9px;
+  }
+
+  .play-btn-mini {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* ACESSIBILIDADE */
+@media (prefers-reduced-motion: reduce) {
+
+  .live-badge .dot,
+  .eq span,
+  .play-btn {
+    animation: none !important;
+  }
+}
