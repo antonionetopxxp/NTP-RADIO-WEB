@@ -39,6 +39,7 @@ function cleanTrackTitle(raw) {
 
 function setNowPlaying(title) {
   const cleaned = cleanTrackTitle(title);
+
   const text = cleaned
     ? '🎵 ' + cleaned
     : '🎵 Carregando música...';
@@ -46,12 +47,19 @@ function setNowPlaying(title) {
   lastTrackText = text;
 
   nowPlayingEls.forEach(el => {
-    el.textContent = text;
-    el.title = cleaned || '';
+    el.classList.add('track-changing');
+
+    setTimeout(() => {
+      el.textContent = text;
+      el.title = cleaned || '';
+      el.classList.remove('track-changing');
+    }, 180);
   });
 
   if (cleaned) {
     document.title = cleaned + ' | NTP RÁDIO WEB';
+  } else {
+    document.title = 'NTP RÁDIO WEB | Rádio Online ao Vivo';
   }
 
   updatePipNowPlaying(text);
