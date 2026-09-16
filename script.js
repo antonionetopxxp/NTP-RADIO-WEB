@@ -1,16 +1,70 @@
-const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
-const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
+/* =========================================================
+   NTP RÁDIO WEB
+   PLAYER + METADATA + VOLUME + PWA
+========================================================= */
 
-const radio = document.getElementById('radio');
-const volumeInput = document.getElementById('volume');
-const volumeMini = document.getElementById('volumeMini');
+const STREAM_URL =
+  'https://stream.zeno.fm/elhz4znig9wuv';
 
-const playButtons = document.querySelectorAll('[data-play]');
-const nowPlayingEls = document.querySelectorAll('[data-now]');
-const eqEls = document.querySelectorAll('[data-eq]');
+const META_URL =
+  'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
 
-let lastTrackText = '🎵 Carregando música...';
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const radio =
+  document.getElementById('radio');
+
+const volumeInput =
+  document.getElementById('volume');
+
+const volumeMini =
+  document.getElementById('volumeMini');
+
+const playButtons =
+  document.querySelectorAll('[data-play]');
+
+const nowPlayingEls =
+  document.querySelectorAll('[data-now]');
+
+const eqEls =
+  document.querySelectorAll('[data-eq]');
+
+const navToggle =
+  document.getElementById('navToggle');
+
+const navLinks =
+  document.getElementById('navLinks');
+
+const playerMin =
+  document.getElementById('playerMin');
+
+const installBtn =
+  document.getElementById('installBtn');
+
+const pipButtons =
+  document.querySelectorAll('[data-pip]');
+
+
+let lastTrackText =
+  '🎵 Carregando música...';
+
 let pipWindow = null;
+
+
+/* =========================================================
+   GARANTE O STREAM
+========================================================= */
+
+if (radio) {
+
+  radio.src = STREAM_URL;
+
+  radio.preload = 'none';
+
+}
 
 
 /* =========================================================
@@ -19,16 +73,25 @@ let pipWindow = null;
 
 function setPlaying(state) {
 
-  document.body.classList.toggle('is-playing', state);
+  document.body.classList.toggle(
+    'is-playing',
+    state
+  );
+
 
   playButtons.forEach(button => {
 
-    button.classList.toggle('playing', state);
+    button.classList.toggle(
+      'playing',
+      state
+    );
+
 
     button.setAttribute(
       'aria-pressed',
       String(state)
     );
+
 
     button.setAttribute(
       'aria-label',
@@ -39,66 +102,76 @@ function setPlaying(state) {
 
 
   eqEls.forEach(eq => {
-    eq.classList.toggle('on', state);
+
+    eq.classList.toggle(
+      'on',
+      state
+    );
+
   });
 
 
   updatePipState(state);
+
 }
 
 
 /* =========================================================
-   LIMPEZA DO NOME DA MÚSICA
+   LIMPA TÍTULO RECEBIDO DO ZENO
 ========================================================= */
 
 function cleanTrackTitle(raw) {
 
-  let title = String(raw || '').trim();
+  let title =
+    String(raw || '').trim();
+
 
   if (!title) {
     return '';
   }
 
 
-  // Remove informações entre colchetes no final
-  title = title.replace(
-    /\s*-\s*\[[^\]]*\]\s*$/,
-    ''
-  );
+  title =
+    title.replace(
+      /\s*-\s*\[[^\]]*\]\s*$/,
+      ''
+    );
 
 
-  // Remove "Various Artists - número -"
-  title = title.replace(
-    /^\s*Various Artists\s*-\s*\d+\s*-\s*/,
-    ''
-  );
+  title =
+    title.replace(
+      /^\s*Various Artists\s*-\s*\d+\s*-\s*/,
+      ''
+    );
 
 
-  // Remove numeração inicial
-  title = title.replace(
-    /^\s*\d+\.\s*/,
-    ''
-  );
+  title =
+    title.replace(
+      /^\s*\d+\.\s*/,
+      ''
+    );
 
 
-  // Remove espaços duplicados
-  title = title.replace(
-    /\s{2,}/g,
-    ' '
-  ).trim();
+  title =
+    title.replace(
+      /\s{2,}/g,
+      ' '
+    ).trim();
 
 
   return title;
+
 }
 
 
 /* =========================================================
-   SEPARAÇÃO ARTISTA / MÚSICA
+   SEPARA ARTISTA E MÚSICA
 ========================================================= */
 
 function parseTrack(raw) {
 
-  const cleaned = cleanTrackTitle(raw);
+  const cleaned =
+    cleanTrackTitle(raw);
 
 
   if (!cleaned) {
@@ -111,20 +184,11 @@ function parseTrack(raw) {
   }
 
 
-  /*
-   * Exemplos aceitos:
-   *
-   * Bon Jovi - Always
-   * Gusttavo Lima - Apelido Carinhoso
-   * Banda X - Música Y - Remix
-   *
-   * O primeiro "-" separa o artista.
-   */
-
-  const parts = cleaned
-    .split(/\s+-\s+/)
-    .map(part => part.trim())
-    .filter(Boolean);
+  const parts =
+    cleaned
+      .split(/\s+-\s+/)
+      .map(part => part.trim())
+      .filter(Boolean);
 
 
   if (parts.length >= 2) {
@@ -133,28 +197,23 @@ function parseTrack(raw) {
 
       artist: parts[0],
 
-      title: parts
-        .slice(1)
-        .join(' - ')
+      title:
+        parts
+          .slice(1)
+          .join(' - ')
 
     };
 
   }
 
 
-  /*
-   * Caso o Zeno envie somente:
-   *
-   * Always
-   *
-   * Mantemos o texto inteiro como música.
-   */
-
   return {
 
-    artist: 'NTP RÁDIO WEB',
+    artist:
+      'NTP RÁDIO WEB',
 
-    title: cleaned
+    title:
+      cleaned
 
   };
 
@@ -162,42 +221,48 @@ function parseTrack(raw) {
 
 
 /* =========================================================
-   ATUALIZAÇÃO DA MÚSICA
+   ATUALIZA MÚSICA
 ========================================================= */
 
-function setNowPlaying(title) {
+function setNowPlaying(rawTitle) {
 
-  const track = parseTrack(title);
-
-
-  const cleaned =
-    track.title === 'Carregando música...'
-      ? ''
-      : `${track.artist} - ${track.title}`;
+  const track =
+    parseTrack(rawTitle);
 
 
-  const text = cleaned
-    ? '🎵 ' + cleaned
-    : '🎵 Carregando música...';
+  const hasTrack =
+    track.title &&
+    track.title !==
+      'Carregando música...';
 
 
-  lastTrackText = text;
+  const fullText =
+    hasTrack
+      ? `🎵 ${track.artist} - ${track.title}`
+      : '🎵 Carregando música...';
 
 
-  /*
-   * Atualiza todos os elementos [data-now]
-   */
+  lastTrackText =
+    fullText;
+
 
   nowPlayingEls.forEach(el => {
 
-    el.classList.add('track-changing');
+    el.classList.add(
+      'track-changing'
+    );
 
 
     setTimeout(() => {
 
-      el.textContent = text;
+      el.textContent =
+        fullText;
 
-      el.title = cleaned || '';
+
+      el.title =
+        hasTrack
+          ? `${track.artist} - ${track.title}`
+          : '';
 
 
       el.dataset.artist =
@@ -218,15 +283,20 @@ function setNowPlaying(title) {
 
 
   /*
-   * Elementos específicos de artista
+   * Elementos opcionais.
+   * Se não existirem no HTML, nada acontece.
    */
 
   const artistElement =
-    document.getElementById('artist');
+    document.getElementById(
+      'artist'
+    );
 
 
   const titleElement =
-    document.getElementById('trackTitle');
+    document.getElementById(
+      'trackTitle'
+    );
 
 
   if (artistElement) {
@@ -240,7 +310,7 @@ function setNowPlaying(title) {
   if (titleElement) {
 
     titleElement.textContent =
-      text;
+      fullText;
 
   }
 
@@ -249,11 +319,10 @@ function setNowPlaying(title) {
    * Título da aba
    */
 
-  if (cleaned) {
+  if (hasTrack) {
 
     document.title =
-      cleaned +
-      ' | NTP RÁDIO WEB';
+      `${track.artist} - ${track.title} | NTP RÁDIO WEB`;
 
   } else {
 
@@ -263,17 +332,10 @@ function setNowPlaying(title) {
   }
 
 
-  /*
-   * Atualiza mini player
-   */
+  updatePipNowPlaying(
+    fullText
+  );
 
-  updatePipNowPlaying(text);
-
-
-  /*
-   * Atualiza controles do sistema
-   * Android / Chrome / tela bloqueada
-   */
 
   updateMediaSession(
     track.title,
@@ -282,87 +344,57 @@ function setNowPlaying(title) {
 
 
   /*
-   * Atualiza capa
+   * Capa padrão.
+   * Não depende de nenhuma API externa.
    */
 
-  updateCover(
-    track.artist,
-    track.title
-  );
+  updateCover();
 
 }
 
 
 /* =========================================================
-   CAPA DA RÁDIO
+   CAPA PADRÃO
 ========================================================= */
 
-const DEFAULT_COVER = 'ntp1.png';
-
-
-function updateCover(artist, title) {
+function updateCover() {
 
   const cover =
-    document.getElementById('cover');
+    document.getElementById(
+      'cover'
+    );
 
 
   const miniCover =
-    document.getElementById('miniCover');
-
-
-  /*
-   * Se não houver música válida,
-   * usa a capa padrão.
-   */
-
-  if (!artist || !title) {
-
-    setCover(DEFAULT_COVER);
-
-    return;
-
-  }
-
-
-  /*
-   * Por enquanto utilizamos a capa oficial
-   * da rádio como fallback.
-   *
-   * A estrutura fica preparada para futuramente
-   * integrar uma API de capas de músicas.
-   */
-
-  setCover(DEFAULT_COVER);
-
-}
-
-
-function setCover(src) {
-
-  const cover =
-    document.getElementById('cover');
-
-
-  const miniCover =
-    document.getElementById('miniCover');
+    document.getElementById(
+      'miniCover'
+    );
 
 
   if (cover) {
 
     cover.onerror = () => {
 
-      /*
-       * Evita imagem quebrada.
-       */
+      cover.onerror = null;
 
-      if (cover.src !== DEFAULT_COVER) {
-        cover.src = DEFAULT_COVER;
-      }
+      cover.src =
+        'ntp1.png';
 
     };
 
 
-    cover.src = src;
+    /*
+     * Só altera se o elemento existir.
+     */
+
+    if (
+      !cover.getAttribute('src')
+    ) {
+
+      cover.src =
+        'ntp1.png';
+
+    }
 
   }
 
@@ -371,14 +403,22 @@ function setCover(src) {
 
     miniCover.onerror = () => {
 
-      if (miniCover.src !== DEFAULT_COVER) {
-        miniCover.src = DEFAULT_COVER;
-      }
+      miniCover.onerror = null;
+
+      miniCover.src =
+        'ntp1.png';
 
     };
 
 
-    miniCover.src = src;
+    if (
+      !miniCover.getAttribute('src')
+    ) {
+
+      miniCover.src =
+        'ntp1.png';
+
+    }
 
   }
 
@@ -391,8 +431,13 @@ function setCover(src) {
 
 function initMediaSession() {
 
-  if (!('mediaSession' in navigator)) {
+  if (
+    !radio ||
+    !('mediaSession' in navigator)
+  ) {
+
     return;
+
   }
 
 
@@ -407,6 +452,10 @@ function initMediaSession() {
       }
     );
 
+  } catch (error) {}
+
+
+  try {
 
     navigator.mediaSession.setActionHandler(
       'pause',
@@ -417,15 +466,7 @@ function initMediaSession() {
       }
     );
 
-
-  } catch (error) {
-
-    /*
-     * Alguns navegadores não suportam
-     * todos os controles.
-     */
-
-  }
+  } catch (error) {}
 
 
   updateMediaSession(
@@ -436,10 +477,36 @@ function initMediaSession() {
 }
 
 
-function updateMediaSession(title, artist) {
+/* =========================================================
+   ATUALIZA MEDIA SESSION
+========================================================= */
 
-  if (!('mediaSession' in navigator)) {
+function updateMediaSession(
+  title,
+  artist
+) {
+
+  if (
+    !('mediaSession' in navigator)
+  ) {
+
     return;
+
+  }
+
+
+  /*
+   * MediaMetadata pode não existir
+   * em alguns navegadores.
+   */
+
+  if (
+    typeof MediaMetadata ===
+    'undefined'
+  ) {
+
+    return;
+
   }
 
 
@@ -471,11 +538,11 @@ function updateMediaSession(title, artist) {
 
       });
 
-
   } catch (error) {
 
     /*
-     * Media Session indisponível.
+     * Não deixa erro da Media Session
+     * afetar o player.
      */
 
   }
@@ -489,23 +556,58 @@ function updateMediaSession(title, artist) {
 
 function togglePlay() {
 
+  if (!radio) {
+    return;
+  }
+
+
   if (radio.paused) {
 
-    radio.play()
+    /*
+     * Garante novamente o endereço do stream.
+     */
 
-      .then(() => {
+    if (!radio.src) {
 
-        setPlaying(true);
+      radio.src =
+        STREAM_URL;
 
-      })
+    }
 
-      .catch(() => {
 
-        toast(
-          'Não foi possível iniciar o áudio. Tente novamente.'
-        );
+    const playPromise =
+      radio.play();
 
-      });
+
+    if (
+      playPromise &&
+      typeof playPromise.then ===
+        'function'
+    ) {
+
+      playPromise
+
+        .then(() => {
+
+          setPlaying(true);
+
+        })
+
+        .catch(() => {
+
+          setPlaying(false);
+
+          toast(
+            'Não foi possível iniciar a rádio. Toque novamente.'
+          );
+
+        });
+
+    } else {
+
+      setPlaying(true);
+
+    }
 
   } else {
 
@@ -518,9 +620,9 @@ function togglePlay() {
 }
 
 
-/*
- * Botões de reprodução
- */
+/* =========================================================
+   BOTÕES PLAY
+========================================================= */
 
 playButtons.forEach(button => {
 
@@ -532,53 +634,69 @@ playButtons.forEach(button => {
 });
 
 
-/*
- * Eventos do áudio
- */
+/* =========================================================
+   EVENTOS DO ÁUDIO
+========================================================= */
 
-radio.addEventListener(
-  'play',
-  () => setPlaying(true)
-);
+if (radio) {
 
+  radio.addEventListener(
+    'play',
+    () => {
 
-radio.addEventListener(
-  'pause',
-  () => setPlaying(false)
-);
+      setPlaying(true);
 
-
-radio.addEventListener(
-  'ended',
-  () => setPlaying(false)
-);
+    }
+  );
 
 
-/*
- * Erro do stream
- */
+  radio.addEventListener(
+    'pause',
+    () => {
 
-radio.addEventListener(
-  'error',
-  () => {
+      setPlaying(false);
 
-    toast(
-      'Não foi possível conectar à rádio. Tente novamente.'
-    );
+    }
+  );
 
-    setPlaying(false);
 
-  }
-);
+  radio.addEventListener(
+    'ended',
+    () => {
+
+      setPlaying(false);
+
+    }
+  );
+
+
+  radio.addEventListener(
+    'error',
+    () => {
+
+      setPlaying(false);
+
+      toast(
+        'Erro na conexão com a rádio. Tente novamente.'
+      );
+
+    }
+  );
+
+}
 
 
 /* =========================================================
    VOLUME
 ========================================================= */
 
-if (volumeInput || volumeMini) {
+if (
+  radio &&
+  (volumeInput || volumeMini)
+) {
 
-  let savedVolume;
+  let savedVolume =
+    NaN;
 
 
   try {
@@ -592,13 +710,16 @@ if (volumeInput || volumeMini) {
 
   } catch (error) {
 
-    savedVolume = NaN;
+    savedVolume =
+      NaN;
 
   }
 
 
   const initialVolume =
-    Number.isFinite(savedVolume)
+    Number.isFinite(
+      savedVolume
+    )
       ? savedVolume
       : 0.8;
 
@@ -610,7 +731,9 @@ if (volumeInput || volumeMini) {
   if (volumeInput) {
 
     volumeInput.value =
-      String(initialVolume);
+      String(
+        initialVolume
+      );
 
   }
 
@@ -618,17 +741,21 @@ if (volumeInput || volumeMini) {
   if (volumeMini) {
 
     volumeMini.value =
-      String(initialVolume);
+      String(
+        initialVolume
+      );
 
   }
 
 
   function applyVolume(value) {
 
-    /*
-     * Garante que o volume fique
-     * entre 0 e 1.
-     */
+    if (!Number.isFinite(value)) {
+
+      return;
+
+    }
+
 
     value =
       Math.max(
@@ -644,10 +771,7 @@ if (volumeInput || volumeMini) {
       value;
 
 
-    if (
-      volumeInput &&
-      volumeInput !== document.activeElement
-    ) {
+    if (volumeInput) {
 
       volumeInput.value =
         String(value);
@@ -655,10 +779,7 @@ if (volumeInput || volumeMini) {
     }
 
 
-    if (
-      volumeMini &&
-      volumeMini !== document.activeElement
-    ) {
+    if (volumeMini) {
 
       volumeMini.value =
         String(value);
@@ -666,7 +787,9 @@ if (volumeInput || volumeMini) {
     }
 
 
-    syncPipVolume(value);
+    syncPipVolume(
+      value
+    );
 
 
     try {
@@ -676,13 +799,7 @@ if (volumeInput || volumeMini) {
         String(value)
       );
 
-    } catch (error) {
-
-      /*
-       * LocalStorage indisponível.
-       */
-
-    }
+    } catch (error) {}
 
   }
 
@@ -726,12 +843,14 @@ if (volumeInput || volumeMini) {
 
 
 /* =========================================================
-   METADATA DO ZENO.FM
+   METADATA ZENO.FM
 ========================================================= */
 
 function initMetadata() {
 
-  if (!('EventSource' in window)) {
+  if (
+    !('EventSource' in window)
+  ) {
 
     setNowPlaying('');
 
@@ -740,10 +859,23 @@ function initMetadata() {
   }
 
 
-  const source =
-    new EventSource(
-      META_URL
-    );
+  let source;
+
+
+  try {
+
+    source =
+      new EventSource(
+        META_URL
+      );
+
+  } catch (error) {
+
+    setNowPlaying('');
+
+    return;
+
+  }
 
 
   source.addEventListener(
@@ -772,7 +904,8 @@ function initMetadata() {
       } catch (error) {
 
         /*
-         * Evento sem título.
+         * Alguns eventos podem não
+         * conter JSON de música.
          */
 
       }
@@ -786,10 +919,8 @@ function initMetadata() {
     () => {
 
       /*
-       * EventSource tenta reconectar
+       * O navegador tenta reconectar
        * automaticamente.
-       *
-       * Mantemos a última música exibida.
        */
 
     }
@@ -799,13 +930,15 @@ function initMetadata() {
 
 
 /* =========================================================
-   TOAST / NOTIFICAÇÕES
+   TOAST
 ========================================================= */
 
 function toast(message) {
 
   const element =
-    document.getElementById('toast');
+    document.getElementById(
+      'toast'
+    );
 
 
   if (!element) {
@@ -823,11 +956,11 @@ function toast(message) {
 
 
   clearTimeout(
-    window.toastTimer
+    window.ntpToastTimer
   );
 
 
-  window.toastTimer =
+  window.ntpToastTimer =
     setTimeout(() => {
 
       element.classList.remove(
@@ -843,19 +976,10 @@ function toast(message) {
    MENU MOBILE
 ========================================================= */
 
-const navToggle =
-  document.getElementById(
-    'navToggle'
-  );
-
-
-const navLinks =
-  document.getElementById(
-    'navLinks'
-  );
-
-
-if (navToggle && navLinks) {
+if (
+  navToggle &&
+  navLinks
+) {
 
   navToggle.addEventListener(
     'click',
@@ -911,14 +1035,15 @@ if (navToggle && navLinks) {
 
 
 /* =========================================================
-   ANIMAÇÕES DE REVEAL
+   ANIMAÇÃO REVEAL
 ========================================================= */
 
-if ('IntersectionObserver' in window) {
+if (
+  'IntersectionObserver' in window
+) {
 
   const revealObserver =
     new IntersectionObserver(
-
       entries => {
 
         entries.forEach(entry => {
@@ -941,11 +1066,9 @@ if ('IntersectionObserver' in window) {
         });
 
       },
-
       {
         threshold: 0.12
       }
-
     );
 
 
@@ -961,11 +1084,6 @@ if ('IntersectionObserver' in window) {
 
 } else {
 
-  /*
-   * Navegadores antigos:
-   * deixa os elementos visíveis.
-   */
-
   document
     .querySelectorAll('.reveal')
     .forEach(element => {
@@ -980,14 +1098,37 @@ if ('IntersectionObserver' in window) {
 
 
 /* =========================================================
-   PICTURE-IN-PICTURE / MINI PLAYER
+   PLAYER MINIMIZADO
 ========================================================= */
 
-const pipButtons =
-  document.querySelectorAll(
-    '[data-pip]'
+if (playerMin) {
+
+  playerMin.addEventListener(
+    'click',
+    () => {
+
+      const minimized =
+        document.body.classList.toggle(
+          'player-minimized'
+        );
+
+
+      playerMin.setAttribute(
+        'aria-label',
+        minimized
+          ? 'Expandir player'
+          : 'Minimizar player'
+      );
+
+    }
   );
 
+}
+
+
+/* =========================================================
+   MINI PLAYER
+========================================================= */
 
 function isPipSupported() {
 
@@ -999,10 +1140,6 @@ function isPipSupported() {
 }
 
 
-/* =========================================================
-   ATUALIZA MINI PLAYER
-========================================================= */
-
 function updatePipNowPlaying(text) {
 
   if (!pipWindow) {
@@ -1010,25 +1147,26 @@ function updatePipNowPlaying(text) {
   }
 
 
-  const track =
-    pipWindow.document.getElementById(
-      'pipTrack'
-    );
+  try {
+
+    const track =
+      pipWindow.document
+        .getElementById(
+          'pipTrack'
+        );
 
 
-  if (track) {
+    if (track) {
 
-    track.textContent =
-      text;
+      track.textContent =
+        text;
 
-  }
+    }
+
+  } catch (error) {}
 
 }
 
-
-/* =========================================================
-   ESTADO MINI PLAYER
-========================================================= */
 
 function updatePipState(state) {
 
@@ -1037,57 +1175,87 @@ function updatePipState(state) {
   }
 
 
-  const button =
-    pipWindow.document.getElementById(
-      'pipPlay'
-    );
+  try {
+
+    const button =
+      pipWindow.document
+        .getElementById(
+          'pipPlay'
+        );
 
 
-  const eq =
-    pipWindow.document.getElementById(
-      'pipEq'
-    );
+    const eq =
+      pipWindow.document
+        .getElementById(
+          'pipEq'
+        );
 
 
-  if (button) {
+    if (button) {
 
-    button.classList.toggle(
-      'playing',
-      state
-    );
-
-
-    button.setAttribute(
-      'aria-pressed',
-      String(state)
-    );
+      button.classList.toggle(
+        'playing',
+        state
+      );
 
 
-    button.setAttribute(
-      'aria-label',
-      state
-        ? 'Pausar'
-        : 'Tocar'
-    );
-
-  }
+      button.setAttribute(
+        'aria-pressed',
+        String(state)
+      );
 
 
-  if (eq) {
+      button.setAttribute(
+        'aria-label',
+        state
+          ? 'Pausar'
+          : 'Tocar'
+      );
 
-    eq.classList.toggle(
-      'on',
-      state
-    );
+    }
 
-  }
+
+    if (eq) {
+
+      eq.classList.toggle(
+        'on',
+        state
+      );
+
+    }
+
+  } catch (error) {}
 
 }
 
 
-/* =========================================================
-   CONTEÚDO DO MINI PLAYER
-========================================================= */
+function syncPipVolume(value) {
+
+  if (!pipWindow) {
+    return;
+  }
+
+
+  try {
+
+    const input =
+      pipWindow.document
+        .getElementById(
+          'pipVolume'
+        );
+
+
+    if (input) {
+
+      input.value =
+        String(value);
+
+    }
+
+  } catch (error) {}
+
+}
+
 
 function buildPipContent() {
 
@@ -1143,7 +1311,6 @@ function buildPipContent() {
       aria-label="Tocar"
       aria-pressed="false"
     >
-
       <span
         class="pb-play"
         aria-hidden="true"
@@ -1153,7 +1320,6 @@ function buildPipContent() {
         class="pb-pause"
         aria-hidden="true"
       ></span>
-
     </button>
 
 
@@ -1169,7 +1335,6 @@ function buildPipContent() {
           d="M3 9v6h4l5 5V4L7 9H3z"
           fill="currentColor"
         ></path>
-
 
         <path
           d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13"
@@ -1201,10 +1366,6 @@ function buildPipContent() {
 
 }
 
-
-/* =========================================================
-   COPIA CSS PARA MINI PLAYER
-========================================================= */
 
 function copyStyleSheets(targetDocument) {
 
@@ -1239,37 +1400,6 @@ function copyStyleSheets(targetDocument) {
 }
 
 
-/* =========================================================
-   SINCRONIZA VOLUME DO MINI PLAYER
-========================================================= */
-
-function syncPipVolume(value) {
-
-  if (!pipWindow) {
-    return;
-  }
-
-
-  const pipVolume =
-    pipWindow.document.getElementById(
-      'pipVolume'
-    );
-
-
-  if (pipVolume) {
-
-    pipVolume.value =
-      String(value);
-
-  }
-
-}
-
-
-/* =========================================================
-   ABRIR MINI PLAYER
-========================================================= */
-
 async function openPip() {
 
   if (!isPipSupported()) {
@@ -1291,7 +1421,7 @@ async function openPip() {
 
 
     toast(
-      'O mini player não é compatível com este navegador.'
+      'Mini player não é compatível com este navegador.'
     );
 
 
@@ -1313,11 +1443,13 @@ async function openPip() {
 
 
   /*
-   * Começa a rádio automaticamente
-   * quando o usuário abre o mini player.
+   * Tenta iniciar a rádio.
    */
 
-  if (radio.paused) {
+  if (
+    radio &&
+    radio.paused
+  ) {
 
     radio
       .play()
@@ -1326,12 +1458,9 @@ async function openPip() {
   }
 
 
-  let windowRef;
-
-
   try {
 
-    windowRef =
+    pipWindow =
       await documentPictureInPicture
         .requestWindow({
 
@@ -1344,7 +1473,8 @@ async function openPip() {
 
   } catch (error) {
 
-    pipWindow = null;
+    pipWindow =
+      null;
 
 
     toast(
@@ -1357,22 +1487,10 @@ async function openPip() {
   }
 
 
-  pipWindow =
-    windowRef;
-
-
-  /*
-   * Copia os estilos da página.
-   */
-
   copyStyleSheets(
     pipWindow.document
   );
 
-
-  /*
-   * Pequena configuração visual.
-   */
 
   pipWindow.document.title =
     'NTP RÁDIO WEB';
@@ -1383,14 +1501,11 @@ async function openPip() {
   );
 
 
-  /*
-   * Botão fechar
-   */
-
   const closeButton =
-    pipWindow.document.getElementById(
-      'pipClose'
-    );
+    pipWindow.document
+      .getElementById(
+        'pipClose'
+      );
 
 
   if (closeButton) {
@@ -1399,7 +1514,11 @@ async function openPip() {
       'click',
       () => {
 
-        pipWindow.close();
+        if (pipWindow) {
+
+          pipWindow.close();
+
+        }
 
       }
     );
@@ -1407,14 +1526,11 @@ async function openPip() {
   }
 
 
-  /*
-   * Botão play/pause
-   */
-
   const pipPlay =
-    pipWindow.document.getElementById(
-      'pipPlay'
-    );
+    pipWindow.document
+      .getElementById(
+        'pipPlay'
+      );
 
 
   if (pipPlay) {
@@ -1427,21 +1543,20 @@ async function openPip() {
   }
 
 
-  /*
-   * Volume
-   */
-
   const pipVolume =
-    pipWindow.document.getElementById(
-      'pipVolume'
-    );
+    pipWindow.document
+      .getElementById(
+        'pipVolume'
+      );
 
 
   if (pipVolume) {
 
     pipVolume.value =
       String(
-        radio.volume
+        radio
+          ? radio.volume
+          : 0.8
       );
 
 
@@ -1449,10 +1564,24 @@ async function openPip() {
       'input',
       () => {
 
+        if (!radio) {
+          return;
+        }
+
+
         const value =
           parseFloat(
             pipVolume.value
           );
+
+
+        if (
+          !Number.isFinite(value)
+        ) {
+
+          return;
+
+        }
 
 
         radio.volume =
@@ -1490,17 +1619,15 @@ async function openPip() {
   }
 
 
-  /*
-   * Estado inicial.
-   */
-
   updatePipNowPlaying(
     lastTrackText
   );
 
 
   updatePipState(
-    !radio.paused
+    radio
+      ? !radio.paused
+      : false
   );
 
 
@@ -1513,15 +1640,12 @@ async function openPip() {
   });
 
 
-  /*
-   * Quando a janela for fechada.
-   */
-
   pipWindow.addEventListener(
     'pagehide',
     () => {
 
-      pipWindow = null;
+      pipWindow =
+        null;
 
 
       pipButtons.forEach(button => {
@@ -1538,10 +1662,6 @@ async function openPip() {
 }
 
 
-/*
- * Ativa os botões do mini player
- */
-
 pipButtons.forEach(button => {
 
   button.addEventListener(
@@ -1553,45 +1673,12 @@ pipButtons.forEach(button => {
 
 
 /* =========================================================
-   PLAYER MINIMIZADO
+   PWA / SERVICE WORKER
 ========================================================= */
 
-const playerMin =
-  document.getElementById(
-    'playerMin'
-  );
-
-
-if (playerMin) {
-
-  playerMin.addEventListener(
-    'click',
-    () => {
-
-      const minimized =
-        document.body.classList.toggle(
-          'player-minimized'
-        );
-
-
-      playerMin.setAttribute(
-        'aria-label',
-        minimized
-          ? 'Expandir player'
-          : 'Minimizar player'
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SERVICE WORKER / PWA
-========================================================= */
-
-if ('serviceWorker' in navigator) {
+if (
+  'serviceWorker' in navigator
+) {
 
   window.addEventListener(
     'load',
@@ -1608,21 +1695,12 @@ if ('serviceWorker' in navigator) {
 
 
 /* =========================================================
-   INSTALAÇÃO DO APLICATIVO
+   INSTALAÇÃO DO APP
 ========================================================= */
 
-let deferredInstall = null;
+let deferredInstall =
+  null;
 
-
-const installBtn =
-  document.getElementById(
-    'installBtn'
-  );
-
-
-/*
- * O navegador oferece instalação.
- */
 
 window.addEventListener(
   'beforeinstallprompt',
@@ -1646,10 +1724,6 @@ window.addEventListener(
 );
 
 
-/*
- * Aplicativo instalado.
- */
-
 window.addEventListener(
   'appinstalled',
   () => {
@@ -1669,25 +1743,16 @@ window.addEventListener(
 );
 
 
-/*
- * Clique no botão instalar.
- */
-
 if (installBtn) {
 
   installBtn.addEventListener(
     'click',
     async () => {
 
-      /*
-       * Se o navegador não disponibilizou
-       * o prompt automático.
-       */
-
       if (!deferredInstall) {
 
         toast(
-          'Instale pelo menu do navegador: ⋮ → "Adicionar à tela inicial".'
+          'Instale pelo menu do navegador: ⋮ → Adicionar à tela inicial.'
         );
 
 
@@ -1696,21 +1761,13 @@ if (installBtn) {
       }
 
 
-      deferredInstall.prompt();
-
-
       try {
+
+        deferredInstall.prompt();
 
         await deferredInstall.userChoice;
 
-      } catch (error) {
-
-        /*
-         * Usuário fechou ou recusou
-         * o prompt.
-         */
-
-      }
+      } catch (error) {}
 
 
       deferredInstall =
@@ -1736,41 +1793,4 @@ initMetadata();
 
 initMediaSession();
 
-
-/* =========================================================
-   CONFIGURAÇÃO DO STREAM
-========================================================= */
-
-/*
- * O elemento <audio> deve possuir:
- *
- * <audio id="radio"></audio>
- *
- * ou
- *
- * <audio
- *   id="radio"
- *   src="https://stream.zeno.fm/elhz4znig9wuv"
- * ></audio>
- *
- * Para garantir que o stream esteja configurado,
- * definimos o src caso ele ainda esteja vazio.
- */
-
-if (radio) {
-
-  if (!radio.src) {
-
-    radio.src =
-      STREAM_URL;
-
-  }
-
-  /*
-   * Mantém o áudio preparado para reprodução.
-   */
-
-  radio.preload =
-    'none';
-
-}
+updateCover();
