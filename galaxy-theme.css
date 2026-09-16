@@ -372,10 +372,21 @@ input[type=range]{accent-color:#9d62ff}
 
 /* ACESSIBILIDADE */
 @media (prefers-reduced-motion: reduce) {
+  
 
   .live-badge .dot,
   .eq span,
   .play-btn {
     animation: none !important;
   }
+}
+.track-changing {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.track {
+  transition:
+    opacity .18s ease,
+    transform .18s ease;
 }
