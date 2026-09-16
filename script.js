@@ -370,51 +370,50 @@ function setNowPlaying(title) {
 /* =========================================================
    MEDIA SESSION
    ========================================================= */
-
 function initMediaSession() {
-
-  if (
-    !('mediaSession' in navigator) ||
-    !radio
-  ) {
+  if (!('mediaSession' in navigator)) {
+    console.log('Media Session API não disponível neste navegador.');
     return;
   }
 
   try {
-
-    navigator.mediaSession.setActionHandler(
-      'play',
-      () => {
-
-        radio.play()
-          .then(() => setPlaying(true))
-          .catch(() => {});
-
+    navigator.mediaSession.setActionHandler('play', async () => {
+      try {
+        await radio.play();
+        navigator.mediaSession.playbackState = 'playing';
+      } catch (error) {
+        console.error('Erro ao reproduzir:', error);
       }
-    );
-
-  } catch (error) {
-    // ação não suportada
-  }
+    });
+  } catch (e) {}
 
   try {
+    navigator.mediaSession.setActionHandler('pause', () => {
+      radio.pause();
+      navigator.mediaSession.playbackState = 'paused';
+    });
+  } catch (e) {}
 
-    navigator.mediaSession.setActionHandler(
-      'pause',
-      () => {
+  try {
+    navigator.mediaSession.setActionHandler('stop', () => {
+      radio.pause();
+      navigator.mediaSession.playbackState = 'none';
+    });
+  } catch (e) {}
 
-        radio.pause();
+  try {
+    navigator.mediaSession.setActionHandler('seekbackward', () => {});
+  } catch (e) {}
 
-        setPlaying(false);
+  try {
+    navigator.mediaSession.setActionHandler('seekforward', () => {});
+  } catch (e) {}
 
-      }
-    );
-
-  } catch (error) {
-    // ação não suportada
-  }
-
-  updateMediaSession(currentTrack);
+  updateMediaSession(currentTrack || {
+    title: 'NTP RÁDIO WEB',
+    artist: 'Ao vivo',
+    album: 'Rádio Online'
+  });
 }
 
 /* =========================================================
