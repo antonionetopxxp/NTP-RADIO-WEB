@@ -1,17 +1,7 @@
-/* =========================================================
-   NTP RÁDIO WEB — SCRIPT PRINCIPAL
-   Player + Metadata + Media Session + PIP + PWA
-   ========================================================= */
-
 const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
 const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
 
-/* =========================================================
-   ELEMENTOS
-   ========================================================= */
-
 const radio = document.getElementById('radio');
-
 const volumeInput = document.getElementById('volume');
 const volumeMini = document.getElementById('volumeMini');
 
@@ -19,39 +9,15 @@ const playButtons = document.querySelectorAll('[data-play]');
 const nowPlayingEls = document.querySelectorAll('[data-now]');
 const eqEls = document.querySelectorAll('[data-eq]');
 
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
-
-const playerMin = document.getElementById('playerMin');
-
-const pipButtons = document.querySelectorAll('[data-pip]');
-
-const installBtn = document.getElementById('installBtn');
-
-/* =========================================================
-   ESTADO
-   ========================================================= */
-
 let lastTrackText = '🎵 Carregando música...';
-
-let currentTrack = {
-  raw: '',
-  artist: '',
-  title: '',
-  full: ''
-};
-
 let pipWindow = null;
 
-let deferredInstall = null;
 
 /* =========================================================
-   PLAYER
-   ========================================================= */
+   ESTADO DO PLAYER
+========================================================= */
 
 function setPlaying(state) {
-
-  if (!radio) return;
 
   document.body.classList.toggle('is-playing', state);
 
@@ -71,27 +37,468 @@ function setPlaying(state) {
 
   });
 
+
   eqEls.forEach(eq => {
     eq.classList.toggle('on', state);
   });
 
+
   updatePipState(state);
 }
 
+
 /* =========================================================
-   TOCAR / PAUSAR
-   ========================================================= */
+   LIMPEZA DO NOME DA MÚSICA
+========================================================= */
+
+function cleanTrackTitle(raw) {
+
+  let title = String(raw || '').trim();
+
+  if (!title) {
+    return '';
+  }
+
+
+  // Remove informações entre colchetes no final
+  title = title.replace(
+    /\s*-\s*\[[^\]]*\]\s*$/,
+    ''
+  );
+
+
+  // Remove "Various Artists - número -"
+  title = title.replace(
+    /^\s*Various Artists\s*-\s*\d+\s*-\s*/,
+    ''
+  );
+
+
+  // Remove numeração inicial
+  title = title.replace(
+    /^\s*\d+\.\s*/,
+    ''
+  );
+
+
+  // Remove espaços duplicados
+  title = title.replace(
+    /\s{2,}/g,
+    ' '
+  ).trim();
+
+
+  return title;
+}
+
+
+/* =========================================================
+   SEPARAÇÃO ARTISTA / MÚSICA
+========================================================= */
+
+function parseTrack(raw) {
+
+  const cleaned = cleanTrackTitle(raw);
+
+
+  if (!cleaned) {
+
+    return {
+      artist: 'NTP RÁDIO WEB',
+      title: 'Carregando música...'
+    };
+
+  }
+
+
+  /*
+   * Exemplos aceitos:
+   *
+   * Bon Jovi - Always
+   * Gusttavo Lima - Apelido Carinhoso
+   * Banda X - Música Y - Remix
+   *
+   * O primeiro "-" separa o artista.
+   */
+
+  const parts = cleaned
+    .split(/\s+-\s+/)
+    .map(part => part.trim())
+    .filter(Boolean);
+
+
+  if (parts.length >= 2) {
+
+    return {
+
+      artist: parts[0],
+
+      title: parts
+        .slice(1)
+        .join(' - ')
+
+    };
+
+  }
+
+
+  /*
+   * Caso o Zeno envie somente:
+   *
+   * Always
+   *
+   * Mantemos o texto inteiro como música.
+   */
+
+  return {
+
+    artist: 'NTP RÁDIO WEB',
+
+    title: cleaned
+
+  };
+
+}
+
+
+/* =========================================================
+   ATUALIZAÇÃO DA MÚSICA
+========================================================= */
+
+function setNowPlaying(title) {
+
+  const track = parseTrack(title);
+
+
+  const cleaned =
+    track.title === 'Carregando música...'
+      ? ''
+      : `${track.artist} - ${track.title}`;
+
+
+  const text = cleaned
+    ? '🎵 ' + cleaned
+    : '🎵 Carregando música...';
+
+
+  lastTrackText = text;
+
+
+  /*
+   * Atualiza todos os elementos [data-now]
+   */
+
+  nowPlayingEls.forEach(el => {
+
+    el.classList.add('track-changing');
+
+
+    setTimeout(() => {
+
+      el.textContent = text;
+
+      el.title = cleaned || '';
+
+
+      el.dataset.artist =
+        track.artist || '';
+
+
+      el.dataset.title =
+        track.title || '';
+
+
+      el.classList.remove(
+        'track-changing'
+      );
+
+    }, 180);
+
+  });
+
+
+  /*
+   * Elementos específicos de artista
+   */
+
+  const artistElement =
+    document.getElementById('artist');
+
+
+  const titleElement =
+    document.getElementById('trackTitle');
+
+
+  if (artistElement) {
+
+    artistElement.textContent =
+      track.artist;
+
+  }
+
+
+  if (titleElement) {
+
+    titleElement.textContent =
+      text;
+
+  }
+
+
+  /*
+   * Título da aba
+   */
+
+  if (cleaned) {
+
+    document.title =
+      cleaned +
+      ' | NTP RÁDIO WEB';
+
+  } else {
+
+    document.title =
+      'NTP RÁDIO WEB | Rádio Online ao Vivo';
+
+  }
+
+
+  /*
+   * Atualiza mini player
+   */
+
+  updatePipNowPlaying(text);
+
+
+  /*
+   * Atualiza controles do sistema
+   * Android / Chrome / tela bloqueada
+   */
+
+  updateMediaSession(
+    track.title,
+    track.artist
+  );
+
+
+  /*
+   * Atualiza capa
+   */
+
+  updateCover(
+    track.artist,
+    track.title
+  );
+
+}
+
+
+/* =========================================================
+   CAPA DA RÁDIO
+========================================================= */
+
+const DEFAULT_COVER = 'ntp1.png';
+
+
+function updateCover(artist, title) {
+
+  const cover =
+    document.getElementById('cover');
+
+
+  const miniCover =
+    document.getElementById('miniCover');
+
+
+  /*
+   * Se não houver música válida,
+   * usa a capa padrão.
+   */
+
+  if (!artist || !title) {
+
+    setCover(DEFAULT_COVER);
+
+    return;
+
+  }
+
+
+  /*
+   * Por enquanto utilizamos a capa oficial
+   * da rádio como fallback.
+   *
+   * A estrutura fica preparada para futuramente
+   * integrar uma API de capas de músicas.
+   */
+
+  setCover(DEFAULT_COVER);
+
+}
+
+
+function setCover(src) {
+
+  const cover =
+    document.getElementById('cover');
+
+
+  const miniCover =
+    document.getElementById('miniCover');
+
+
+  if (cover) {
+
+    cover.onerror = () => {
+
+      /*
+       * Evita imagem quebrada.
+       */
+
+      if (cover.src !== DEFAULT_COVER) {
+        cover.src = DEFAULT_COVER;
+      }
+
+    };
+
+
+    cover.src = src;
+
+  }
+
+
+  if (miniCover) {
+
+    miniCover.onerror = () => {
+
+      if (miniCover.src !== DEFAULT_COVER) {
+        miniCover.src = DEFAULT_COVER;
+      }
+
+    };
+
+
+    miniCover.src = src;
+
+  }
+
+}
+
+
+/* =========================================================
+   MEDIA SESSION
+========================================================= */
+
+function initMediaSession() {
+
+  if (!('mediaSession' in navigator)) {
+    return;
+  }
+
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'play',
+      () => {
+
+        radio.play().catch(() => {});
+
+      }
+    );
+
+
+    navigator.mediaSession.setActionHandler(
+      'pause',
+      () => {
+
+        radio.pause();
+
+      }
+    );
+
+
+  } catch (error) {
+
+    /*
+     * Alguns navegadores não suportam
+     * todos os controles.
+     */
+
+  }
+
+
+  updateMediaSession(
+    '',
+    'NTP RÁDIO WEB'
+  );
+
+}
+
+
+function updateMediaSession(title, artist) {
+
+  if (!('mediaSession' in navigator)) {
+    return;
+  }
+
+
+  try {
+
+    navigator.mediaSession.metadata =
+      new MediaMetadata({
+
+        title:
+          title ||
+          'NTP RÁDIO WEB',
+
+        artist:
+          artist ||
+          'NTP RÁDIO WEB',
+
+        album:
+          'NTP RÁDIO WEB',
+
+        artwork: [
+
+          {
+            src: 'ntp1.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+
+        ]
+
+      });
+
+
+  } catch (error) {
+
+    /*
+     * Media Session indisponível.
+     */
+
+  }
+
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+========================================================= */
 
 function togglePlay() {
-
-  if (!radio) return;
 
   if (radio.paused) {
 
     radio.play()
+
       .then(() => {
+
         setPlaying(true);
+
       })
+
       .catch(() => {
 
         toast(
@@ -105,12 +512,15 @@ function togglePlay() {
     radio.pause();
 
     setPlaying(false);
+
   }
+
 }
 
-/* =========================================================
-   BOTÕES PLAY
-   ========================================================= */
+
+/*
+ * Botões de reprodução
+ */
 
 playButtons.forEach(button => {
 
@@ -121,410 +531,55 @@ playButtons.forEach(button => {
 
 });
 
-/* =========================================================
-   EVENTOS DO ÁUDIO
-   ========================================================= */
 
-if (radio) {
+/*
+ * Eventos do áudio
+ */
 
-  radio.addEventListener(
-    'play',
-    () => setPlaying(true)
-  );
+radio.addEventListener(
+  'play',
+  () => setPlaying(true)
+);
 
-  radio.addEventListener(
-    'pause',
-    () => setPlaying(false)
-  );
 
-  radio.addEventListener(
-    'ended',
-    () => setPlaying(false)
-  );
+radio.addEventListener(
+  'pause',
+  () => setPlaying(false)
+);
 
-  radio.addEventListener(
-    'error',
-    () => {
 
-      setPlaying(false);
+radio.addEventListener(
+  'ended',
+  () => setPlaying(false)
+);
 
-      toast(
-        'Não foi possível conectar à transmissão.'
-      );
 
-    }
-  );
+/*
+ * Erro do stream
+ */
 
-}
+radio.addEventListener(
+  'error',
+  () => {
 
-/* =========================================================
-   LIMPEZA DO TÍTULO DA MÚSICA
-   ========================================================= */
-
-function cleanTrackTitle(raw) {
-
-  let title = String(raw || '').trim();
-
-  if (!title) {
-    return '';
-  }
-
-  /* Remove informações extras no final */
-
-  title = title.replace(
-    /\s*-\s*\[[^\]]*\]\s*$/,
-    ''
-  );
-
-  /* Remove Various Artists + número */
-
-  title = title.replace(
-    /^\s*Various Artists\s*-\s*\d+\s*-\s*/,
-    ''
-  );
-
-  /* Remove numeração */
-
-  title = title.replace(
-    /^\s*\d+\.\s*/,
-    ''
-  );
-
-  /* Remove espaços duplicados */
-
-  title = title.replace(
-    /\s{2,}/g,
-    ' '
-  );
-
-  return title.trim();
-}
-
-/* =========================================================
-   SEPARAR ARTISTA E MÚSICA
-   ========================================================= */
-
-function parseTrack(raw) {
-
-  const cleaned = cleanTrackTitle(raw);
-
-  if (!cleaned) {
-
-    return {
-      raw: '',
-      artist: '',
-      title: '',
-      full: ''
-    };
-
-  }
-
-  /*
-    Formato esperado:
-
-    Artista - Música
-
-    Caso o Zeno envie apenas:
-
-    Música
-
-    o sistema mantém tudo como título.
-  */
-
-  const separator = ' - ';
-
-  const parts = cleaned.split(separator);
-
-  if (parts.length >= 2) {
-
-    const artist = parts.shift().trim();
-
-    const title = parts
-      .join(separator)
-      .trim();
-
-    return {
-      raw: raw,
-      artist: artist,
-      title: title,
-      full: cleaned
-    };
-
-  }
-
-  return {
-    raw: raw,
-    artist: '',
-    title: cleaned,
-    full: cleaned
-  };
-}
-
-/* =========================================================
-   TEXTO PRINCIPAL DA FAIXA
-   ========================================================= */
-
-function getTrackDisplayText(track) {
-
-  if (!track || !track.full) {
-
-    return '🎵 Carregando música...';
-
-  }
-
-  if (track.artist && track.title) {
-
-    return `🎵 ${track.artist} - ${track.title}`;
-
-  }
-
-  return `🎵 ${track.title}`;
-}
-
-/* =========================================================
-   ATUALIZAR MÚSICA
-   ========================================================= */
-
-function setNowPlaying(title) {
-
-  const track = parseTrack(title);
-
-  currentTrack = track;
-
-  const text = getTrackDisplayText(track);
-
-  lastTrackText = text;
-
-  /* -----------------------------------------
-     Atualização visual
-     ----------------------------------------- */
-
-  nowPlayingEls.forEach(el => {
-
-    el.classList.add(
-      'track-changing'
+    toast(
+      'Não foi possível conectar à rádio. Tente novamente.'
     );
 
-    setTimeout(() => {
-
-      el.textContent = text;
-
-      el.title = track.full || '';
-
-      el.dataset.artist =
-        track.artist || '';
-
-      el.dataset.title =
-        track.title || '';
-
-      el.classList.remove(
-        'track-changing'
-      );
-
-    }, 180);
-
-  });
-
-  /* -----------------------------------------
-     Título da página
-     ----------------------------------------- */
-
-  if (track.full) {
-
-    document.title =
-      `${track.full} | NTP RÁDIO WEB`;
-
-  } else {
-
-    document.title =
-      'NTP RÁDIO WEB | Rádio Online ao Vivo';
+    setPlaying(false);
 
   }
+);
 
-  /* -----------------------------------------
-     Mini player
-     ----------------------------------------- */
-
-  updatePipNowPlaying(text);
-
-  /* -----------------------------------------
-     Media Session
-     ----------------------------------------- */
-
-  updateMediaSession(track);
-
-  /* -----------------------------------------
-     Evento personalizado
-     ----------------------------------------- */
-
-  document.dispatchEvent(
-    new CustomEvent(
-      'ntp:trackchange',
-      {
-        detail: track
-      }
-    )
-  );
-}
-
-/* =========================================================
-   MEDIA SESSION
-   ========================================================= */
-function initMediaSession() {
-  if (!('mediaSession' in navigator)) {
-    console.log('Media Session API não disponível neste navegador.');
-    return;
-  }
-
-  try {
-    navigator.mediaSession.setActionHandler('play', async () => {
-      try {
-        await radio.play();
-        navigator.mediaSession.playbackState = 'playing';
-      } catch (error) {
-        console.error('Erro ao reproduzir:', error);
-      }
-    });
-  } catch (e) {}
-
-  try {
-    navigator.mediaSession.setActionHandler('pause', () => {
-      radio.pause();
-      navigator.mediaSession.playbackState = 'paused';
-    });
-  } catch (e) {}
-
-  try {
-    navigator.mediaSession.setActionHandler('stop', () => {
-      radio.pause();
-      navigator.mediaSession.playbackState = 'none';
-    });
-  } catch (e) {}
-
-  try {
-    navigator.mediaSession.setActionHandler('seekbackward', () => {});
-  } catch (e) {}
-
-  try {
-    navigator.mediaSession.setActionHandler('seekforward', () => {});
-  } catch (e) {}
-
-  updateMediaSession(currentTrack || {
-    title: 'NTP RÁDIO WEB',
-    artist: 'Ao vivo',
-    album: 'Rádio Online'
-  });
-}
-// ======================================================
-// REPRODUÇÃO EM SEGUNDO PLANO / TELA BLOQUEADA
-// ======================================================
-
-function updatePlaybackState() {
-  if (!('mediaSession' in navigator)) return;
-
-  if (!radio.paused) {
-    navigator.mediaSession.playbackState = 'playing';
-  } else {
-    navigator.mediaSession.playbackState = 'paused';
-  }
-}
-
-radio.addEventListener('play', () => {
-  updatePlaybackState();
-});
-
-radio.addEventListener('playing', () => {
-  updatePlaybackState();
-});
-
-radio.addEventListener('pause', () => {
-  updatePlaybackState();
-});
-
-radio.addEventListener('ended', () => {
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.playbackState = 'none';
-  }
-});
-
-document.addEventListener('visibilitychange', () => {
-  if (!radio.paused) {
-    updatePlaybackState();
-  }
-});
-
-window.addEventListener('pagehide', () => {
-  if (!radio.paused) {
-    updatePlaybackState();
-  }
-});
-
-/* =========================================================
-   MEDIA SESSION — METADADOS
-   ========================================================= */
-
-function updateMediaSession(track) {
-
-  if (
-    !('mediaSession' in navigator)
-  ) {
-    return;
-  }
-
-  try {
-
-    const title =
-      track && track.title
-        ? track.title
-        : 'NTP RÁDIO WEB';
-
-    const artist =
-      track && track.artist
-        ? track.artist
-        : 'NTP RÁDIO WEB';
-
-    navigator.mediaSession.metadata =
-      new MediaMetadata({
-
-        title: title,
-
-        artist: artist,
-
-        album: 'Rádio Online',
-
-        artwork: [
-
-          {
-            src: 'favicon.svg',
-            sizes: '64x64',
-            type: 'image/svg+xml'
-          }
-
-        ]
-
-      });
-
-  } catch (error) {
-
-    // MediaMetadata indisponível
-
-  }
-}
 
 /* =========================================================
    VOLUME
-   ========================================================= */
+========================================================= */
 
-function initVolume() {
-
-  if (
-    !volumeInput &&
-    !volumeMini
-  ) {
-    return;
-  }
+if (volumeInput || volumeMini) {
 
   let savedVolume;
+
 
   try {
 
@@ -541,17 +596,16 @@ function initVolume() {
 
   }
 
+
   const initialVolume =
     Number.isFinite(savedVolume)
       ? savedVolume
       : 0.8;
 
-  if (radio) {
 
-    radio.volume =
-      initialVolume;
+  radio.volume =
+    initialVolume;
 
-  }
 
   if (volumeInput) {
 
@@ -560,6 +614,7 @@ function initVolume() {
 
   }
 
+
   if (volumeMini) {
 
     volumeMini.value =
@@ -567,11 +622,13 @@ function initVolume() {
 
   }
 
+
   function applyVolume(value) {
 
-    if (!Number.isFinite(value)) {
-      return;
-    }
+    /*
+     * Garante que o volume fique
+     * entre 0 e 1.
+     */
 
     value =
       Math.max(
@@ -582,12 +639,10 @@ function initVolume() {
         )
       );
 
-    if (radio) {
 
-      radio.volume =
-        value;
+    radio.volume =
+      value;
 
-    }
 
     if (
       volumeInput &&
@@ -599,6 +654,7 @@ function initVolume() {
 
     }
 
+
     if (
       volumeMini &&
       volumeMini !== document.activeElement
@@ -609,7 +665,9 @@ function initVolume() {
 
     }
 
+
     syncPipVolume(value);
+
 
     try {
 
@@ -619,10 +677,15 @@ function initVolume() {
       );
 
     } catch (error) {
-      // armazenamento indisponível
+
+      /*
+       * LocalStorage indisponível.
+       */
+
     }
 
   }
+
 
   if (volumeInput) {
 
@@ -640,6 +703,7 @@ function initVolume() {
     );
 
   }
+
 
   if (volumeMini) {
 
@@ -660,15 +724,14 @@ function initVolume() {
 
 }
 
+
 /* =========================================================
    METADATA DO ZENO.FM
-   ========================================================= */
+========================================================= */
 
 function initMetadata() {
 
-  if (
-    !('EventSource' in window)
-  ) {
+  if (!('EventSource' in window)) {
 
     setNowPlaying('');
 
@@ -676,22 +739,12 @@ function initMetadata() {
 
   }
 
-  let source;
 
-  try {
+  const source =
+    new EventSource(
+      META_URL
+    );
 
-    source =
-      new EventSource(
-        META_URL
-      );
-
-  } catch (error) {
-
-    setNowPlaying('');
-
-    return;
-
-  }
 
   source.addEventListener(
     'message',
@@ -703,6 +756,7 @@ function initMetadata() {
           JSON.parse(
             event.data
           );
+
 
         if (
           data &&
@@ -718,77 +772,90 @@ function initMetadata() {
       } catch (error) {
 
         /*
-          Alguns eventos do Zeno
-          podem ser apenas pings.
-        */
+         * Evento sem título.
+         */
 
       }
 
     }
   );
 
+
   source.addEventListener(
     'error',
     () => {
 
       /*
-        EventSource tenta reconectar
-        automaticamente.
-      */
+       * EventSource tenta reconectar
+       * automaticamente.
+       *
+       * Mantemos a última música exibida.
+       */
 
     }
   );
 
 }
 
+
 /* =========================================================
-   TOAST
-   ========================================================= */
+   TOAST / NOTIFICAÇÕES
+========================================================= */
 
 function toast(message) {
 
   const element =
-    document.getElementById(
-      'toast'
-    );
+    document.getElementById('toast');
+
 
   if (!element) {
     return;
   }
 
+
   element.textContent =
     message;
+
 
   element.classList.add(
     'show'
   );
 
+
   clearTimeout(
     window.toastTimer
   );
 
+
   window.toastTimer =
-    setTimeout(
-      () => {
+    setTimeout(() => {
 
-        element.classList.remove(
-          'show'
-        );
+      element.classList.remove(
+        'show'
+      );
 
-      },
-      2600
-    );
+    }, 2600);
 
 }
 
+
 /* =========================================================
    MENU MOBILE
-   ========================================================= */
+========================================================= */
 
-if (
-  navToggle &&
-  navLinks
-) {
+const navToggle =
+  document.getElementById(
+    'navToggle'
+  );
+
+
+const navLinks =
+  document.getElementById(
+    'navLinks'
+  );
+
+
+if (navToggle && navLinks) {
 
   navToggle.addEventListener(
     'click',
@@ -799,10 +866,12 @@ if (
           'open'
         );
 
+
       navToggle.setAttribute(
         'aria-expanded',
         String(open)
       );
+
 
       navToggle.setAttribute(
         'aria-label',
@@ -814,13 +883,6 @@ if (
     }
   );
 
-}
-
-/* =========================================================
-   FECHAR MENU AO CLICAR
-   ========================================================= */
-
-if (navLinks && navToggle) {
 
   navLinks
     .querySelectorAll('a')
@@ -834,6 +896,7 @@ if (navLinks && navToggle) {
             'open'
           );
 
+
           navToggle.setAttribute(
             'aria-expanded',
             'false'
@@ -846,43 +909,16 @@ if (navLinks && navToggle) {
 
 }
 
-/* =========================================================
-   MINIMIZAR PLAYER
-   ========================================================= */
-
-if (playerMin) {
-
-  playerMin.addEventListener(
-    'click',
-    () => {
-
-      const minimized =
-        document.body.classList.toggle(
-          'player-minimized'
-        );
-
-      playerMin.setAttribute(
-        'aria-label',
-        minimized
-          ? 'Expandir player'
-          : 'Minimizar player'
-      );
-
-    }
-  );
-
-}
 
 /* =========================================================
-   ANIMAÇÕES REVEAL
-   ========================================================= */
+   ANIMAÇÕES DE REVEAL
+========================================================= */
 
-if (
-  'IntersectionObserver' in window
-) {
+if ('IntersectionObserver' in window) {
 
   const revealObserver =
     new IntersectionObserver(
+
       entries => {
 
         entries.forEach(entry => {
@@ -895,6 +931,7 @@ if (
               'visible'
             );
 
+
             revealObserver.unobserve(
               entry.target
             );
@@ -904,10 +941,13 @@ if (
         });
 
       },
+
       {
         threshold: 0.12
       }
+
     );
+
 
   document
     .querySelectorAll('.reveal')
@@ -921,6 +961,11 @@ if (
 
 } else {
 
+  /*
+   * Navegadores antigos:
+   * deixa os elementos visíveis.
+   */
+
   document
     .querySelectorAll('.reveal')
     .forEach(element => {
@@ -933,9 +978,16 @@ if (
 
 }
 
+
 /* =========================================================
-   PICTURE-IN-PICTURE
-   ========================================================= */
+   PICTURE-IN-PICTURE / MINI PLAYER
+========================================================= */
+
+const pipButtons =
+  document.querySelectorAll(
+    '[data-pip]'
+  );
+
 
 function isPipSupported() {
 
@@ -946,9 +998,10 @@ function isPipSupported() {
 
 }
 
+
 /* =========================================================
-   ATUALIZAR TEXTO DO PIP
-   ========================================================= */
+   ATUALIZA MINI PLAYER
+========================================================= */
 
 function updatePipNowPlaying(text) {
 
@@ -956,11 +1009,12 @@ function updatePipNowPlaying(text) {
     return;
   }
 
+
   const track =
-    pipWindow.document
-      .getElementById(
-        'pipTrack'
-      );
+    pipWindow.document.getElementById(
+      'pipTrack'
+    );
+
 
   if (track) {
 
@@ -971,9 +1025,10 @@ function updatePipNowPlaying(text) {
 
 }
 
+
 /* =========================================================
-   ATUALIZAR ESTADO DO PIP
-   ========================================================= */
+   ESTADO MINI PLAYER
+========================================================= */
 
 function updatePipState(state) {
 
@@ -981,17 +1036,18 @@ function updatePipState(state) {
     return;
   }
 
+
   const button =
-    pipWindow.document
-      .getElementById(
-        'pipPlay'
-      );
+    pipWindow.document.getElementById(
+      'pipPlay'
+    );
+
 
   const eq =
-    pipWindow.document
-      .getElementById(
-        'pipEq'
-      );
+    pipWindow.document.getElementById(
+      'pipEq'
+    );
+
 
   if (button) {
 
@@ -1000,10 +1056,12 @@ function updatePipState(state) {
       state
     );
 
+
     button.setAttribute(
       'aria-pressed',
       String(state)
     );
+
 
     button.setAttribute(
       'aria-label',
@@ -1013,6 +1071,7 @@ function updatePipState(state) {
     );
 
   }
+
 
   if (eq) {
 
@@ -1025,9 +1084,10 @@ function updatePipState(state) {
 
 }
 
+
 /* =========================================================
    CONTEÚDO DO MINI PLAYER
-   ========================================================= */
+========================================================= */
 
 function buildPipContent() {
 
@@ -1036,8 +1096,10 @@ function buildPipContent() {
       'div'
     );
 
+
   wrap.className =
     'pip-window';
+
 
   wrap.innerHTML = `
 
@@ -1049,9 +1111,11 @@ function buildPipContent() {
       &times;
     </button>
 
+
     <div class="pip-brand">
       NTP <b>RÁDIO WEB</b>
     </div>
+
 
     <div
       class="eq"
@@ -1064,12 +1128,14 @@ function buildPipContent() {
       <span></span>
     </div>
 
+
     <div
       class="pip-track"
       id="pipTrack"
     >
       🎵 Carregando música...
     </div>
+
 
     <button
       class="play-btn"
@@ -1090,6 +1156,7 @@ function buildPipContent() {
 
     </button>
 
+
     <div class="pip-volume">
 
       <svg
@@ -1103,6 +1170,7 @@ function buildPipContent() {
           fill="currentColor"
         ></path>
 
+
         <path
           d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13"
           fill="none"
@@ -1112,6 +1180,7 @@ function buildPipContent() {
         ></path>
 
       </svg>
+
 
       <input
         type="range"
@@ -1127,16 +1196,17 @@ function buildPipContent() {
 
   `;
 
+
   return wrap;
+
 }
 
-/* =========================================================
-   COPIAR CSS PARA PIP
-   ========================================================= */
 
-function copyStyleSheets(
-  targetDocument
-) {
+/* =========================================================
+   COPIA CSS PARA MINI PLAYER
+========================================================= */
+
+function copyStyleSheets(targetDocument) {
 
   [...document.styleSheets]
     .forEach(styleSheet => {
@@ -1145,16 +1215,20 @@ function copyStyleSheets(
         return;
       }
 
+
       const link =
         document.createElement(
           'link'
         );
 
+
       link.rel =
         'stylesheet';
 
+
       link.href =
         styleSheet.href;
+
 
       targetDocument.head.appendChild(
         link
@@ -1164,9 +1238,10 @@ function copyStyleSheets(
 
 }
 
+
 /* =========================================================
-   SINCRONIZAR VOLUME DO PIP
-   ========================================================= */
+   SINCRONIZA VOLUME DO MINI PLAYER
+========================================================= */
 
 function syncPipVolume(value) {
 
@@ -1174,11 +1249,12 @@ function syncPipVolume(value) {
     return;
   }
 
+
   const pipVolume =
-    pipWindow.document
-      .getElementById(
-        'pipVolume'
-      );
+    pipWindow.document.getElementById(
+      'pipVolume'
+    );
+
 
   if (pipVolume) {
 
@@ -1189,448 +1265,133 @@ function syncPipVolume(value) {
 
 }
 
+
 /* =========================================================
-   ABRIR PIP
-   ========================================================= */
+   ABRIR MINI PLAYER
+========================================================= */
 
 async function openPip() {
-  // Verifica se o navegador suporta Document Picture-in-Picture
-  if (!('documentPictureInPicture' in window)) {
-    console.warn('Picture-in-Picture não é suportado neste navegador.');
-    
-    // Alternativa: informa ao usuário que o áudio pode continuar
-    // em segundo plano usando o player normal.
-    alert(
-      'O mini player flutuante não é suportado neste navegador. ' +
-      'Você ainda pode ouvir a rádio em segundo plano pelo player normal.'
+
+  if (!isPipSupported()) {
+
+    const live =
+      document.getElementById(
+        'ao-vivo'
+      );
+
+
+    if (live) {
+
+      live.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+    }
+
+
+    toast(
+      'O mini player não é compatível com este navegador.'
     );
-    
+
+
     return;
+
   }
 
-  // Evita abrir várias janelas PiP
-  if (window.__ntpPipWindow && !window.__ntpPipWindow.closed) {
-    window.__ntpPipWindow.focus();
+
+  if (pipWindow) {
+
+    toast(
+      'O mini player já está aberto.'
+    );
+
+
     return;
+
   }
+
+
+  /*
+   * Começa a rádio automaticamente
+   * quando o usuário abre o mini player.
+   */
+
+  if (radio.paused) {
+
+    radio
+      .play()
+      .catch(() => {});
+
+  }
+
+
+  let windowRef;
+
 
   try {
-    const pipWindow = await documentPictureInPicture.requestWindow({
-      width: 360,
-      height: 220
-    });
 
-    window.__ntpPipWindow = pipWindow;
+    windowRef =
+      await documentPictureInPicture
+        .requestWindow({
 
-    // ==================================================
-    // ESTILO DO MINI PLAYER
-    // ==================================================
+          width: 340,
 
-    const style = pipWindow.document.createElement('style');
+          height: 300
 
-    style.textContent = `
-      * {
-        box-sizing: border-box;
-      }
+        });
 
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        background: #0b1020;
-        color: #ffffff;
-      }
-
-      .ntp-pip {
-        width: 100%;
-        height: 100%;
-        padding: 18px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        background:
-          radial-gradient(circle at top right, #26345f 0%, transparent 45%),
-          #0b1020;
-      }
-
-      .ntp-pip-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .ntp-pip-logo {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        object-fit: cover;
-        background: #151d35;
-      }
-
-      .ntp-pip-info {
-        min-width: 0;
-        flex: 1;
-      }
-
-      .ntp-pip-title {
-        font-size: 16px;
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .ntp-pip-artist {
-        margin-top: 5px;
-        font-size: 13px;
-        opacity: .72;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .ntp-pip-live {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 7px;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .8px;
-        color: #ff4d6d;
-      }
-
-      .ntp-pip-live-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #ff4d6d;
-        animation: ntpPulse 1.2s infinite;
-      }
-
-      @keyframes ntpPulse {
-        0%, 100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: .35;
-        }
-      }
-
-      .ntp-pip-controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 14px;
-      }
-
-      .ntp-pip-button {
-        width: 52px;
-        height: 52px;
-        border: 0;
-        border-radius: 50%;
-        background: #ffffff;
-        color: #0b1020;
-        font-size: 22px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .ntp-pip-button:active {
-        transform: scale(.94);
-      }
-
-      .ntp-pip-close {
-        width: 38px;
-        height: 38px;
-        border: 0;
-        border-radius: 50%;
-        background: rgba(255,255,255,.12);
-        color: #ffffff;
-        font-size: 18px;
-        cursor: pointer;
-      }
-
-      .ntp-pip-status {
-        text-align: center;
-        font-size: 11px;
-        opacity: .55;
-      }
-    `;
-
-    pipWindow.document.head.appendChild(style);
-
-    // ==================================================
-    // HTML DO MINI PLAYER
-    // ==================================================
-
-    const container = pipWindow.document.createElement('div');
-
-    container.className = 'ntp-pip';
-
-    container.innerHTML = `
-      <div class="ntp-pip-header">
-
-        <img
-          class="ntp-pip-logo"
-          src="favicon.svg"
-          alt="NTP Rádio Web"
-        >
-
-        <div class="ntp-pip-info">
-
-          <div class="ntp-pip-title">
-            NTP RÁDIO WEB
-          </div>
-
-          <div class="ntp-pip-artist">
-            Ao vivo
-          </div>
-
-          <div class="ntp-pip-live">
-            <span class="ntp-pip-live-dot"></span>
-            AO VIVO
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="ntp-pip-controls">
-
-        <button
-          class="ntp-pip-close"
-          id="ntpPipClose"
-          aria-label="Fechar mini player">
-          ✕
-        </button>
-
-        <button
-          class="ntp-pip-button"
-          id="ntpPipPlay"
-          aria-label="Reproduzir rádio">
-          ▶
-        </button>
-
-      </div>
-
-      <div
-        class="ntp-pip-status"
-        id="ntpPipStatus">
-        Rádio online
-      </div>
-    `;
-
-    pipWindow.document.body.appendChild(container);
-
-    // ==================================================
-    // ELEMENTOS
-    // ==================================================
-
-    const pipPlay = pipWindow.document.getElementById('ntpPipPlay');
-    const pipClose = pipWindow.document.getElementById('ntpPipClose');
-    const pipTitle = pipWindow.document.querySelector('.ntp-pip-title');
-    const pipArtist = pipWindow.document.querySelector('.ntp-pip-artist');
-    const pipStatus = pipWindow.document.getElementById('ntpPipStatus');
-
-    // ==================================================
-    // ATUALIZA O BOTÃO PLAY/PAUSE
-    // ==================================================
-
-    function updatePipButton() {
-      if (!pipPlay) return;
-
-      if (radio.paused) {
-        pipPlay.textContent = '▶';
-        pipPlay.setAttribute(
-          'aria-label',
-          'Reproduzir rádio'
-        );
-      } else {
-        pipPlay.textContent = '❚❚';
-        pipPlay.setAttribute(
-          'aria-label',
-          'Pausar rádio'
-        );
-      }
-    }
-
-    // ==================================================
-    // PLAY / PAUSE
-    // ==================================================
-
-    pipPlay.addEventListener('click', async () => {
-
-      try {
-
-        if (radio.paused) {
-
-          await radio.play();
-
-          if ('mediaSession' in navigator) {
-            navigator.mediaSession.playbackState = 'playing';
-          }
-
-          pipStatus.textContent = 'Reproduzindo ao vivo';
-
-        } else {
-
-          radio.pause();
-
-          if ('mediaSession' in navigator) {
-            navigator.mediaSession.playbackState = 'paused';
-          }
-
-          pipStatus.textContent = 'Pausado';
-
-        }
-
-        updatePipButton();
-
-      } catch (error) {
-
-        console.error(
-          'Erro no mini player:',
-          error
-        );
-
-        pipStatus.textContent =
-          'Não foi possível reproduzir';
-
-      }
-
-    });
-
-    // ==================================================
-    // FECHAR
-    // ==================================================
-
-    pipClose.addEventListener('click', () => {
-
-      try {
-        pipWindow.close();
-      } catch (error) {
-        console.error(error);
-      }
-
-    });
-
-    // ==================================================
-    // SINCRONIZAÇÃO COM O PLAYER PRINCIPAL
-    // ==================================================
-
-    function syncPip() {
-
-      updatePipButton();
-
-      if (!radio.paused) {
-        pipStatus.textContent =
-          'Reproduzindo ao vivo';
-      } else {
-        pipStatus.textContent =
-          'Pausado';
-      }
-
-    }
-
-    radio.addEventListener('play', syncPip);
-    radio.addEventListener('playing', syncPip);
-    radio.addEventListener('pause', syncPip);
-
-    // ==================================================
-    // ATUALIZA METADATA NO MINI PLAYER
-    // ==================================================
-
-    function updatePipMetadata(track) {
-
-      if (!track) return;
-
-      const title =
-        track.title ||
-        track.name ||
-        'NTP RÁDIO WEB';
-
-      const artist =
-        track.artist ||
-        track.author ||
-        'Ao vivo';
-
-      if (pipTitle) {
-        pipTitle.textContent = title;
-      }
-
-      if (pipArtist) {
-        pipArtist.textContent = artist;
-      }
-
-    }
-
-    // Tenta mostrar a faixa atual
-    if (typeof currentTrack !== 'undefined' && currentTrack) {
-      updatePipMetadata(currentTrack);
-    }
-
-    // Observa alterações da metadata existente
-    const originalUpdateMediaSession =
-      window.updateMediaSession;
-
-    if (typeof originalUpdateMediaSession === 'function') {
-      // O player principal continua funcionando normalmente.
-      // A metadata do PiP será atualizada pelos eventos abaixo.
-    }
-
-    // ==================================================
-    // QUANDO A JANELA PiP FOR FECHADA
-    // ==================================================
-
-    pipWindow.addEventListener('pagehide', () => {
-
-      window.__ntpPipWindow = null;
-
-      // Remove listeners associados ao mini player
-      radio.removeEventListener('play', syncPip);
-      radio.removeEventListener('playing', syncPip);
-      radio.removeEventListener('pause', syncPip);
-
-    });
-
-    // ==================================================
-    // ESTADO INICIAL
-    // ==================================================
-
-    syncPip();
 
   } catch (error) {
 
-    console.error(
-      'Erro ao abrir o mini player PiP:',
-      error
+    pipWindow = null;
+
+
+    toast(
+      'Não foi possível abrir o mini player.'
     );
 
-    window.__ntpPipWindow = null;
 
-    alert(
-      'Não foi possível abrir o mini player neste navegador.'
-    );
+    return;
+
   }
-}
 
-  /* -----------------------------------------
-     Botão fechar
-     ----------------------------------------- */
+
+  pipWindow =
+    windowRef;
+
+
+  /*
+   * Copia os estilos da página.
+   */
+
+  copyStyleSheets(
+    pipWindow.document
+  );
+
+
+  /*
+   * Pequena configuração visual.
+   */
+
+  pipWindow.document.title =
+    'NTP RÁDIO WEB';
+
+
+  pipWindow.document.body.appendChild(
+    buildPipContent()
+  );
+
+
+  /*
+   * Botão fechar
+   */
 
   const closeButton =
-    pipWindow.document
-      .getElementById(
-        'pipClose'
-      );
+    pipWindow.document.getElementById(
+      'pipClose'
+    );
+
 
   if (closeButton) {
 
@@ -1645,15 +1406,16 @@ async function openPip() {
 
   }
 
-  /* -----------------------------------------
-     Botão play
-     ----------------------------------------- */
+
+  /*
+   * Botão play/pause
+   */
 
   const pipPlay =
-    pipWindow.document
-      .getElementById(
-        'pipPlay'
-      );
+    pipWindow.document.getElementById(
+      'pipPlay'
+    );
+
 
   if (pipPlay) {
 
@@ -1664,24 +1426,24 @@ async function openPip() {
 
   }
 
-  /* -----------------------------------------
-     Volume
-     ----------------------------------------- */
+
+  /*
+   * Volume
+   */
 
   const pipVolume =
-    pipWindow.document
-      .getElementById(
-        'pipVolume'
-      );
+    pipWindow.document.getElementById(
+      'pipVolume'
+    );
+
 
   if (pipVolume) {
 
     pipVolume.value =
       String(
-        radio
-          ? radio.volume
-          : 0.8
+        radio.volume
       );
+
 
     pipVolume.addEventListener(
       'input',
@@ -1692,12 +1454,10 @@ async function openPip() {
             pipVolume.value
           );
 
-        if (radio) {
 
-          radio.volume =
-            value;
+        radio.volume =
+          value;
 
-        }
 
         if (volumeInput) {
 
@@ -1706,12 +1466,14 @@ async function openPip() {
 
         }
 
+
         if (volumeMini) {
 
           volumeMini.value =
             String(value);
 
         }
+
 
         try {
 
@@ -1720,28 +1482,27 @@ async function openPip() {
             String(value)
           );
 
-        } catch (error) {
-          // armazenamento indisponível
-        }
+        } catch (error) {}
 
       }
     );
 
   }
 
-  /* -----------------------------------------
-     Estado inicial
-     ----------------------------------------- */
+
+  /*
+   * Estado inicial.
+   */
 
   updatePipNowPlaying(
     lastTrackText
   );
 
+
   updatePipState(
-    radio
-      ? !radio.paused
-      : false
+    !radio.paused
   );
+
 
   pipButtons.forEach(button => {
 
@@ -1751,15 +1512,17 @@ async function openPip() {
 
   });
 
-  /* -----------------------------------------
-     Fechamento da janela
-     ----------------------------------------- */
+
+  /*
+   * Quando a janela for fechada.
+   */
 
   pipWindow.addEventListener(
     'pagehide',
     () => {
 
       pipWindow = null;
+
 
       pipButtons.forEach(button => {
 
@@ -1774,9 +1537,10 @@ async function openPip() {
 
 }
 
-/* =========================================================
-   BOTÕES PIP
-   ========================================================= */
+
+/*
+ * Ativa os botões do mini player
+ */
 
 pipButtons.forEach(button => {
 
@@ -1787,13 +1551,47 @@ pipButtons.forEach(button => {
 
 });
 
+
+/* =========================================================
+   PLAYER MINIMIZADO
+========================================================= */
+
+const playerMin =
+  document.getElementById(
+    'playerMin'
+  );
+
+
+if (playerMin) {
+
+  playerMin.addEventListener(
+    'click',
+    () => {
+
+      const minimized =
+        document.body.classList.toggle(
+          'player-minimized'
+        );
+
+
+      playerMin.setAttribute(
+        'aria-label',
+        minimized
+          ? 'Expandir player'
+          : 'Minimizar player'
+      );
+
+    }
+  );
+
+}
+
+
 /* =========================================================
    SERVICE WORKER / PWA
-   ========================================================= */
+========================================================= */
 
-if (
-  'serviceWorker' in navigator
-) {
+if ('serviceWorker' in navigator) {
 
   window.addEventListener(
     'load',
@@ -1808,9 +1606,23 @@ if (
 
 }
 
+
 /* =========================================================
-   INSTALAÇÃO PWA
-   ========================================================= */
+   INSTALAÇÃO DO APLICATIVO
+========================================================= */
+
+let deferredInstall = null;
+
+
+const installBtn =
+  document.getElementById(
+    'installBtn'
+  );
+
+
+/*
+ * O navegador oferece instalação.
+ */
 
 window.addEventListener(
   'beforeinstallprompt',
@@ -1818,8 +1630,10 @@ window.addEventListener(
 
     event.preventDefault();
 
+
     deferredInstall =
       event;
+
 
     if (installBtn) {
 
@@ -1831,9 +1645,10 @@ window.addEventListener(
   }
 );
 
-/* =========================================================
-   APP INSTALADO
-   ========================================================= */
+
+/*
+ * Aplicativo instalado.
+ */
 
 window.addEventListener(
   'appinstalled',
@@ -1841,6 +1656,7 @@ window.addEventListener(
 
     deferredInstall =
       null;
+
 
     if (installBtn) {
 
@@ -1852,9 +1668,10 @@ window.addEventListener(
   }
 );
 
-/* =========================================================
-   BOTÃO INSTALAR
-   ========================================================= */
+
+/*
+ * Clique no botão instalar.
+ */
 
 if (installBtn) {
 
@@ -1862,28 +1679,43 @@ if (installBtn) {
     'click',
     async () => {
 
+      /*
+       * Se o navegador não disponibilizou
+       * o prompt automático.
+       */
+
       if (!deferredInstall) {
 
         toast(
           'Instale pelo menu do navegador: ⋮ → "Adicionar à tela inicial".'
         );
 
+
         return;
 
       }
 
+
       deferredInstall.prompt();
+
 
       try {
 
         await deferredInstall.userChoice;
 
       } catch (error) {
-        // usuário fechou a janela
+
+        /*
+         * Usuário fechou ou recusou
+         * o prompt.
+         */
+
       }
+
 
       deferredInstall =
         null;
+
 
       installBtn.hidden =
         true;
@@ -1893,31 +1725,52 @@ if (installBtn) {
 
 }
 
+
 /* =========================================================
    INICIALIZAÇÃO
-   ========================================================= */
+========================================================= */
 
-initVolume();
+setNowPlaying('');
 
 initMetadata();
 
 initMediaSession();
 
+
 /* =========================================================
-   EVENTO GLOBAL PARA OUTROS MÓDULOS
-   ========================================================= */
+   CONFIGURAÇÃO DO STREAM
+========================================================= */
 
 /*
-  Outros scripts poderão escutar:
+ * O elemento <audio> deve possuir:
+ *
+ * <audio id="radio"></audio>
+ *
+ * ou
+ *
+ * <audio
+ *   id="radio"
+ *   src="https://stream.zeno.fm/elhz4znig9wuv"
+ * ></audio>
+ *
+ * Para garantir que o stream esteja configurado,
+ * definimos o src caso ele ainda esteja vazio.
+ */
 
-  document.addEventListener(
-    'ntp:trackchange',
-    event => {
-      console.log(event.detail);
-    }
-  );
-*/
+if (radio) {
 
-console.log(
-  'NTP RÁDIO WEB — sistema inicializado.'
-);
+  if (!radio.src) {
+
+    radio.src =
+      STREAM_URL;
+
+  }
+
+  /*
+   * Mantém o áudio preparado para reprodução.
+   */
+
+  radio.preload =
+    'none';
+
+}
