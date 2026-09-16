@@ -203,7 +203,12 @@
 <button class="play-btn play-btn-mini" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play" aria-hidden="true"></span><span class="pb-pause" aria-hidden="true"></span></button>
 </div>
 
-<audio id="radio" preload="none" src="https://stream.zeno.fm/elhz4znig9wuv"></audio>
+<audio
+  id="radio"
+  preload="none"
+  playsinline
+  src="https://stream.zeno.fm/elhz4znig9wuv">
+</audio>
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="script.js"></script>
 </body>
