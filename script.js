@@ -415,6 +415,49 @@ function initMediaSession() {
     album: 'Rádio Online'
   });
 }
+// ======================================================
+// REPRODUÇÃO EM SEGUNDO PLANO / TELA BLOQUEADA
+// ======================================================
+
+function updatePlaybackState() {
+  if (!('mediaSession' in navigator)) return;
+
+  if (!radio.paused) {
+    navigator.mediaSession.playbackState = 'playing';
+  } else {
+    navigator.mediaSession.playbackState = 'paused';
+  }
+}
+
+radio.addEventListener('play', () => {
+  updatePlaybackState();
+});
+
+radio.addEventListener('playing', () => {
+  updatePlaybackState();
+});
+
+radio.addEventListener('pause', () => {
+  updatePlaybackState();
+});
+
+radio.addEventListener('ended', () => {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = 'none';
+  }
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!radio.paused) {
+    updatePlaybackState();
+  }
+});
+
+window.addEventListener('pagehide', () => {
+  if (!radio.paused) {
+    updatePlaybackState();
+  }
+});
 
 /* =========================================================
    MEDIA SESSION — METADADOS
