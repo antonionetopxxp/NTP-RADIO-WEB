@@ -1,679 +1,134 @@
-
-/* NTP RÁDIO WEB — GALAXY PURPLE THEME */
-:root{
-  --bg:#02030a;--panel:#090718;--panel2:#100b25;--line:#28185a;
-  --purple:#6d28ff;--purple2:#a66bff;--pink:#9b5cff;
-  --text:#f8f7ff;--muted:#aaa2c7;--green:#29e39a;
-}
-body{
-  background:radial-gradient(circle at 15% 8%,rgba(109,40,255,.18),transparent 28%),
-             radial-gradient(circle at 85% 30%,rgba(72,36,190,.16),transparent 32%),
-             radial-gradient(circle at 50% 90%,rgba(142,82,255,.10),transparent 30%),#02030a;
-}
-.orb-a{background:#6d28ff!important;opacity:.20!important}
-.orb-b{background:#3420b8!important;opacity:.16!important}
-.site-header{background:rgba(2,3,10,.88);border-bottom-color:#24134f;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-.logo b{background:linear-gradient(90deg,#b98cff,#7135ff,#d0b2ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.btn-primary{
-  background:linear-gradient(135deg,#b98cff,#7a35ff 42%,#4d18d6);
-  box-shadow:0 8px 30px rgba(109,40,255,.38),inset 0 1px 0 rgba(255,255,255,.28);
-}
-.btn-primary:hover{box-shadow:0 14px 44px rgba(109,40,255,.55),inset 0 1px 0 rgba(255,255,255,.32)}
-.btn-ghost{background:rgba(109,40,255,.055);border-color:#352078}
-.btn-ghost:hover{border-color:#a66bff}
-.hero-bg{filter:brightness(.30) saturate(1.18) hue-rotate(4deg)}
-.hero-bg::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 72% 35%,rgba(160,100,255,.28),transparent 20%),radial-gradient(circle at 22% 65%,rgba(77,24,214,.18),transparent 24%);mix-blend-mode:screen;pointer-events:none}
-.hero-bg::after{background:linear-gradient(180deg,rgba(2,3,10,.18),rgba(2,3,10,.68) 55%,#02030a)}
-.hero-badge{background:rgba(109,40,255,.10);border-color:rgba(166,107,255,.58);color:#d9c7ff;box-shadow:0 0 24px rgba(109,40,255,.12)}
-.dot{background:#a66bff;box-shadow:0 0 14px rgba(166,107,255,.75)}
-.hero h1 em{background:linear-gradient(90deg,#d2b8ff,#8b4dff,#b58aff,#6d28ff,#d2b8ff);background-size:300% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:galaxyGradient 7s linear infinite}
-@keyframes galaxyGradient{to{background-position:300% center}}
-.hero-ticker{background:rgba(5,3,16,.68);border-color:#30206a;box-shadow:inset 0 0 30px rgba(109,40,255,.04)}
-.ticker-label,.section-label{color:#b98cff}
-.live-card,.schedule-card{background:radial-gradient(circle at 90% 0%,rgba(109,40,255,.14),transparent 34%),linear-gradient(145deg,#110a27,#05040d 85%);border-color:#2d1c63;box-shadow:0 20px 60px rgba(0,0,0,.45)}
-.live-badge{color:#b98cff}
-.schedule-card::before{background:linear-gradient(90deg,#5e24e8,#b98cff,#6d28ff)}
-.eq span{background:linear-gradient(180deg,#d1b3ff,#7a35ff,#4d18d6)}
-.play-btn{background:radial-gradient(circle at 35% 25%,#d4b9ff,#9a5cff 22%,#6725e8 62%,#35109e);box-shadow:0 0 0 6px rgba(109,40,255,.16),0 0 38px rgba(109,40,255,.35),0 12px 34px rgba(0,0,0,.55)}
-.play-btn:hover{box-shadow:0 0 0 10px rgba(109,40,255,.14),0 0 54px rgba(166,107,255,.42),0 16px 44px rgba(0,0,0,.65)}
-.player{background:linear-gradient(135deg,rgba(7,4,18,.97),rgba(15,8,34,.97));border-top-color:#38207c!important;box-shadow:0 -10px 45px rgba(0,0,0,.60)}
-.player .live-badge{color:#b98cff}
-input[type=range]{accent-color:#9d62ff}
-.section-dark{background:radial-gradient(circle at 20% 30%,rgba(109,40,255,.06),transparent 32%),linear-gradient(180deg,transparent,rgba(109,40,255,.045));border-color:#251650}
-.nav-links a:hover,.footer-col a:hover{color:#cdb5ff}
-.nav-toggle span{background:#cbb2ff}
-.contact-card,.install-bar .btn-install{border-color:#30206a!important}
-.contact-card:hover{border-color:#8e54ff!important;box-shadow:0 15px 45px rgba(109,40,255,.14)}
-::selection{background:#7135ff;color:#fff}
-::-webkit-scrollbar{width:9px}
-::-webkit-scrollbar-track{background:#02030a}
-::-webkit-scrollbar-thumb{background:linear-gradient(#7a35ff,#35109e);border-radius:20px}
-::-webkit-scrollbar-thumb:hover{background:linear-gradient(#b98cff,#6d28ff)}
-@media(max-width:700px){
-  body{background:radial-gradient(circle at 50% 5%,rgba(109,40,255,.16),transparent 25%),radial-gradient(circle at 90% 55%,rgba(65,35,180,.12),transparent 28%),#02030a}
-  .hero-bg{background-position:center top;filter:brightness(.27) saturate(1.2)}
-  .hero-badge{box-shadow:0 0 22px rgba(109,40,255,.18)}
-  .btn-primary{box-shadow:0 8px 28px rgba(109,40,255,.38)}
-  .live-card{box-shadow:0 16px 45px rgba(0,0,0,.48)}
-}
-/* =========================================================
-   NTP RÁDIO WEB — GALAXY PRO PLAYER
-   ========================================================= */
+/* 
+   GALAXY THEME ENGINE - NTP RÁDIO WEB
+   Focado em Profundidade, Luz e Atmosfera Espacial
+*/
 
 :root {
-  --radio-purple: #7c3cff;
-  --radio-violet: #a855f7;
-  --radio-blue: #5b21ff;
-  --radio-bg: #03030a;
+    /* Paleta de Cores Espaciais */
+    --space-black: #020205;
+    --space-dark: #0a0a12;
+    --nebula-purple: #7b2cff;
+    --nebula-blue: #3a0ca3;
+    --star-white: #ffffff;
+    --star-dim: rgba(255, 255, 255, 0.6);
+    
+    /* Gradientes de Profundidade */
+    --grad-nebula: linear-gradient(135deg, var(--nebula-purple), var(--nebula-blue));
+    --grad-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    --grad-dark: linear-gradient(to bottom, var(--space-black), var(--space-dark));
+    
+    /* Efeitos de Brilho (Glow) */
+    --glow-primary: 0 0 25px rgba(123, 44, 255, 0.4);
+    --glow-secondary: 0 0 50px rgba(58, 12, 163, 0.2);
 }
 
-/* PLAYER PRINCIPAL */
-.live-card {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  border: 1px solid rgba(124, 60, 255, .35);
-  background:
-    radial-gradient(circle at 15% 20%, rgba(124, 60, 255, .20), transparent 35%),
-    radial-gradient(circle at 85% 80%, rgba(168, 85, 247, .14), transparent 35%),
-    linear-gradient(145deg, rgba(10, 8, 22, .96), rgba(3, 3, 10, .98));
-  box-shadow:
-    0 0 35px rgba(124, 60, 255, .12),
-    inset 0 0 40px rgba(124, 60, 255, .04);
+/* Camada de Atmosfera (Background Dinâmico) */
+body {
+    background: var(--grad-dark);
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* brilho interno */
-.live-card::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 50%, rgba(124,60,255,.18), transparent 25%),
-    radial-gradient(circle at 80% 50%, rgba(168,85,247,.12), transparent 25%);
-  filter: blur(20px);
-  pointer-events: none;
+/* Efeito de Partículas/Estrelas (Simulado via CSS para Performance) */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 160px, var(--nebula-purple), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, var(--nebula-blue), rgba(0,0,0,0));
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    opacity: 0.3;
+    z-index: -1;
+    animation: starsMove 100s linear infinite;
 }
 
-/* BADGE AO VIVO */
-.live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-shadow: 0 0 12px rgba(168,85,247,.6);
+/* Estilização dos Elementos "Galaxy" */
+.galaxy-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent, var(--space-black));
+    pointer-events: none;
+    z-index: 1;
 }
 
-.live-badge .dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #a855f7;
-  box-shadow:
-    0 0 6px #a855f7,
-    0 0 18px rgba(168,85,247,.9);
-  animation: livePulse 1.4s infinite;
+/* Botões com Efeito de Brilho Galáctico */
+.btn-galaxy {
+    position: relative;
+    overflow: hidden;
+    background: var(--grad-nebula);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    box-shadow: var(--glow-primary);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes livePulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.45);
-    opacity: .55;
-  }
+.btn-galaxy:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 0 40px var(--nebula-purple);
 }
 
-/* TEXTO DA MÚSICA */
-.live-meta p {
-  min-height: 24px;
-  color: rgba(255,255,255,.78);
-  transition: opacity .3s ease;
+/* Glassmorphism Avançado para Cards e Menus */
+.glass-panel {
+    background: var(--grad-glass);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-3d);
 }
 
-/* EQUALIZADOR */
-.eq {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 5px;
-  height: 52px;
+/* Animação de Estrelas para profundidade */
+@keyframes starsMove {
+    from { transform: translateY(0); }
+    to { transform: translateY(-1000px); }
 }
 
-.eq span {
-  display: block;
-  width: 5px;
-  height: 12px;
-  border-radius: 10px;
-  background: linear-gradient(
-    to top,
-    #6d28ff,
-    #a855f7
-  );
-  box-shadow:
-    0 0 8px rgba(124,60,255,.7);
-  transform-origin: bottom;
-}
-
-.eq.on span:nth-child(1) {
-  animation: eq1 .75s ease-in-out infinite alternate;
-}
-
-.eq.on span:nth-child(2) {
-  animation: eq2 .55s ease-in-out infinite alternate;
-}
-
-.eq.on span:nth-child(3) {
-  animation: eq3 .85s ease-in-out infinite alternate;
-}
-
-.eq.on span:nth-child(4) {
-  animation: eq2 .65s ease-in-out infinite alternate-reverse;
-}
-
-.eq.on span:nth-child(5) {
-  animation: eq1 .50s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes eq1 {
-  from { height: 8px; }
-  to { height: 42px; }
-}
-
-@keyframes eq2 {
-  from { height: 14px; }
-  to { height: 50px; }
-}
-
-@keyframes eq3 {
-  from { height: 10px; }
-  to { height: 34px; }
-}
-
-/* PLAY BUTTON */
-.play-btn {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  border: 1px solid rgba(168,85,247,.6);
-  background:
-    radial-gradient(circle at 35% 30%,
-      #a855f7 0%,
-      #7c3cff 35%,
-      #351078 100%);
-  box-shadow:
-    0 0 0 6px rgba(124,60,255,.08),
-    0 0 25px rgba(124,60,255,.45),
-    0 0 55px rgba(168,85,247,.18);
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
-}
-
-.play-btn:hover {
-  transform: scale(1.07);
-  box-shadow:
-    0 0 0 8px rgba(124,60,255,.08),
-    0 0 35px rgba(124,60,255,.65),
-    0 0 70px rgba(168,85,247,.25);
-}
-
-.play-btn:active {
-  transform: scale(.96);
-}
-
-/* player tocando */
-.is-playing .play-btn {
-  animation: playerGlow 2s ease-in-out infinite;
-}
-
-@keyframes playerGlow {
-  0%, 100% {
-    box-shadow:
-      0 0 0 6px rgba(124,60,255,.08),
-      0 0 25px rgba(124,60,255,.45);
-  }
-
-  50% {
-    box-shadow:
-      0 0 0 10px rgba(124,60,255,.05),
-      0 0 45px rgba(168,85,247,.7);
-  }
-}
-
-/* MINI PLAYER */
-.player {
-  background:
-    radial-gradient(circle at 10% 50%, rgba(124,60,255,.18), transparent 30%),
-    radial-gradient(circle at 90% 50%, rgba(168,85,247,.12), transparent 30%),
-    rgba(4,4,12,.96);
-  border-top: 1px solid rgba(124,60,255,.4);
-  box-shadow:
-    0 -10px 40px rgba(0,0,0,.45),
-    0 -2px 25px rgba(124,60,255,.12);
-  backdrop-filter: blur(18px);
-}
-
-/* música atual no player */
-.player .track {
-  display: block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 700;
-}
-
-/* VOLUME */
-.volume input[type="range"] {
-  accent-color: #8b5cf6;
-  cursor: pointer;
-}
-
-/* BOTÃO MINI PLAYER */
-.pip-btn {
-  transition: all .2s ease;
-}
-
-.pip-btn:hover {
-  color: #a855f7;
-  filter: drop-shadow(0 0 8px rgba(168,85,247,.7));
-}
-
-/* BARRA DE PROGRESSO DECORATIVA */
-.player::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #6d28ff,
-    #a855f7,
-    #6d28ff,
-    transparent
-  );
-  opacity: .8;
-}
-
-/* HERO — TOCOU AGORA */
-.hero-ticker {
-  border-color: rgba(124,60,255,.25);
-  background: rgba(8,5,18,.65);
-  box-shadow:
-    inset 0 0 20px rgba(124,60,255,.04),
-    0 0 20px rgba(124,60,255,.05);
-}
-
-.ticker-label {
-  color: #a855f7;
-}
-
-/* MOBILE */
-@media (max-width: 700px) {
-
-  .live-card {
-    padding: 22px 16px;
-    border-radius: 22px;
-  }
-
-  .live-card .eq {
-    margin-bottom: 12px;
-  }
-
-  .play-btn {
-    width: 66px;
-    height: 66px;
-  }
-
-  .player {
-    padding:
-      10px
-      max(12px, env(safe-area-inset-right))
-      calc(10px + env(safe-area-inset-bottom))
-      max(12px, env(safe-area-inset-left));
-  }
-
-  .player .eq-mini {
-    display: none;
-  }
-
-  .volume-mini {
-    display: none;
-  }
-
-  .player-meta {
-    min-width: 0;
-    flex: 1;
-  }
-
-  .player .track {
-    max-width: 46vw;
-    font-size: 12px;
-  }
-
-  .player .live-badge {
-    font-size: 9px;
-  }
-
-  .play-btn-mini {
-    width: 52px;
-    height: 52px;
-  }
-}
-
-/* ACESSIBILIDADE */
-@media (prefers-reduced-motion: reduce) {
-  
-
-  .live-badge .dot,
-  .eq span,
-  .play-btn {
-    animation: none !important;
-  }
-}
-.track-changing {
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-.track {
-  transition:
-    opacity .18s ease,
-    transform .18s ease;
-}
-/* =====================================================
-   NTP RÁDIO WEB — PLAYER GALAXY PRO
-   ===================================================== */
-
-:root {
-  --radio-purple: #7c3cff;
-  --radio-violet: #b66cff;
-}
-
-/* PLAYER PRINCIPAL */
-.live-card {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(124, 60, 255, .25),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      rgba(182, 108, 255, .16),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(13, 8, 30, .98),
-      rgba(3, 3, 10, .98)
+/* Efeito de Scanline (Linhas de monitor antigo para toque Cyberpunk/Retro) */
+.scanline {
+    width: 100%;
+    height: 100px;
+    z-index: 10;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(123, 44, 255, 0.05),
+        transparent
     );
-
-  border: 1px solid rgba(124, 60, 255, .45);
-
-  box-shadow:
-    0 0 30px rgba(124, 60, 255, .14),
-    inset 0 0 35px rgba(124, 60, 255, .05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    animation: scanlineMove 8s linear infinite;
 }
 
-.live-card::before {
-  content: "";
-  position: absolute;
-  inset: -50%;
-  z-index: -1;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(124, 60, 255, .12),
-      transparent 45%
-    );
-
-  filter: blur(35px);
-  pointer-events: none;
+@keyframes scanlineMove {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
 }
 
-/* AO VIVO */
-.live-badge {
-  color: #b66cff !important;
-  text-shadow: 0 0 12px rgba(182,108,255,.6);
+/* Texto com gradiente de luz */
+.text-glow {
+    color: white;
+    text-shadow: 0 0 10px var(--nebula-purple), 0 0 20px var(--nebula-blue);
 }
 
-.live-badge .dot {
-  background: #b66cff !important;
-
-  box-shadow:
-    0 0 8px #b66cff,
-    0 0 20px rgba(182,108,255,.8);
-
-  animation: galaxyLive 1.4s ease-in-out infinite;
+/* Scrollbar Customizada (Para não quebrar a estética) */
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-@keyframes galaxyLive {
-  0%,100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.5);
-    opacity: .55;
-  }
+::-webkit-scrollbar-track {
+    background: var(--space-black);
 }
 
-/* EQUALIZADOR */
-.eq span {
-  background: linear-gradient(
-    to top,
-    #6d28ff,
-    #b66cff
-  ) !important;
-
-  box-shadow:
-    0 0 8px rgba(124,60,255,.8);
-}
-
-/* BOTÃO PLAY */
-.play-btn {
-  background:
-    radial-gradient(
-      circle at 35% 30%,
-      #c084fc 0%,
-      #8b5cf6 35%,
-      #4c1d95 100%
-    ) !important;
-
-  border: 1px solid rgba(192,132,252,.65);
-
-  box-shadow:
-    0 0 0 6px rgba(124,60,255,.10),
-    0 0 25px rgba(124,60,255,.55),
-    0 0 60px rgba(182,108,255,.20);
-
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
-}
-
-.play-btn:hover {
-  transform: scale(1.07);
-
-  box-shadow:
-    0 0 0 9px rgba(124,60,255,.10),
-    0 0 35px rgba(124,60,255,.7),
-    0 0 75px rgba(182,108,255,.3);
-}
-
-.is-playing .play-btn {
-  animation: galaxyPlayerGlow 2s ease-in-out infinite;
-}
-
-@keyframes galaxyPlayerGlow {
-  0%,100% {
-    box-shadow:
-      0 0 0 6px rgba(124,60,255,.10),
-      0 0 25px rgba(124,60,255,.5);
-  }
-
-  50% {
-    box-shadow:
-      0 0 0 11px rgba(124,60,255,.05),
-      0 0 48px rgba(182,108,255,.75);
-  }
-}
-
-/* PLAYER FIXO */
-.player {
-  background:
-    radial-gradient(
-      circle at 10% 50%,
-      rgba(124,60,255,.18),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 90% 50%,
-      rgba(182,108,255,.12),
-      transparent 30%
-    ),
-    rgba(4,3,12,.94) !important;
-
-  border-top: 1px solid rgba(124,60,255,.45);
-
-  box-shadow:
-    0 -10px 40px rgba(0,0,0,.55),
-    0 -2px 25px rgba(124,60,255,.15);
-
-  backdrop-filter: blur(20px);
-}
-
-/* LINHA NEON NO TOPO DO PLAYER */
-.player::before {
-  content: "";
-
-  position: absolute;
-  top: -1px;
-  left: 0;
-
-  width: 100%;
-  height: 2px;
-
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #6d28ff,
-    #b66cff,
-    #6d28ff,
-    transparent
-  );
-
-  opacity: .9;
-}
-
-/* MÚSICA */
-.player .track {
-  font-weight: 800;
-  color: #eee8ff;
-}
-
-/* TRANSIÇÃO DA MÚSICA */
-.track-changing {
-  opacity: 0;
-  transform: translateY(5px);
-}
-
-.track {
-  transition:
-    opacity .2s ease,
-    transform .2s ease;
-}
-
-/* VOLUME */
-.volume input[type="range"],
-.volume-mini input {
-  accent-color: #9b6cff;
-}
-
-/* MINI PLAYER */
-.pip-btn:hover {
-  color: #b66cff;
-  border-color: #8b5cf6;
-
-  filter:
-    drop-shadow(
-      0 0 8px
-      rgba(182,108,255,.7)
-    );
-}
-
-/* TOCOU AGORA */
-.hero-ticker {
-  border-color: rgba(124,60,255,.35);
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(12,7,27,.75),
-      rgba(5,3,14,.75)
-    );
-
-  box-shadow:
-    inset 0 0 25px rgba(124,60,255,.05),
-    0 0 20px rgba(124,60,255,.06);
-}
-
-.ticker-label {
-  color: #b66cff !important;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-
-  .live-card {
-    border-radius: 22px;
-    padding: 24px 16px;
-  }
-
-  .play-btn {
-    width: 68px;
-    height: 68px;
-  }
-
-  .player {
-    padding:
-      8px
-      12px
-      calc(8px + env(safe-area-inset-bottom));
-  }
-
-  .player .track {
-    max-width: 45vw;
-    font-size: 12px;
-  }
-
-  .volume-mini {
-    width: 75px;
-  }
-}
-
-/* REDUZIR ANIMAÇÕES SE O USUÁRIO PEDIR */
-@media (prefers-reduced-motion: reduce) {
-
-  .live-badge .dot,
-  .is-playing .play-btn,
-  .eq span {
-    animation: none !important;
-  }
+::-webkit-scrollbar-thumb {
+    background: var(--grad-nebula);
+    border-radius: 10px;
 }
