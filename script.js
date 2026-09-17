@@ -1,15 +1,51 @@
-const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
-const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
+/* =========================================================
+   NTP RÁDIO WEB
+   PLAYER + METADATA + VOLUME + SERVICE WORKER
+   ========================================================= */
 
-const radio = document.getElementById('radio');
-const volumeInput = document.getElementById('volume');
-const volumeMini = document.getElementById('volumeMini');
 
-const playButtons = document.querySelectorAll('[data-play]');
-const nowPlayingEls = document.querySelectorAll('[data-now]');
-const eqEls = document.querySelectorAll('[data-eq]');
+/* ================================
+   CONFIGURAÇÃO DA RÁDIO
+================================ */
 
-let lastTrackText = '🎵 Carregando música...';
+const STREAM_URL =
+  'https://stream.zeno.fm/elhz4znig9wuv';
+
+const META_URL =
+  'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
+
+
+/* ================================
+   ELEMENTOS
+================================ */
+
+const radio =
+  document.getElementById('radio');
+
+const volumeInput =
+  document.getElementById('volume');
+
+const volumeMini =
+  document.getElementById('volumeMini');
+
+const playButtons =
+  document.querySelectorAll('[data-play]');
+
+const nowPlayingEls =
+  document.querySelectorAll('[data-now]');
+
+const eqEls =
+  document.querySelectorAll('[data-eq]');
+
+
+/* ================================
+   ESTADO
+================================ */
+
+let lastTrackText =
+  '🎵 Carregando música...';
+
+let metadataSource = null;
 
 
 /* ================================
@@ -18,29 +54,165 @@ let lastTrackText = '🎵 Carregando música...';
 
 function setPlaying(state) {
 
-  document.body.classList.toggle('is-playing', state);
+  document.body.classList.toggle(
+    'is-playing',
+    Boolean(state)
+  );
+
 
   playButtons.forEach(button => {
 
-    button.classList.toggle('playing', state);
+    button.classList.toggle(
+      'playing',
+      Boolean(state)
+    );
+
 
     button.setAttribute(
       'aria-pressed',
-      String(state)
+      String(Boolean(state))
     );
+
 
     button.setAttribute(
       'aria-label',
-      state ? 'Pausar' : 'Tocar'
+      state
+        ? 'Pausar rádio'
+        : 'Tocar rádio'
     );
 
   });
 
+
   eqEls.forEach(eq => {
 
-    eq.classList.toggle('on', state);
+    eq.classList.toggle(
+      'on',
+      Boolean(state)
+    );
 
   });
+
+}
+
+
+/* ================================
+   PLAY
+================================ */
+
+async function playRadio() {
+
+  if (!radio) {
+
+    console.error(
+      'Elemento #radio não encontrado.'
+    );
+
+    toast(
+      'Player de rádio não encontrado.'
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    /*
+     * Define novamente o endereço somente
+     * se necessário.
+     */
+
+    if (
+      !radio.src ||
+      !radio.src.includes(STREAM_URL)
+    ) {
+
+      radio.src =
+        STREAM_URL;
+
+    }
+
+
+    /*
+     * Não usamos load() toda vez que
+     * o usuário aperta Play.
+     *
+     * Isso evita reiniciar a conexão
+     * desnecessariamente.
+     */
+
+    const promise =
+      radio.play();
+
+
+    if (
+      promise &&
+      typeof promise.then === 'function'
+    ) {
+
+      await promise;
+
+    }
+
+
+    setPlaying(true);
+
+
+    /*
+     * Atualiza Media Session, quando
+     * disponível.
+     */
+
+    updateMediaSession();
+
+  } catch (error) {
+
+    console.error(
+      'Erro ao iniciar a rádio:',
+      error
+    );
+
+
+    setPlaying(false);
+
+
+    toast(
+      'Não foi possível iniciar a rádio.'
+    );
+
+  }
+
+}
+
+
+/* ================================
+   PAUSE
+================================ */
+
+function pauseRadio() {
+
+  if (!radio) {
+    return;
+  }
+
+
+  try {
+
+    radio.pause();
+
+  } catch (error) {
+
+    console.error(
+      'Erro ao pausar rádio:',
+      error
+    );
+
+  }
+
+
+  setPlaying(false);
 
 }
 
@@ -52,51 +224,23 @@ function setPlaying(state) {
 function togglePlay() {
 
   if (!radio) {
-    console.error('Elemento #radio não encontrado.');
+
+    console.error(
+      'Elemento #radio não encontrado.'
+    );
+
     return;
+
   }
 
 
   if (radio.paused) {
 
-    radio.src = STREAM_URL;
-
-    radio.load();
-
-
-    const promise = radio.play();
-
-
-    if (promise !== undefined) {
-
-      promise
-        .then(() => {
-
-          setPlaying(true);
-
-        })
-        .catch(error => {
-
-          console.error(
-            'Erro ao iniciar a rádio:',
-            error
-          );
-
-          setPlaying(false);
-
-          toast(
-            'Não foi possível iniciar a rádio.'
-          );
-
-        });
-
-    }
+    playRadio();
 
   } else {
 
-    radio.pause();
-
-    setPlaying(false);
+    pauseRadio();
 
   }
 
@@ -104,7 +248,7 @@ function togglePlay() {
 
 
 /* ================================
-   BOTÕES
+   BOTÕES PLAY
 ================================ */
 
 playButtons.forEach(button => {
@@ -128,6 +272,20 @@ if (radio) {
     () => {
 
       setPlaying(true);
+
+      updateMediaSession();
+
+    }
+  );
+
+
+  radio.addEventListener(
+    'playing',
+    () => {
+
+      setPlaying(true);
+
+      updateMediaSession();
 
     }
   );
@@ -154,6 +312,37 @@ if (radio) {
 
 
   radio.addEventListener(
+    'waiting',
+    () => {
+
+      /*
+       * A transmissão pode ficar alguns
+       * instantes aguardando dados.
+       *
+       * Não desligamos o estado aqui.
+       */
+
+      console.log(
+        'Rádio aguardando dados...'
+      );
+
+    }
+  );
+
+
+  radio.addEventListener(
+    'stalled',
+    () => {
+
+      console.log(
+        'Transmissão temporariamente interrompida.'
+      );
+
+    }
+  );
+
+
+  radio.addEventListener(
     'error',
     event => {
 
@@ -162,7 +351,9 @@ if (radio) {
         event
       );
 
+
       setPlaying(false);
+
 
       toast(
         'Erro ao conectar ao servidor da rádio.'
@@ -185,21 +376,45 @@ try {
 
   const stored =
     parseFloat(
-      localStorage.getItem('ntpVolume')
+      localStorage.getItem(
+        'ntpVolume'
+      )
     );
 
-  if (Number.isFinite(stored)) {
 
-    savedVolume = stored;
+  if (
+    Number.isFinite(stored)
+  ) {
+
+    savedVolume =
+      Math.max(
+        0,
+        Math.min(
+          1,
+          stored
+        )
+      );
 
   }
 
-} catch (error) {}
+} catch (error) {
 
+  console.warn(
+    'Não foi possível carregar o volume salvo.',
+    error
+  );
+
+}
+
+
+/* ================================
+   APLICAR VOLUME INICIAL
+================================ */
 
 if (radio) {
 
-  radio.volume = savedVolume;
+  radio.volume =
+    savedVolume;
 
 }
 
@@ -220,10 +435,18 @@ if (volumeMini) {
 }
 
 
+/* ================================
+   APLICAR VOLUME
+================================ */
+
 function applyVolume(value) {
 
-  if (!Number.isFinite(value)) {
+  if (
+    !Number.isFinite(value)
+  ) {
+
     return;
+
   }
 
 
@@ -268,10 +491,21 @@ function applyVolume(value) {
       String(value)
     );
 
-  } catch (error) {}
+  } catch (error) {
+
+    console.warn(
+      'Não foi possível salvar o volume.',
+      error
+    );
+
+  }
 
 }
 
+
+/* ================================
+   VOLUME PRINCIPAL
+================================ */
 
 if (volumeInput) {
 
@@ -290,6 +524,10 @@ if (volumeInput) {
 
 }
 
+
+/* ================================
+   VOLUME MINI PLAYER
+================================ */
 
 if (volumeMini) {
 
@@ -310,17 +548,21 @@ if (volumeMini) {
 
 
 /* ================================
-   METADATA
+   LIMPAR TÍTULO
 ================================ */
 
 function cleanTrackTitle(raw) {
 
   let title =
-    String(raw || '').trim();
+    String(
+      raw || ''
+    ).trim();
 
 
   if (!title) {
+
     return '';
+
   }
 
 
@@ -346,16 +588,25 @@ function cleanTrackTitle(raw) {
 
 
   return title
-    .replace(/\s{2,}/g, ' ')
+    .replace(
+      /\s{2,}/g,
+      ' '
+    )
     .trim();
 
 }
 
 
+/* ================================
+   NOW PLAYING
+================================ */
+
 function setNowPlaying(rawTitle) {
 
   const title =
-    cleanTrackTitle(rawTitle);
+    cleanTrackTitle(
+      rawTitle
+    );
 
 
   const text =
@@ -372,6 +623,7 @@ function setNowPlaying(rawTitle) {
 
     element.textContent =
       text;
+
 
     element.title =
       title || '';
@@ -392,6 +644,9 @@ function setNowPlaying(rawTitle) {
 
   }
 
+
+  updateMediaSession();
+
 }
 
 
@@ -401,7 +656,14 @@ function setNowPlaying(rawTitle) {
 
 function initMetadata() {
 
-  if (!('EventSource' in window)) {
+  if (
+    !('EventSource' in window)
+  ) {
+
+    console.warn(
+      'EventSource não é suportado neste navegador.'
+    );
+
 
     setNowPlaying('');
 
@@ -410,15 +672,31 @@ function initMetadata() {
   }
 
 
+  /*
+   * Fecha uma conexão anterior caso
+   * initMetadata seja chamado novamente.
+   */
+
+  if (metadataSource) {
+
+    try {
+
+      metadataSource.close();
+
+    } catch (error) {}
+
+  }
+
+
   try {
 
-    const source =
+    metadataSource =
       new EventSource(
         META_URL
       );
 
 
-    source.addEventListener(
+    metadataSource.addEventListener(
       'message',
       event => {
 
@@ -444,8 +722,8 @@ function initMetadata() {
         } catch (error) {
 
           /*
-           * Ignora eventos que não sejam
-           * metadata válida.
+           * Alguns eventos do servidor
+           * podem não conter JSON válido.
            */
 
         }
@@ -454,12 +732,18 @@ function initMetadata() {
     );
 
 
-    source.addEventListener(
+    metadataSource.addEventListener(
       'error',
-      () => {
+      error => {
+
+        console.warn(
+          'Conexão de metadata temporariamente indisponível.',
+          error
+        );
 
         /*
-         * EventSource tenta reconectar.
+         * O EventSource tenta reconectar
+         * automaticamente.
          */
 
       }
@@ -490,7 +774,9 @@ function toast(message) {
 
 
   if (!element) {
+
     return;
+
   }
 
 
@@ -509,13 +795,16 @@ function toast(message) {
 
 
   window.ntpToastTimer =
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      element.classList.remove(
-        'show'
-      );
+        element.classList.remove(
+          'show'
+        );
 
-    }, 2600);
+      },
+      2600
+    );
 
 }
 
@@ -578,6 +867,7 @@ if (
           navLinks.classList.remove(
             'open'
           );
+
 
           navToggle.setAttribute(
             'aria-expanded',
@@ -679,6 +969,186 @@ if (
 
 
 /* ================================
+   MEDIA SESSION
+   CONTROLES DA TELA BLOQUEADA
+================================ */
+
+function initMediaSession() {
+
+  if (
+    !('mediaSession' in navigator)
+  ) {
+
+    console.log(
+      'Media Session API não disponível.'
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'play',
+      () => {
+
+        playRadio();
+
+      }
+    );
+
+  } catch (error) {
+
+    console.warn(
+      'Media Session play:',
+      error
+    );
+
+  }
+
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'pause',
+      () => {
+
+        pauseRadio();
+
+      }
+    );
+
+  } catch (error) {
+
+    console.warn(
+      'Media Session pause:',
+      error
+    );
+
+  }
+
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'stop',
+      () => {
+
+        pauseRadio();
+
+      }
+    );
+
+  } catch (error) {
+
+    console.warn(
+      'Media Session stop:',
+      error
+    );
+
+  }
+
+
+  /*
+   * Alguns celulares oferecem esses
+   * controles mesmo para streaming.
+   */
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'seekbackward',
+      null
+    );
+
+  } catch (error) {}
+
+
+  try {
+
+    navigator.mediaSession.setActionHandler(
+      'seekforward',
+      null
+    );
+
+  } catch (error) {}
+
+
+  updateMediaSession();
+
+}
+
+
+/* ================================
+   ATUALIZAR MEDIA SESSION
+================================ */
+
+function updateMediaSession() {
+
+  if (
+    !('mediaSession' in navigator)
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    typeof MediaMetadata === 'undefined'
+  ) {
+
+    return;
+
+  }
+
+
+  const title =
+    lastTrackText
+      .replace(/^🎵\s*/, '')
+      .trim();
+
+
+  try {
+
+    navigator.mediaSession.metadata =
+      new MediaMetadata({
+
+        title:
+          title ||
+          'NTP RÁDIO WEB',
+
+        artist:
+          'NTP RÁDIO WEB',
+
+        album:
+          'Rádio Online Ao Vivo',
+
+        artwork: [
+          {
+            src: 'favicon.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml'
+          }
+        ]
+
+      });
+
+  } catch (error) {
+
+    console.warn(
+      'Erro ao atualizar Media Session:',
+      error
+    );
+
+  }
+
+}
+
+
+/* ================================
    SERVICE WORKER
 ================================ */
 
@@ -691,15 +1161,29 @@ if (
     () => {
 
       navigator.serviceWorker
-        .register('sw.js')
-        .catch(error => {
+        .register(
+          'sw.js'
+        )
+        .then(
+          registration => {
 
-          console.error(
-            'Service Worker:',
-            error
-          );
+            console.log(
+              'Service Worker ativo:',
+              registration.scope
+            );
 
-        });
+          }
+        )
+        .catch(
+          error => {
+
+            console.error(
+              'Service Worker:',
+              error
+            );
+
+          }
+        );
 
     }
   );
@@ -711,6 +1195,67 @@ if (
    INICIALIZAÇÃO
 ================================ */
 
-setNowPlaying('');
+function initRadio() {
+
+  if (!radio) {
+
+    console.error(
+      'NTP RÁDIO WEB: elemento #radio não encontrado.'
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Garante que o endereço correto
+   * esteja configurado.
+   */
+
+  if (
+    !radio.src ||
+    !radio.src.includes(STREAM_URL)
+  ) {
+
+    radio.src =
+      STREAM_URL;
+
+  }
+
+
+  /*
+   * Volume inicial.
+   */
+
+  radio.volume =
+    savedVolume;
+
+
+  /*
+   * Estado inicial.
+   */
+
+  setPlaying(
+    !radio.paused
+  );
+
+
+  /*
+   * Metadata.
+   */
+
+  setNowPlaying('');
+
+}
+
+
+/* ================================
+   INICIAR SISTEMA
+================================ */
+
+initRadio();
 
 initMetadata();
+
+initMediaSession();
