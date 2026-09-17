@@ -170,46 +170,70 @@
 </div>
 <div class="footer-col">
 <b>NAVEGAÇÃO</b>
-<a href="#inicio">Início</a>
-<a href="#ao-vivo">Ao Vivo</a>
-<a href="#programacao">Programação</a>
-</div>
-<div class="footer-col">
-<b>INSTITUCIONAL</b>
-<a href="#anuncie">Anuncie</a>
-<a href="#sobre">Sobre</a>
-<a href="#contato">Contato</a>
-</div>
-</div>
-<small class="copyright">© 2026 NTP RÁDIO WEB · Transmissão via <a href="https://ntpradioweb.netlify.app/" rel="noopener noreferrer">ntpradioweb</a></small>
-</footer>
+<body class="galaxy-theme">
+    <!-- Camadas de Profundidade (Background) -->
+    <div class="space-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="stars-overlay"></div>
+    </div>
 
-<a class="whatsapp-float" href="https://wa.me/61991057795" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
-<img src="whatsapp.svg" alt="WhatsApp">
-</a>
+    <header class="main-header">
+        <nav class="nav-container">
+            <div class="logo-3d">NTP <span>RÁDIO</span></div>
+            <ul class="nav-menu">
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#ao-vivo">Ao Vivo</a></li>
+                <li><a href="#programacao">Programação</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+            <button class="btn-menu-3d">...</button>
+        </nav>
+    </header>
 
-<div class="player" id="player">
-<button class="player-min" id="playerMin" aria-label="Minimizar player"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
-<div class="eq eq-mini" data-eq aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-<div class="player-meta">
-<span class="live-badge"><i class="dot" aria-hidden="true"></i> AO VIVO</span>
-<span class="track" data-now>🎵 Carregando música...</span>
-</div>
-<div class="volume volume-mini">
-<svg class="vol-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"></path><path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-<input id="volumeMini" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
-</div>
-<button class="pip-btn pip-btn-icon" data-pip aria-label="Mini player em segundo plano no computador"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7h-2V6H5v7h11v2H5a2 2 0 0 1-2-2V6zm14 4h4v7h-4v-7z"></path></svg></button>
-<button class="play-btn play-btn-mini" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play" aria-hidden="true"></span><span class="pb-pause" aria-hidden="true"></span></button>
-</div>
+    <main>
+        <!-- Seção Hero: Onde o usuário sente o impacto -->
+        <section class="hero-section" id="inicio">
+            <div class="hero-content">
+                <span class="badge-glow">TRANSMISSÃO 24H</span>
+                <h1 class="text-3d-title">O SOM QUE <br> <em class="highlight">NUNCA MORRE</em></h1>
+                <p class="hero-subtitle">Sinta a experiência sonora definitiva com alta fidelidade.</p>
+                <div class="hero-actions">
+                    <a href="#ao-vivo" class="btn-primary-3d">OUVIR AGORA</a>
+                    <a href="#anuncie" class="btn-secondary-3d">ANUNCIE</a>
+                </div>
+            </div>
+        </section>
 
-<audio
-  id="radio"
-  preload="none"
-  playsinline
-  src="https://stream.zeno.fm/elhz4znig9wuv">
-</audio>
-<div id="toast" role="status" aria-live="polite"></div>
-<script src="script.js"></script>
+        <!-- Seção Player: O elemento principal em 3D -->
+        <section class="player-section" id="ao-vivo">
+            <div class="glass-card player-card">
+                <div class="player-visualizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+                <div class="player-info">
+                    <span class="status-live">AO VIVO</span>
+                    <h2 class="track-name">NTP RÁDIO WEB</h2>
+                    <p class="track-desc">Sintonizando a melhor vibe...</p>
+                </div>
+                <div class="player-controls">
+                    <button class="btn-play-main" id="playBtn">
+                        <div class="play-icon"></div>
+                    </button>
+                </div>
+                <div class="player-volume-container">
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="0.8">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Player Flutuante (Mobile/Desktop) -->
+    <div class="floating-player">
+        <!-- Aqui entra o seu áudio -->
+        <audio id="radio" src="https://stream.zeno.fm/elhz4znig9wuv"></audio>
+    </div>
+
+    <div class="scanline"></div>
 </body>
 </html>
