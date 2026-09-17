@@ -1,134 +1,77 @@
-/* 
-   GALAXY THEME ENGINE - NTP RÁDIO WEB
-   Focado em Profundidade, Luz e Atmosfera Espacial
-*/
-
+/* GALAXY THEME - Identidade Visual e Atmosfera */
 :root {
-    /* Paleta de Cores Espaciais */
-    --space-black: #020205;
-    --space-dark: #0a0a12;
+    --space-black: #050507;
     --nebula-purple: #7b2cff;
     --nebula-blue: #3a0ca3;
-    --star-white: #ffffff;
-    --star-dim: rgba(255, 255, 255, 0.6);
-    
-    /* Gradientes de Profundidade */
-    --grad-nebula: linear-gradient(135deg, var(--nebula-purple), var(--nebula-blue));
-    --grad-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-    --grad-dark: linear-gradient(to bottom, var(--space-black), var(--space-dark));
-    
-    /* Efeitos de Brilho (Glow) */
-    --glow-primary: 0 0 25px rgba(123, 44, 255, 0.4);
-    --glow-secondary: 0 0 50px rgba(58, 12, 163, 0.2);
+    --accent-glow: rgba(123, 44, 255, 0.5);
+    --text-white: #ffffff;
+    --text-dim: #a0a0a0;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-/* Camada de Atmosfera (Background Dinâmico) */
 body {
-    background: var(--grad-dark);
-    background-attachment: fixed;
-    min-height: 100vh;
+    background-color: var(--space-black);
+    color: var(--text-white);
+    margin: 0;
     overflow-x: hidden;
 }
 
-/* Efeito de Partículas/Estrelas (Simulado via CSS para Performance) */
-body::before {
-    content: "";
+/* Fundo com Profundidade */
+.space-bg {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
-        radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 50px 160px, var(--nebula-purple), rgba(0,0,0,0)),
-        radial-gradient(2px 2px at 90px 40px, var(--nebula-blue), rgba(0,0,0,0));
-    background-size: 200px 200px;
-    background-repeat: repeat;
-    opacity: 0.3;
     z-index: -1;
-    animation: starsMove 100s linear infinite;
+    background: radial-gradient(circle at center, #0a0a1a 0%, #050507 100%);
 }
 
-/* Estilização dos Elementos "Galaxy" */
-.galaxy-overlay {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, transparent, var(--space-black));
-    pointer-events: none;
-    z-index: 1;
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+}
+.orb-a {
+    width: 40vw;
+    height: 40vw;
+    background: var(--nebula-purple);
+    top: -10%;
+    left: -10%;
+    opacity: 0.4;
+}
+.orb-b {
+    width: 40vw;
+    height: 40vw;
+    background: var(--nebula-blue);
+    bottom: -10%;
+    right: -10%;
+    opacity: 0.4;
 }
 
-/* Botões com Efeito de Brilho Galáctico */
-.btn-galaxy {
-    position: relative;
-    overflow: hidden;
-    background: var(--grad-nebula);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    box-shadow: var(--glow-primary);
+/* Efeito de Brilho nos Textos */
+.highlight {
+    background: linear-gradient(90deg, #fff, var(--nebula-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Botão com Efeito de Glow */
+.btn-primary-3d {
+    background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-blue));
+    box-shadow: 0 10px 25px var(--accent-glow);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.btn-galaxy:hover {
-    transform: scale(1.05) translateY(-3px);
-    box-shadow: 0 0 40px var(--nebula-purple);
+.btn-primary-3d:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px var(--accent-glow);
 }
 
-/* Glassmorphism Avançado para Cards e Menus */
+/* Efeito de Vidro (Glassmorphism) */
 .glass-panel {
-    background: var(--grad-glass);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: var(--shadow-3d);
-}
-
-/* Animação de Estrelas para profundidade */
-@keyframes starsMove {
-    from { transform: translateY(0); }
-    to { transform: translateY(-1000px); }
-}
-
-/* Efeito de Scanline (Linhas de monitor antigo para toque Cyberpunk/Retro) */
-.scanline {
-    width: 100%;
-    height: 100px;
-    z-index: 10;
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(123, 44, 255, 0.05),
-        transparent
-    );
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    animation: scanlineMove 8s linear infinite;
-}
-
-@keyframes scanlineMove {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100vh); }
-}
-
-/* Texto com gradiente de luz */
-.text-glow {
-    color: white;
-    text-shadow: 0 0 10px var(--nebula-purple), 0 0 20px var(--nebula-blue);
-}
-
-/* Scrollbar Customizada (Para não quebrar a estética) */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--space-black);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--grad-nebula);
-    border-radius: 10px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
 }
