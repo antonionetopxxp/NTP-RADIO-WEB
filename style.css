@@ -494,3 +494,118 @@
   }
 
 }
+/* =========================================================
+   PROGRAMAÇÃO DINÂMICA
+========================================================= */
+
+.schedule-empty {
+
+  grid-column:
+    1 / -1;
+
+  padding:
+    45px 25px;
+
+  text-align: center;
+
+  border:
+    1px solid
+    rgba(109, 40, 255, .25);
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(11, 7, 24, .65);
+}
+
+
+.schedule-empty-icon {
+
+  font-size: 42px;
+
+  margin-bottom:
+    12px;
+}
+
+
+.schedule-empty h3 {
+
+  margin:
+    0 0 8px;
+
+  color:
+    #f7f5ff;
+}
+
+
+.schedule-empty p {
+
+  margin: 0;
+
+  color:
+    #a79bc4;
+}
+
+
+.schedule-day {
+
+  display: inline-block;
+
+  margin-top:
+    8px;
+
+  padding:
+    5px 9px;
+
+  border-radius:
+    20px;
+
+  background:
+    rgba(109, 40, 255, .14);
+
+  color:
+    #b991ff;
+
+  font-size:
+    12px;
+
+  font-weight:
+    600;
+}
+
+
+.schedule-presenter {
+
+  margin-top:
+    10px;
+
+  color:
+    #a66bff;
+
+  font-size:
+    13px;
+
+  font-weight:
+    600;
+}
+
+
+.schedule-time-range {
+
+  margin-top:
+    12px;
+
+  padding-top:
+    10px;
+
+  border-top:
+    1px solid
+    rgba(109, 40, 255, .15);
+
+  color:
+    #c7bce0;
+
+  font-size:
+    13px;
+}
