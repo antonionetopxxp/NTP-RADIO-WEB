@@ -10,425 +10,19 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Programação | NTP RADIO OS</title>
+  <meta
+    name="theme-color"
+    content="#02030a"
+  >
+
+  <title>
+    Programação | NTP RADIO OS
+  </title>
 
   <link
     rel="stylesheet"
     href="style.css"
   >
-
-  <style>
-
-    .programacao-page {
-      padding: 30px;
-    }
-
-    .page-header {
-      margin-bottom: 25px;
-    }
-
-    .page-header h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
-
-    .page-header p {
-      margin: 0;
-      color: #a79bc4;
-    }
-
-    .programacao-grid {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 25px;
-    }
-
-    .program-form,
-    .program-list {
-      background: rgba(11, 7, 24, .88);
-      border: 1px solid #2a1d55;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow:
-        0 0 30px rgba(109, 40, 255, .08);
-    }
-
-    .program-form h2,
-    .program-list h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 7px;
-      color: #ddd5f5;
-      font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-
-      width: 100%;
-      box-sizing: border-box;
-
-      background: #07050f;
-
-      border: 1px solid #35246b;
-
-      border-radius: 10px;
-
-      padding: 12px;
-
-      color: #fff;
-
-      outline: none;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-
-      border-color: #7b2cff;
-
-      box-shadow:
-        0 0 0 2px
-        rgba(123, 44, 255, .15);
-    }
-
-    .form-group textarea {
-
-      min-height: 100px;
-
-      resize: vertical;
-    }
-
-    .time-grid {
-
-      display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
-      gap: 12px;
-    }
-
-    .checkbox-row {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-      margin: 15px 0;
-    }
-
-    .checkbox-row input {
-
-      width: 18px;
-      height: 18px;
-
-      accent-color: #7b2cff;
-    }
-
-    .checkbox-row label {
-
-      color: #ddd5f5;
-
-      font-size: 14px;
-    }
-
-    .form-buttons {
-
-      display: flex;
-
-      gap: 10px;
-
-      margin-top: 20px;
-    }
-
-    .btn {
-
-      border: 0;
-
-      border-radius: 10px;
-
-      padding: 12px 18px;
-
-      cursor: pointer;
-
-      font-weight: 700;
-    }
-
-    .btn-primary {
-
-      background:
-        linear-gradient(
-          135deg,
-          #6d28ff,
-          #a66bff
-        );
-
-      color: white;
-
-      flex: 1;
-    }
-
-    .btn-secondary {
-
-      background: #1a0f33;
-
-      border: 1px solid #35246b;
-
-      color: #ddd5f5;
-    }
-
-    .notice {
-
-      display: none;
-
-      padding: 12px;
-
-      border-radius: 10px;
-
-      margin-bottom: 20px;
-
-      background:
-        rgba(41, 227, 154, .1);
-
-      border:
-        1px solid
-        rgba(41, 227, 154, .25);
-
-      color: #75efbe;
-    }
-
-    .empty {
-
-      text-align: center;
-
-      padding: 45px 20px;
-
-      color: #8f83aa;
-    }
-
-    .empty-icon {
-
-      font-size: 45px;
-
-      margin-bottom: 10px;
-    }
-
-    .program-card {
-
-      border: 1px solid #30205d;
-
-      background:
-        rgba(7, 5, 15, .75);
-
-      border-radius: 14px;
-
-      padding: 18px;
-
-      margin-bottom: 14px;
-    }
-
-    .program-card:last-child {
-
-      margin-bottom: 0;
-    }
-
-    .program-top {
-
-      display: flex;
-
-      justify-content: space-between;
-
-      gap: 15px;
-
-      align-items: flex-start;
-    }
-
-    .program-name {
-
-      font-size: 18px;
-
-      font-weight: 800;
-
-      color: #fff;
-    }
-
-    .program-presenter {
-
-      color: #a66bff;
-
-      margin-top: 5px;
-
-      font-size: 14px;
-    }
-
-    .program-time {
-
-      margin-top: 12px;
-
-      font-size: 16px;
-
-      font-weight: 700;
-
-      color: #fff;
-    }
-
-    .program-day {
-
-      display: inline-block;
-
-      margin-top: 8px;
-
-      padding: 5px 9px;
-
-      border-radius: 20px;
-
-      background:
-        rgba(109, 40, 255, .15);
-
-      color: #b991ff;
-
-      font-size: 12px;
-    }
-
-    .program-description {
-
-      color: #9e93b8;
-
-      margin-top: 12px;
-
-      line-height: 1.5;
-
-      font-size: 14px;
-    }
-
-    .program-actions {
-
-      display: flex;
-
-      gap: 8px;
-
-      margin-top: 15px;
-
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-
-      padding: 8px 12px;
-
-      border-radius: 8px;
-
-      border: 1px solid #35246b;
-
-      background: #120a26;
-
-      color: #ddd5f5;
-
-      cursor: pointer;
-    }
-
-    .action-btn:hover {
-
-      border-color: #7b2cff;
-
-      color: #fff;
-    }
-
-    .action-btn.delete {
-
-      color: #ff8fae;
-    }
-
-    .action-btn.delete:hover {
-
-      border-color: #ff4778;
-    }
-
-    .status {
-
-      padding: 5px 9px;
-
-      border-radius: 20px;
-
-      font-size: 11px;
-
-      white-space: nowrap;
-    }
-
-    .status.active {
-
-      background:
-        rgba(41, 227, 154, .12);
-
-      color: #29e39a;
-    }
-
-    .status.inactive {
-
-      background:
-        rgba(255, 80, 120, .1);
-
-      color: #ff809e;
-    }
-
-    @media (max-width: 900px) {
-
-      .programacao-page {
-
-        padding: 20px 15px;
-
-      }
-
-      .programacao-grid {
-
-        grid-template-columns: 1fr;
-
-      }
-
-    }
-
-    @media (max-width: 500px) {
-
-      .program-form,
-      .program-list {
-
-        padding: 18px;
-
-      }
-
-      .time-grid {
-
-        grid-template-columns: 1fr;
-
-      }
-
-      .program-top {
-
-        flex-direction: column;
-
-      }
-
-      .form-buttons {
-
-        flex-direction: column;
-
-      }
-
-    }
-
-  </style>
 
 </head>
 
@@ -436,329 +30,379 @@
 <body>
 
 
-  <!-- PROTEÇÃO DO PAINEL -->
+<!-- =====================================================
+     CABEÇALHO
+===================================================== -->
 
-  <script>
+<header class="admin-header">
 
-    if (
-      sessionStorage.getItem(
-        "ntp_admin_logged"
-      ) !== "true"
-    ) {
+  <div class="admin-brand">
 
-      window.location.href =
-        "index.html";
+    <strong>NTP</strong>
 
-    }
+    <span>RADIO OS</span>
 
-  </script>
+  </div>
 
 
-  <!-- CABEÇALHO -->
+  <div class="admin-actions">
 
-  <header class="admin-header">
-
-    <div class="admin-brand">
-
-      <strong>NTP</strong>
-
-      <span>
-        RADIO OS
-      </span>
-
-    </div>
+    <a
+      class="admin-button"
+      href="../index.html"
+    >
+      📻 Ver rádio
+    </a>
 
 
-    <div class="admin-actions">
+    <a
+      class="admin-button logout"
+      href="index.html"
+    >
+      ← Painel
+    </a>
 
-      <a
-        href="dashboard.html"
-        class="admin-button"
-      >
-        🏠 Dashboard
-      </a>
+  </div>
 
-      <a
-        href="../index.html"
-        class="admin-button"
-      >
-        📻 Ver rádio
-      </a>
-
-      <button
-        id="logoutButton"
-        class="admin-button logout"
-      >
-        Sair
-      </button>
-
-    </div>
-
-  </header>
+</header>
 
 
-  <!-- CONTEÚDO -->
 
-  <main class="programacao-page">
+<!-- =====================================================
+     MENU
+===================================================== -->
 
+<nav class="admin-sidebar">
 
-    <div class="page-header">
-
-      <h1>
-        📅 Gerenciador de Programação
-      </h1>
-
-      <p>
-        Organize os programas e horários
-        da NTP RÁDIO WEB.
-      </p>
-
-    </div>
+  <a
+    class="sidebar-link"
+    href="index.html"
+  >
+    🏠 Dashboard
+  </a>
 
 
-    <div
-      id="notice"
-      class="notice"
-    ></div>
+  <a
+    class="sidebar-link active"
+    href="programacao.html"
+  >
+    📅 Programação
+  </a>
 
 
-    <div class="programacao-grid">
+  <a
+    class="sidebar-link"
+    href="../pages/noticias.html"
+  >
+    📰 Notícias
+  </a>
 
 
-      <!-- FORMULÁRIO -->
+  <a
+    class="sidebar-link"
+    href="../pages/eventos.html"
+  >
+    🎫 Eventos
+  </a>
 
-      <section class="program-form">
-
-        <h2 id="formTitle">
-          Novo programa
-        </h2>
+</nav>
 
 
-        <form id="programForm">
 
+<!-- =====================================================
+     CONTEÚDO
+===================================================== -->
+
+<main class="programacao-page">
+
+
+  <div class="page-header">
+
+    <h1>
+      📅 Gerenciador de Programação
+    </h1>
+
+    <p>
+      Cadastre os programas e horários
+      da NTP RÁDIO WEB.
+    </p>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       AVISO
+  ==================================================== -->
+
+  <div
+    id="notice"
+    class="notice"
+  ></div>
+
+
+
+  <!-- ===================================================
+       GRID
+  ==================================================== -->
+
+  <div class="programacao-grid">
+
+
+    <!-- ===============================================
+         FORMULÁRIO
+    ================================================ -->
+
+    <section class="program-form">
+
+      <h2 id="formTitle">
+        Novo programa
+      </h2>
+
+
+      <form id="programForm">
+
+
+        <!-- ID OCULTO -->
+
+        <input
+          type="hidden"
+          id="programId"
+        >
+
+
+
+        <!-- NOME -->
+
+        <div class="form-group">
+
+          <label for="programName">
+            Nome do programa
+          </label>
 
           <input
-            type="hidden"
-            id="programId"
+            type="text"
+            id="programName"
+            placeholder="Ex.: Manhã NTP"
+            autocomplete="off"
+            required
           >
 
+        </div>
+
+
+
+        <!-- APRESENTADOR -->
+
+        <div class="form-group">
+
+          <label for="presenter">
+            Apresentador
+          </label>
+
+          <input
+            type="text"
+            id="presenter"
+            placeholder="Ex.: Neto"
+            autocomplete="off"
+          >
+
+        </div>
+
+
+
+        <!-- DIA -->
+
+        <div class="form-group">
+
+          <label for="day">
+            Dia da semana
+          </label>
+
+          <select
+            id="day"
+            required
+          >
+
+            <option value="">
+              Selecione o dia
+            </option>
+
+            <option value="segunda">
+              Segunda-feira
+            </option>
+
+            <option value="terca">
+              Terça-feira
+            </option>
+
+            <option value="quarta">
+              Quarta-feira
+            </option>
+
+            <option value="quinta">
+              Quinta-feira
+            </option>
+
+            <option value="sexta">
+              Sexta-feira
+            </option>
+
+            <option value="sabado">
+              Sábado
+            </option>
+
+            <option value="domingo">
+              Domingo
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- HORÁRIOS -->
+
+        <div class="time-grid">
+
 
           <div class="form-group">
 
-            <label for="programName">
-              Nome do programa
+            <label for="startTime">
+              Início
             </label>
 
             <input
-              id="programName"
-              type="text"
-              placeholder="Ex.: Manhã NTP"
+              type="time"
+              id="startTime"
               required
             >
 
           </div>
 
 
+
           <div class="form-group">
 
-            <label for="presenter">
-              Apresentador
+            <label for="endTime">
+              Término
             </label>
 
             <input
-              id="presenter"
-              type="text"
-              placeholder="Ex.: Antônio Neto"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label for="day">
-              Dia da semana
-            </label>
-
-            <select
-              id="day"
+              type="time"
+              id="endTime"
               required
             >
 
-              <option value="">
-                Selecione
-              </option>
-
-              <option value="segunda">
-                Segunda-feira
-              </option>
-
-              <option value="terca">
-                Terça-feira
-              </option>
-
-              <option value="quarta">
-                Quarta-feira
-              </option>
-
-              <option value="quinta">
-                Quinta-feira
-              </option>
-
-              <option value="sexta">
-                Sexta-feira
-              </option>
-
-              <option value="sabado">
-                Sábado
-              </option>
-
-              <option value="domingo">
-                Domingo
-              </option>
-
-            </select>
-
           </div>
 
 
-          <div class="time-grid">
+        </div>
 
 
-            <div class="form-group">
 
-              <label for="startTime">
-                Início
-              </label>
+        <!-- DESCRIÇÃO -->
 
-              <input
-                id="startTime"
-                type="time"
-                required
-              >
+        <div class="form-group">
 
-            </div>
+          <label for="description">
+            Descrição
+          </label>
 
+          <textarea
+            id="description"
+            placeholder="Descreva o programa..."
+          ></textarea>
 
-            <div class="form-group">
-
-              <label for="endTime">
-                Término
-              </label>
-
-              <input
-                id="endTime"
-                type="time"
-                required
-              >
-
-            </div>
+        </div>
 
 
-          </div>
+
+        <!-- ATIVO -->
+
+        <div class="checkbox-row">
+
+          <input
+            type="checkbox"
+            id="active"
+            checked
+          >
+
+          <label for="active">
+            Programa ativo
+          </label>
+
+        </div>
 
 
-          <div class="form-group">
 
-            <label for="description">
-              Descrição
-            </label>
+        <!-- BOTÕES -->
 
-            <textarea
-              id="description"
-              placeholder="Descrição do programa..."
-            ></textarea>
+        <div class="form-buttons">
 
-          </div>
-
-
-          <div class="checkbox-row">
-
-            <input
-              id="active"
-              type="checkbox"
-              checked
-            >
-
-            <label for="active">
-              Programa ativo
-            </label>
-
-          </div>
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            💾 Salvar programa
+          </button>
 
 
-          <div class="form-buttons">
+          <button
+            type="button"
+            id="cancelEdit"
+            class="btn btn-secondary"
+            style="display:none"
+          >
+            Cancelar
+          </button>
 
-            <button
-              type="submit"
-              class="btn btn-primary"
-            >
-              💾 Salvar programa
-            </button>
-
-
-            <button
-              type="button"
-              id="cancelEdit"
-              class="btn btn-secondary"
-              style="display:none;"
-            >
-              Cancelar
-            </button>
-
-          </div>
+        </div>
 
 
-        </form>
+      </form>
 
-      </section>
-
-
-      <!-- LISTA -->
-
-      <section class="program-list">
-
-        <h2>
-          Programas cadastrados
-        </h2>
-
-        <div id="programList"></div>
-
-      </section>
+    </section>
 
 
-    </div>
+
+    <!-- ===============================================
+         LISTA
+    ================================================ -->
+
+    <section class="program-list">
+
+      <h2>
+        Programas cadastrados
+      </h2>
 
 
-  </main>
+      <div id="programList">
+
+        <div class="empty">
+
+          Carregando programação...
+
+        </div>
+
+      </div>
+
+    </section>
 
 
-  <script>
+  </div>
 
-    document
-      .getElementById(
-        "logoutButton"
-      )
-      .addEventListener(
-        "click",
-        function() {
-
-          sessionStorage.removeItem(
-            "ntp_admin_logged"
-          );
-
-          window.location.href =
-            "index.html";
-
-        }
-      );
-
-  </script>
+</main>
 
 
-  <script src="programacao.js"></script>
 
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="programacao.js?v=3"></script>
 
 </body>
 
-  </html>
+      </html>
