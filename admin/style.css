@@ -843,3 +843,159 @@ a {
 
   background:
     radial-gradient(
+      /* =========================
+   DASHBOARD
+========================= */
+
+.admin-header {
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 25px;
+
+  background: rgba(7, 5, 15, .95);
+
+  border-bottom: 1px solid #2a1d55;
+
+  box-sizing: border-box;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-brand strong {
+  color: #a66bff;
+  font-size: 24px;
+}
+
+.admin-brand span {
+  color: #f7f5ff;
+  font-weight: 700;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 9px 14px;
+
+  border-radius: 9px;
+
+  border: 1px solid #35246b;
+
+  background: #120a26;
+
+  color: #ddd5f5;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.admin-button:hover {
+  border-color: #7b2cff;
+}
+
+.admin-button.logout {
+  color: #ff8da9;
+}
+
+.admin-layout {
+  min-height: calc(100vh - 70px);
+
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 230px;
+
+  flex-shrink: 0;
+
+  padding: 25px 15px;
+
+  box-sizing: border-box;
+
+  background: #07050f;
+
+  border-right: 1px solid #2a1d55;
+}
+
+.sidebar-title {
+  color: #71658b;
+  font-size: 11px;
+  font-weight: 800;
+
+  padding: 0 12px 12px;
+
+  letter-spacing: 1px;
+}
+
+.sidebar-link {
+  display: block;
+
+  padding: 12px;
+
+  margin-bottom: 5px;
+
+  border-radius: 9px;
+
+  color: #aaa0bd;
+
+  text-decoration: none;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: rgba(109,40,255,.15);
+  color: #fff;
+}
+
+.admin-main {
+  flex: 1;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(109,40,255,.08),
+      transparent 30%
+    );
+}
+
+.dashboard-title {
+  margin-bottom: 25px;
+}
+
+.dashboard-title h1 {
+  margin: 0 0 5px;
+}
+
+.dashboard-title p {
+  margin: 0;
+  color: #9186a8;
+}
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 15px;
+
+  margin-bottom: 20
