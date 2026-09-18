@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
 
@@ -8,91 +9,318 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Login | NTP RADIO OS</title>
+  <title>Dashboard | NTP RADIO OS</title>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="login-page">
+<body>
 
-  <main class="login-container">
+  <!-- =========================
+       CABEÇALHO
+  ========================== -->
 
-    <div class="login-logo">
-      NTP
+  <header class="admin-header">
+
+    <div class="admin-brand">
+
+      <strong>
+        NTP RADIO OS
+      </strong>
+
+      <span>
+        Painel administrativo
+      </span>
+
     </div>
 
-    <h1>NTP RADIO OS</h1>
+    <div class="admin-actions">
 
-    <p class="login-subtitle">
-      Área administrativa
-    </p>
-
-    <form id="loginForm">
-
-      <div class="login-field">
-
-        <label for="username">
-          Usuário
-        </label>
-
-        <input
-          id="username"
-          type="text"
-          autocomplete="username"
-          placeholder="Digite seu usuário"
-          required
-        >
-<div class="admin-card">
-    <div class="card-icon">📅</div>
-
-    <div>
-        <span>Programação</span>
-        <strong id="programCount">0</strong>
-    </div>
-</div>
-        
-      </div>
-
-      <div class="login-field">
-
-        <label for="password">
-          Senha
-        </label>
-
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Digite sua senha"
-          required
-        >
-
-      </div>
-
-      <button
-        type="submit"
-        class="login-button"
+      <a
+        href="../index.html"
+        class="admin-button"
       >
-        Entrar no painel
-      </button>
+        Ver rádio
+      </a>
 
-      <p
-        id="loginError"
-        class="login-error"
-      ></p>
+      <a
+        href="login.html"
+        class="admin-button"
+      >
+        Sair
+      </a>
 
-    </form>
+    </div>
 
-    <a
-      href="../index.html"
-      class="back-site"
-    >
-      ← Voltar para a rádio
-    </a>
+  </header>
 
-  </main>
 
-  <script src="login.js"></script>
+  <!-- =========================
+       LAYOUT
+  ========================== -->
+
+  <div class="admin-layout">
+
+
+    <!-- =========================
+         MENU
+    ========================== -->
+
+    <nav class="admin-nav">
+
+      <a
+        href="index.html"
+        class="active"
+      >
+        Dashboard
+      </a>
+
+      <a
+        href="programacao.html"
+      >
+        Programação
+      </a>
+
+      <a
+        href="noticias.html"
+      >
+        Notícias
+      </a>
+
+      <a
+        href="eventos.html"
+      >
+        Eventos
+      </a>
+
+    </nav>
+
+
+    <!-- =========================
+         CONTEÚDO
+    ========================== -->
+
+    <main class="admin-content">
+
+      <div class="admin-page-title">
+
+        <div>
+
+          <h1>
+            Dashboard
+          </h1>
+
+          <p>
+            Visão geral da sua rádio.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           CARDS
+      ========================== -->
+
+      <section class="admin-grid">
+
+
+        <!-- RÁDIO -->
+
+        <div class="admin-card">
+
+          <div class="card-icon">
+            📻
+          </div>
+
+          <div>
+
+            <span>
+              Rádio
+            </span>
+
+            <strong>
+              Online
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROGRAMAÇÃO -->
+
+        <div class="admin-card">
+
+          <div class="card-icon">
+            📅
+          </div>
+
+          <div>
+
+            <span>
+              Programação
+            </span>
+
+            <strong id="programCount">
+              0
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- NOTÍCIAS -->
+
+        <div class="admin-card">
+
+          <div class="card-icon">
+            📰
+          </div>
+
+          <div>
+
+            <span>
+              Notícias
+            </span>
+
+            <strong>
+              Gerenciar
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- PLATAFORMA -->
+
+        <div class="admin-card">
+
+          <div class="card-icon">
+            🚀
+          </div>
+
+          <div>
+
+            <span>
+              Plataforma
+            </span>
+
+            <strong>
+              NTP RADIO OS
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           AÇÕES RÁPIDAS
+      ========================== -->
+
+      <section class="admin-section">
+
+        <h2>
+          Ações rápidas
+        </h2>
+
+
+        <div class="quick-actions">
+
+
+          <a
+            href="programacao.html"
+            class="quick-card"
+          >
+
+            <span>
+              📅
+            </span>
+
+            <div>
+
+              <strong>
+                Programação
+              </strong>
+
+              <small>
+                Gerenciar programas
+              </small>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="noticias.html"
+            class="quick-card"
+          >
+
+            <span>
+              📰
+            </span>
+
+            <div>
+
+              <strong>
+                Notícias
+              </strong>
+
+              <small>
+                Gerenciar notícias
+              </small>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="eventos.html"
+            class="quick-card"
+          >
+
+            <span>
+              📅
+            </span>
+
+            <div>
+
+              <strong>
+                Eventos
+              </strong>
+
+              <small>
+                Gerenciar eventos
+              </small>
+
+            </div>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script src="app.js?v=3"></script>
 
 </body>
+
 </html>
