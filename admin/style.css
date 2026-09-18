@@ -1735,3 +1735,64 @@ textarea {
   }
 
 }
+/* =========================================================
+   AJUSTE FINAL DO CABEÇALHO MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .admin-header {
+    min-height: 58px;
+
+    display: flex;
+    flex-wrap: nowrap;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 8px 12px;
+
+    gap: 8px;
+  }
+
+  .admin-brand {
+    flex-shrink: 0;
+  }
+
+  .admin-brand strong {
+    font-size: 20px;
+  }
+
+  .admin-brand span {
+    font-size: 11px;
+  }
+
+  .admin-actions {
+    width: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+  }
+
+  .admin-button {
+    min-height: 34px;
+
+    padding:
+      6px 9px;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+  }
+
+  .admin-layout {
+    min-height:
+      calc(100vh - 58px);
+  }
+
+}
