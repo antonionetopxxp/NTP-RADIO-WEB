@@ -1,34 +1,55 @@
-<script>
-  document
-    .getElementById("logoutButton")
-    .addEventListener("click", function () {
-
-      sessionStorage.removeItem(
-        "ntp_admin_logged"
-      );
-
-      window.location.href =
-        "index.html";
-
-    });
-</script>
-
 /* =========================================================
    NTP RADIO OS
    GERENCIADOR DE PROGRAMAÇÃO
+   VERSÃO 3
 ========================================================= */
 
-const STORAGE_KEY = "ntp_radio_programacao";
 
-const dayNames = {
+"use strict";
+
+
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
+const STORAGE_KEY =
+  "ntp_radio_programacao";
+
+
+/* =========================================================
+   DIAS
+========================================================= */
+
+const DAY_NAMES = {
+
   segunda: "Segunda-feira",
+
   terca: "Terça-feira",
+
   quarta: "Quarta-feira",
+
   quinta: "Quinta-feira",
+
   sexta: "Sexta-feira",
+
   sabado: "Sábado",
+
   domingo: "Domingo"
+
 };
+
+
+const DAY_ORDER = [
+
+  "segunda",
+  "terca",
+  "quarta",
+  "quinta",
+  "sexta",
+  "sabado",
+  "domingo"
+
+];
 
 
 /* =========================================================
@@ -36,77 +57,150 @@ const dayNames = {
 ========================================================= */
 
 const form =
-  document.getElementById("programForm");
+  document.getElementById(
+    "programForm"
+  );
+
 
 const programId =
-  document.getElementById("programId");
+  document.getElementById(
+    "programId"
+  );
+
 
 const programName =
-  document.getElementById("programName");
+  document.getElementById(
+    "programName"
+  );
+
 
 const presenter =
-  document.getElementById("presenter");
+  document.getElementById(
+    "presenter"
+  );
+
 
 const day =
-  document.getElementById("day");
+  document.getElementById(
+    "day"
+  );
+
 
 const startTime =
-  document.getElementById("startTime");
+  document.getElementById(
+    "startTime"
+  );
+
 
 const endTime =
-  document.getElementById("endTime");
+  document.getElementById(
+    "endTime"
+  );
+
 
 const description =
-  document.getElementById("description");
+  document.getElementById(
+    "description"
+  );
+
 
 const active =
-  document.getElementById("active");
+  document.getElementById(
+    "active"
+  );
+
 
 const programList =
-  document.getElementById("programList");
+  document.getElementById(
+    "programList"
+  );
+
 
 const formTitle =
-  document.getElementById("formTitle");
+  document.getElementById(
+    "formTitle"
+  );
+
 
 const cancelEdit =
-  document.getElementById("cancelEdit");
+  document.getElementById(
+    "cancelEdit"
+  );
+
 
 const notice =
-  document.getElementById("notice");
+  document.getElementById(
+    "notice"
+  );
 
 
 /* =========================================================
-   CARREGAR PROGRAMAS
+   VERIFICAÇÃO
+========================================================= */
+
+console.log(
+  "NTP RADIO OS - Programação carregada"
+);
+
+
+console.log(
+  "Chave:",
+  STORAGE_KEY
+);
+
+
+if (!form) {
+
+  console.error(
+    "ERRO: #programForm não foi encontrado."
+  );
+
+}
+
+
+/* =========================================================
+   LER DADOS
 ========================================================= */
 
 function getPrograms() {
 
+  const raw =
+    localStorage.getItem(
+      STORAGE_KEY
+    );
+
+
+  if (!raw) {
+
+    return [];
+
+  }
+
+
   try {
 
-    const saved =
-      localStorage.getItem(
-        STORAGE_KEY
-      );
+    const data =
+      JSON.parse(raw);
 
-    if (!saved) {
+
+    if (
+      !Array.isArray(data)
+    ) {
+
       return [];
+
     }
 
-    const programs =
-      JSON.parse(saved);
 
-    if (!Array.isArray(programs)) {
-      return [];
-    }
-
-    return programs;
+    return data;
 
   } catch (error) {
 
     console.error(
-      "Erro ao carregar programação:",
+      "Erro no JSON da programação:",
       error
     );
+
 
     return [];
 
@@ -116,31 +210,66 @@ function getPrograms() {
 
 
 /* =========================================================
-   SALVAR PROGRAMAS
+   GRAVAR DADOS
 ========================================================= */
 
-function savePrograms(programs) {
+function savePrograms(
+  programs
+) {
 
   try {
 
+    const json =
+      JSON.stringify(
+        programs
+      );
+
+
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify(programs)
+      json
     );
+
+
+    /* VERIFICAÇÃO REAL */
+
+    const verification =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+
+    if (
+      verification !== json
+    ) {
+
+      throw new Error(
+        "O navegador não confirmou o armazenamento."
+      );
+
+    }
+
+
+    console.log(
+      "Programação salva:",
+      programs
+    );
+
 
     return true;
 
   } catch (error) {
 
     console.error(
-      "Erro ao salvar programação:",
+      "ERRO AO SALVAR:",
       error
     );
 
-    showNotice(
-      "Não foi possível salvar. O armazenamento do navegador pode estar bloqueado.",
-      "error"
+
+    alert(
+      "Não foi possível salvar a programação neste navegador."
     );
+
 
     return false;
 
@@ -153,30 +282,28 @@ function savePrograms(programs) {
    ORDENAR
 ========================================================= */
 
-const dayOrder = [
-  "segunda",
-  "terca",
-  "quarta",
-  "quinta",
-  "sexta",
-  "sabado",
-  "domingo"
-];
-
-
-function sortPrograms(programs) {
+function sortPrograms(
+  programs
+) {
 
   return [...programs].sort(
-    (a, b) => {
+    function(a, b) {
 
       const dayA =
-        dayOrder.indexOf(a.day);
+        DAY_ORDER.indexOf(
+          a.day
+        );
+
 
       const dayB =
-        dayOrder.indexOf(b.day);
+        DAY_ORDER.indexOf(
+          b.day
+        );
 
 
-      if (dayA !== dayB) {
+      if (
+        dayA !== dayB
+      ) {
 
         return dayA - dayB;
 
@@ -198,30 +325,37 @@ function sortPrograms(programs) {
 
 
 /* =========================================================
-   SEGURANÇA HTML
+   SEGURANÇA
 ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+  value
+) {
 
   return String(
     value ?? ""
   )
+
     .replace(
       /&/g,
       "&amp;"
     )
+
     .replace(
       /</g,
       "&lt;"
     )
+
     .replace(
       />/g,
       "&gt;"
     )
+
     .replace(
       /"/g,
       "&quot;"
     )
+
     .replace(
       /'/g,
       "&#039;"
@@ -247,68 +381,59 @@ function showNotice(
   notice.textContent =
     message;
 
+
   notice.style.display =
     "block";
 
 
-  if (type === "error") {
+  if (
+    type === "error"
+  ) {
 
     notice.style.color =
       "#ff8fae";
-
-    notice.style.background =
-      "rgba(255,80,120,.08)";
-
-    notice.style.borderColor =
-      "rgba(255,80,120,.25)";
 
   } else {
 
     notice.style.color =
       "#75efbe";
 
-    notice.style.background =
-      "rgba(41,227,154,.08)";
-
-    notice.style.borderColor =
-      "rgba(41,227,154,.25)";
-
   }
 
 
-  clearTimeout(
-    showNotice.timer
+  setTimeout(
+    function() {
+
+      notice.style.display =
+        "none";
+
+    },
+    3500
   );
-
-
-  showNotice.timer =
-    setTimeout(
-      () => {
-
-        notice.style.display =
-          "none";
-
-      },
-      3500
-    );
 
 }
 
 
 /* =========================================================
-   LIMPAR FORMULÁRIO
+   LIMPAR
 ========================================================= */
 
 function clearForm() {
 
   form.reset();
 
-  programId.value = "";
 
-  active.checked = true;
+  programId.value =
+    "";
+
+
+  active.checked =
+    true;
+
 
   formTitle.textContent =
     "Novo programa";
+
 
   cancelEdit.style.display =
     "none";
@@ -317,7 +442,7 @@ function clearForm() {
 
 
 /* =========================================================
-   RENDERIZAR LISTA
+   RENDERIZAR
 ========================================================= */
 
 function renderPrograms() {
@@ -328,28 +453,33 @@ function renderPrograms() {
     );
 
 
-  if (!programs.length) {
+  if (
+    programs.length === 0
+  ) {
 
     programList.innerHTML = `
 
       <div class="empty">
 
-        <div class="empty-icon">
+        <div style="font-size:40px">
           📻
         </div>
+
+        <br>
 
         <strong>
           Nenhum programa cadastrado
         </strong>
 
         <p>
-          Use o formulário ao lado
-          para criar o primeiro programa.
+          Cadastre o primeiro programa
+          usando o formulário.
         </p>
 
       </div>
 
     `;
+
 
     return;
 
@@ -357,169 +487,186 @@ function renderPrograms() {
 
 
   programList.innerHTML =
-    programs.map(
-      program => {
+    programs
+      .map(
+        function(program) {
 
-        const dayName =
-          dayNames[
-            program.day
-          ] ||
-          program.day ||
-          "Dia não informado";
-
-
-        const statusClass =
-          program.active !== false
-            ? "active"
-            : "inactive";
+          const dayName =
+            DAY_NAMES[
+              program.day
+            ] ||
+            program.day;
 
 
-        const statusText =
-          program.active !== false
-            ? "ATIVO"
-            : "INATIVO";
+          const status =
+            program.active !== false;
 
 
-        return `
+          return `
 
-          <article
-            class="program-card"
-          >
-
-            <div
-              class="program-top"
+            <article
+              class="program-card"
             >
 
-              <div>
+              <div
+                class="program-top"
+              >
 
-                <div
-                  class="program-name"
-                >
-                  ${escapeHTML(
-                    program.name
-                  )}
+                <div>
+
+                  <div
+                    class="program-name"
+                  >
+                    ${escapeHTML(
+                      program.name
+                    )}
+                  </div>
+
+
+                  ${
+                    program.presenter
+                      ? `
+                        <div
+                          class="program-presenter"
+                        >
+                          🎙️
+                          ${escapeHTML(
+                            program.presenter
+                          )}
+                        </div>
+                      `
+                      : ""
+                  }
+
                 </div>
 
 
-                ${
-                  program.presenter
-                    ? `
-                      <div
-                        class="program-presenter"
-                      >
-                        🎙️
-                        ${escapeHTML(
-                          program.presenter
-                        )}
-                      </div>
-                    `
-                    : ""
-                }
+                <span
+                  class="status ${
+                    status
+                      ? "active"
+                      : "inactive"
+                  }"
+                >
+
+                  ${
+                    status
+                      ? "ATIVO"
+                      : "INATIVO"
+                  }
+
+                </span>
+
+              </div>
+
+
+              <div
+                class="program-time"
+              >
+
+                🕐
+
+                ${escapeHTML(
+                  program.startTime
+                )}
+
+                —
+
+                ${escapeHTML(
+                  program.endTime
+                )}
 
               </div>
 
 
               <span
-                class="status ${statusClass}"
+                class="program-day"
               >
-                ${statusText}
+
+                📅
+
+                ${escapeHTML(
+                  dayName
+                )}
+
               </span>
 
-            </div>
+
+              ${
+                program.description
+                  ? `
+                    <div
+                      class="program-description"
+                    >
+                      ${escapeHTML(
+                        program.description
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
 
 
-            <div
-              class="program-time"
-            >
-
-              🕐
-
-              ${escapeHTML(
-                program.startTime
-              )}
-
-              —
-
-              ${escapeHTML(
-                program.endTime
-              )}
-
-            </div>
-
-
-            <span
-              class="program-day"
-            >
-              📅
-              ${escapeHTML(
-                dayName
-              )}
-            </span>
-
-
-            ${
-              program.description
-                ? `
-                  <div
-                    class="program-description"
-                  >
-                    ${escapeHTML(
-                      program.description
-                    )}
-                  </div>
-                `
-                : ""
-            }
-
-
-            <div
-              class="program-actions"
-            >
-
-              <button
-                class="action-btn"
-                data-action="edit"
-                data-id="${program.id}"
+              <div
+                class="program-actions"
               >
-                ✏️ Editar
-              </button>
+
+                <button
+                  type="button"
+                  class="action-btn"
+                  data-action="edit"
+                  data-id="${
+                    program.id
+                  }"
+                >
+                  ✏️ Editar
+                </button>
 
 
-              <button
-                class="action-btn"
-                data-action="toggle"
-                data-id="${program.id}"
-              >
-                ${
-                  program.active !== false
-                    ? "⏸️ Desativar"
-                    : "▶️ Ativar"
-                }
-              </button>
+                <button
+                  type="button"
+                  class="action-btn"
+                  data-action="toggle"
+                  data-id="${
+                    program.id
+                  }"
+                >
+
+                  ${
+                    status
+                      ? "⏸️ Desativar"
+                      : "▶️ Ativar"
+                  }
+
+                </button>
 
 
-              <button
-                class="action-btn delete"
-                data-action="delete"
-                data-id="${program.id}"
-              >
-                🗑️ Excluir
-              </button>
+                <button
+                  type="button"
+                  class="action-btn delete"
+                  data-action="delete"
+                  data-id="${
+                    program.id
+                  }"
+                >
+                  🗑️ Excluir
+                </button>
 
-            </div>
+              </div>
 
-          </article>
+            </article>
 
-        `;
+          `;
 
-      }
-    ).join("");
+        }
+      )
+      .join("");
 
 }
 
 
 /* =========================================================
-   SALVAR NOVO / EDITAR
+   SALVAR
 ========================================================= */
 
 form.addEventListener(
@@ -529,31 +676,42 @@ form.addEventListener(
     event.preventDefault();
 
 
+    console.log(
+      "Botão SALVAR pressionado."
+    );
+
+
     const name =
       programName.value.trim();
+
 
     const presenterValue =
       presenter.value.trim();
 
+
     const dayValue =
       day.value;
+
 
     const startValue =
       startTime.value;
 
+
     const endValue =
       endTime.value;
 
+
     const descriptionValue =
       description.value.trim();
+
 
     const activeValue =
       active.checked;
 
 
-    /* =========================
+    /* ================================================
        VALIDAÇÕES
-    ========================= */
+    ================================================= */
 
     if (!name) {
 
@@ -572,7 +730,7 @@ form.addEventListener(
     if (!dayValue) {
 
       showNotice(
-        "Selecione o dia da semana.",
+        "Selecione o dia.",
         "error"
       );
 
@@ -611,10 +769,12 @@ form.addEventListener(
     }
 
 
-    if (startValue >= endValue) {
+    if (
+      startValue >= endValue
+    ) {
 
       showNotice(
-        "O horário de término deve ser depois do início.",
+        "O horário final deve ser depois do horário inicial.",
         "error"
       );
 
@@ -629,25 +789,34 @@ form.addEventListener(
       getPrograms();
 
 
-    /* =========================
+    /* ================================================
        EDITAR
-    ========================= */
+    ================================================= */
 
-    if (programId.value) {
+    if (
+      programId.value
+    ) {
 
       const index =
         programs.findIndex(
-          program =>
-            String(program.id) ===
-            String(programId.value)
+          function(item) {
+
+            return String(
+              item.id
+            ) === String(
+              programId.value
+            );
+
+          }
         );
 
 
-      if (index === -1) {
+      if (
+        index === -1
+      ) {
 
-        showNotice(
-          "Programa não encontrado.",
-          "error"
+        alert(
+          "Programa não encontrado."
         );
 
         return;
@@ -682,266 +851,86 @@ form.addEventListener(
       };
 
 
-      if (
-        savePrograms(
-          programs
-        )
-      ) {
-
-        showNotice(
-          "Programa atualizado com sucesso!"
-        );
-
-        clearForm();
-
-        renderPrograms();
-
-      }
+    } else {
 
 
-      return;
+      /* ==============================================
+         NOVO
+      ============================================== */
+
+      const newProgram = {
+
+        id:
+          Date.now().toString(),
+
+        name,
+
+        presenter:
+          presenterValue,
+
+        day:
+          dayValue,
+
+        startTime:
+          startValue,
+
+        endTime:
+          endValue,
+
+        description:
+          descriptionValue,
+
+        active:
+          activeValue,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+
+      programs.push(
+        newProgram
+      );
 
     }
 
 
-    /* =========================
-       NOVO PROGRAMA
-    ========================= */
+    /* ==============================================
+       GRAVAR
+    ============================================== */
 
-    const newProgram = {
-
-      id:
-        Date.now().toString(),
-
-      name,
-
-      presenter:
-        presenterValue,
-
-      day:
-        dayValue,
-
-      startTime:
-        startValue,
-
-      endTime:
-        endValue,
-
-      description:
-        descriptionValue,
-
-      active:
-        activeValue,
-
-      createdAt:
-        new Date().toISOString()
-
-    };
+    const saved =
+      savePrograms(
+        programs
+      );
 
 
-    programs.push(
-      newProgram
+    if (!saved) {
+      return;
+    }
+
+
+    /* ==============================================
+       CONFIRMAÇÃO
+    ============================================== */
+
+    showNotice(
+      "✅ Programa salvo com sucesso!"
     );
 
 
-    if (
-      savePrograms(
-        programs
-      )
-    ) {
+    clearForm();
 
-      showNotice(
-        "Programa salvo com sucesso! 🎉"
-      );
 
-      clearForm();
-
-      renderPrograms();
-
-    }
+    renderPrograms();
 
   }
 );
 
 
 /* =========================================================
-   EDITAR
-========================================================= */
-
-function editProgram(id) {
-
-  const programs =
-    getPrograms();
-
-
-  const program =
-    programs.find(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-
-  if (!program) {
-
-    showNotice(
-      "Programa não encontrado.",
-      "error"
-    );
-
-    return;
-
-  }
-
-
-  programId.value =
-    program.id;
-
-  programName.value =
-    program.name || "";
-
-  presenter.value =
-    program.presenter || "";
-
-  day.value =
-    program.day || "";
-
-  startTime.value =
-    program.startTime || "";
-
-  endTime.value =
-    program.endTime || "";
-
-  description.value =
-    program.description || "";
-
-  active.checked =
-    program.active !== false;
-
-
-  formTitle.textContent =
-    "Editar programa";
-
-
-  cancelEdit.style.display =
-    "block";
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-
-/* =========================================================
-   ATIVAR / DESATIVAR
-========================================================= */
-
-function toggleProgram(id) {
-
-  const programs =
-    getPrograms();
-
-
-  const index =
-    programs.findIndex(
-      program =>
-        String(program.id) ===
-        String(id)
-    );
-
-
-  if (index === -1) {
-    return;
-  }
-
-
-  programs[index].active =
-    programs[index].active === false;
-
-
-  if (
-    savePrograms(
-      programs
-    )
-  ) {
-
-    showNotice(
-      programs[index].active
-        ? "Programa ativado."
-        : "Programa desativado."
-    );
-
-    renderPrograms();
-
-  }
-
-}
-
-
-/* =========================================================
-   EXCLUIR
-========================================================= */
-
-function deleteProgram(id) {
-
-  const programs =
-    getPrograms();
-
-
-  const program =
-    programs.find(
-      item =>
-        String(item.id) ===
-        String(id)
-    );
-
-
-  if (!program) {
-    return;
-  }
-
-
-  const confirmed =
-    window.confirm(
-      `Excluir o programa "${program.name}"?`
-    );
-
-
-  if (!confirmed) {
-    return;
-  }
-
-
-  const updated =
-    programs.filter(
-      item =>
-        String(item.id) !==
-        String(id)
-    );
-
-
-  if (
-    savePrograms(
-      updated
-    )
-  ) {
-
-    showNotice(
-      "Programa excluído."
-    );
-
-    renderPrograms();
-
-  }
-
-}
-
-
-/* =========================================================
-   BOTÕES DA LISTA
+   BOTÕES
 ========================================================= */
 
 programList.addEventListener(
@@ -962,27 +951,163 @@ programList.addEventListener(
     const action =
       button.dataset.action;
 
+
     const id =
       button.dataset.id;
 
 
-    if (action === "edit") {
+    const programs =
+      getPrograms();
 
-      editProgram(id);
+
+    const index =
+      programs.findIndex(
+        function(item) {
+
+          return String(
+            item.id
+          ) === String(id);
+
+        }
+      );
+
+
+    if (
+      index === -1
+    ) {
+
+      return;
 
     }
 
 
-    if (action === "toggle") {
+    /* EDITAR */
 
-      toggleProgram(id);
+    if (
+      action === "edit"
+    ) {
+
+      const program =
+        programs[index];
+
+
+      programId.value =
+        program.id;
+
+
+      programName.value =
+        program.name || "";
+
+
+      presenter.value =
+        program.presenter || "";
+
+
+      day.value =
+        program.day || "";
+
+
+      startTime.value =
+        program.startTime || "";
+
+
+      endTime.value =
+        program.endTime || "";
+
+
+      description.value =
+        program.description || "";
+
+
+      active.checked =
+        program.active !== false;
+
+
+      formTitle.textContent =
+        "Editar programa";
+
+
+      cancelEdit.style.display =
+        "block";
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+
+      return;
 
     }
 
 
-    if (action === "delete") {
+    /* ATIVAR / DESATIVAR */
 
-      deleteProgram(id);
+    if (
+      action === "toggle"
+    ) {
+
+      programs[index].active =
+        programs[index].active === false;
+
+
+      if (
+        savePrograms(
+          programs
+        )
+      ) {
+
+        renderPrograms();
+
+        showNotice(
+          "Status do programa atualizado."
+        );
+
+      }
+
+
+      return;
+
+    }
+
+
+    /* EXCLUIR */
+
+    if (
+      action === "delete"
+    ) {
+
+      const confirmed =
+        window.confirm(
+          "Deseja excluir este programa?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      programs.splice(
+        index,
+        1
+      );
+
+
+      if (
+        savePrograms(
+          programs
+        )
+      ) {
+
+        renderPrograms();
+
+        showNotice(
+          "Programa excluído."
+        );
+
+      }
 
     }
 
@@ -991,7 +1116,7 @@ programList.addEventListener(
 
 
 /* =========================================================
-   CANCELAR EDIÇÃO
+   CANCELAR
 ========================================================= */
 
 cancelEdit.addEventListener(
@@ -1005,11 +1130,7 @@ cancelEdit.addEventListener(
 
 
 /* =========================================================
-   INICIALIZAÇÃO
+   INICIAR
 ========================================================= */
 
 renderPrograms();
-
-console.log(
-  "NTP RADIO OS - Gerenciador de Programação carregado."
-);
