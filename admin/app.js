@@ -142,8 +142,40 @@ if (refresh) {
 
       }, 500);
 
+    }function atualizarDashboard() {
+  try {
+    const programas = JSON.parse(
+      localStorage.getItem("ntp_radio_programacao") || "[]"
+    );
+
+    const ativos = programas.filter(programa => programa.active !== false);
+
+    const elemento = document.getElementById("programCount");
+
+    if (elemento) {
+      elemento.textContent = ativos.length;
     }
+
+    console.log("Programas encontrados:", programas);
+    console.log("Programas ativos:", ativos);
+  } catch (erro) {
+    console.error("Erro ao carregar programação:", erro);
+
+    const elemento = document.getElementById("programCount");
+
+    if (elemento) {
+      elemento.textContent = "0";
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", atualizarDashboard);
+
+window.addEventListener("pageshow", atualizarDashboard);
+
+window.addEventListener("storage", atualizarDashboard);
   );
+  
 
 }
 
