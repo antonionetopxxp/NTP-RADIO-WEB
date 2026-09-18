@@ -1,474 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#02030a">
 
-  <title>NTP RADIO OS — Dashboard</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="../galaxy-theme.css">
+  <title>Login | NTP RADIO OS</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="login-page">
 
-<header class="admin-topbar">
+  <main class="login-container">
 
-  <a class="admin-brand" href="../index.html">
-    <span class="brand-mark">N</span>
-
-    <span>
-      <strong>NTP RADIO OS</strong>
-      <small>Painel da rádio</small>
-    </span>
-  </a>
-
-  <div class="top-actions">
-    <a class="view-site" href="../index.html">
-      Ver rádio
-    </a>
-
-    <button id="refreshBtn" class="icon-btn" type="button">
-      ↻
-    </button>
-  </div>
-
-</header>
-
-
-<div class="admin-layout">
-
-  <aside class="sidebar">
-
-    <nav>
-
-      <a class="active" href="index.html">
-        ⌂ <span>Dashboard</span>
-      </a>
-
-      <a href="../pages/programacao.html">
-        ▣ <span>Programação</span>
-      </a>
-
-      <a href="../pages/noticias.html">
-        ◈ <span>Notícias</span>
-      </a>
-
-      <a href="../pages/eventos.html">
-        ★ <span>Eventos</span>
-      </a>
-
-      <a href="../pages/contato.html">
-        ✉ <span>Contato</span>
-      </a>
-
-    </nav>
-
-    <div class="sidebar-bottom">
-      <i></i>
-      <span>Sistema online</span>
+    <div class="login-logo">
+      NTP
     </div>
 
-  </aside>
+    <h1>NTP RADIO OS</h1>
 
+    <p class="login-subtitle">
+      Área administrativa
+    </p>
 
-  <main class="dashboard">
+    <form id="loginForm">
 
-    <section class="dashboard-head">
+      <div class="login-field">
 
-      <div>
+        <label for="username">
+          Usuário
+        </label>
 
-        <span class="eyebrow">
-          NTP RADIO OS
-        </span>
-
-        <h1>Dashboard</h1>
-
-        <p>
-          Controle e acompanhe sua rádio em um único painel.
-        </p>
-
-      </div>
-
-      <div class="date-card">
-
-        <span>Hoje</span>
-
-        <strong id="currentDate">
-          --
-        </strong>
+        <input
+          id="username"
+          type="text"
+          autocomplete="username"
+          placeholder="Digite seu usuário"
+          required
+        >
 
       </div>
 
-    </section>
+      <div class="login-field">
 
+        <label for="password">
+          Senha
+        </label>
 
-    <section class="status-banner">
-
-      <div>
-
-        <span class="live-dot"></span>
-
-        <div>
-
-          <strong>
-            Rádio online
-          </strong>
-
-          <p>
-            O streaming da NTP RÁDIO WEB está configurado.
-          </p>
-
-        </div>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Digite sua senha"
+          required
+        >
 
       </div>
 
-      <a href="../index.html" class="primary-btn">
-        Abrir player
-      </a>
-
-    </section>
-
-
-    <section class="stats-grid">
-
-      <article class="stat-card">
-
-        <b>◉</b>
-
-        <div>
-
-          <small>Status</small>
-
-          <strong>Online</strong>
-
-        </div>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <b>♫</b>
-
-        <div>
-
-          <small>Stream</small>
-
-          <strong>Zeno.FM</strong>
-
-        </div>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <b>◫</b>
-
-        <div>
-
-          <small>Programação</small>
-
-          <strong>24 horas</strong>
-
-        </div>
-
-      </article>
-
-
-      <article class="stat-card">
-
-        <b>☁</b>
-
-        <div>
-
-          <small>Plataforma</small>
-
-          <strong>Web + PWA</strong>
-
-        </div>
-
-      </article>
-
-    </section>
-
-
-    <section class="content-grid">
-
-
-      <article class="panel-card">
-
-        <div class="panel-title">
-
-          <div>
-
-            <span class="eyebrow">
-              GERENCIAMENTO
-            </span>
-
-            <h2>
-              Ações rápidas
-            </h2>
-
-          </div>
-
-        </div>
-
-
-        <div class="quick-grid">
-
-          <a
-            href="../pages/programacao.html"
-            class="quick-action"
-          >
-
-            <span>▣</span>
-
-            <strong>
-              Programação
-            </strong>
-
-            <small>
-              Ver grade da rádio
-            </small>
-
-          </a>
-
-
-          <a
-            href="../pages/noticias.html"
-            class="quick-action"
-          >
-
-            <span>◈</span>
-
-            <strong>
-              Notícias
-            </strong>
-
-            <small>
-              Gerenciar conteúdo
-            </small>
-
-          </a>
-
-
-          <a
-            href="../pages/eventos.html"
-            class="quick-action"
-          >
-
-            <span>★</span>
-
-            <strong>
-              Eventos
-            </strong>
-
-            <small>
-              Ver eventos
-            </small>
-
-          </a>
-
-
-          <a
-            href="../pages/contato.html"
-            class="quick-action"
-          >
-
-            <span>✉</span>
-
-            <strong>
-              Contato
-            </strong>
-
-            <small>
-              Informações da rádio
-            </small>
-
-          </a>
-
-        </div>
-
-      </article>
-
-
-      <article class="panel-card">
-
-        <div class="panel-title">
-
-          <div>
-
-            <span class="eyebrow">
-              CONFIGURAÇÃO
-            </span>
-
-            <h2>
-              Rádio
-            </h2>
-
-          </div>
-
-        </div>
-
-
-        <div class="config-list">
-
-          <div>
-
-            <span>Nome</span>
-
-            <strong id="stationName">
-              NTP RÁDIO WEB
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>País</span>
-
-            <strong id="stationCountry">
-              Brasil
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>Idioma</span>
-
-            <strong id="stationLanguage">
-              pt-BR
-            </strong>
-
-          </div>
-
-
-          <div>
-
-            <span>Fuso horário</span>
-
-            <strong id="stationTimezone">
-              America/Sao_Paulo
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <div class="panel-note">
-
-          <strong>
-            Próxima etapa
-          </strong>
-
-          <p>
-            Transformar estas informações em configurações
-            editáveis pelo painel.
-          </p>
-
-        </div>
-
-      </article>
-
-    </section>
-
-
-    <section class="panel-card activity-card">
-
-      <div class="panel-title">
-
-        <div>
-
-          <span class="eyebrow">
-            SISTEMA
-          </span>
-
-          <h2>
-            Atividade
-          </h2>
-
-        </div>
-
-        <span class="status-pill">
-          Funcionando
-        </span>
-
-      </div>
-
-
-      <div class="activity-row">
-
-        <b>✓</b>
-
-        <div>
-
-          <strong>
-            Configuração carregada
-          </strong>
-
-          <p id="configMessage">
-            Aguardando leitura de config/radio.json...
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="activity-row">
-
-        <b>✓</b>
-
-        <div>
-
-          <strong>
-            Interface administrativa
-          </strong>
-
-          <p>
-            Dashboard responsivo instalado.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="activity-row">
-
-        <b>→</b>
-
-        <div>
-
-          <strong>
-            Próxima evolução
-          </strong>
-
-          <p>
-            Programação, notícias, eventos e configurações editáveis.
-          </p>
-
-        </div>
-
-      </div>
-
-    </section>
+      <button
+        type="submit"
+        class="login-button"
+      >
+        Entrar no painel
+      </button>
+
+      <p
+        id="loginError"
+        class="login-error"
+      ></p>
+
+    </form>
+
+    <a
+      href="../index.html"
+      class="back-site"
+    >
+      ← Voltar para a rádio
+    </a>
 
   </main>
 
-</div>
-
-
-<script src="app.js"></script>
+  <script src="login.js"></script>
 
 </body>
 </html>
