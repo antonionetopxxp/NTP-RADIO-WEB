@@ -1,36 +1,4 @@
-/* NTP RÁDIO WEB — GALAXY THEME */
-:root{
-  --bg:#02030a;
-  --panel:#0b0718;
-  --panel2:#120a26;
-  --line:#2a1d55;
-  --purple:#6d28ff;
-  --purple2:#a66bff;
-  --pink:#8b5cf6;
-  --text:#f7f5ff;
-  --muted:#a79bc4;
-}
-body{
-  background:
-    radial-gradient(circle at 10% 0%,rgba(109,40,255,.18),transparent 30%),
-    radial-gradient(circle at 90% 30%,rgba(166,107,255,.12),transparent 28%),
-    radial-gradient(circle at 50% 100%,rgba(80,30,180,.12),transparent 35%),
-    #02030a;
-}
-.orb-a{background:#6d28ff!important;opacity:.22}
-.orb-b{background:#a66bff!important;opacity:.16}
-.site-header{background:rgba(2,3,10,.84)!important;border-bottom-color:#24154d!important}
-.logo b,.hero h1 em,.pip-brand b{background:linear-gradient(90deg,#a66bff,#6d28ff,#c29aff)!important;background-size:200% auto!important}
-.hero-bg::after{background:linear-gradient(180deg,rgba(2,3,10,.25),rgba(2,3,10,.94) 88%)!important}
-.hero-badge{background:rgba(109,40,255,.12)!important;border-color:rgba(166,107,255,.45)!important;color:#d8c5ff!important}
-.dot{background:#a66bff!important;box-shadow:0 0 0 0 rgba(166,107,255,.6)!important}
-.live-badge{color:#a66bff!important}
-.eq span{background:linear-gradient(180deg,#c29aff,#6d28ff)!important}
-.btn-primary,.play-btn,.pip-btn.active{background:linear-gradient(135deg,#a66bff,#6d28ff)!important}
-.btn-primary{box-shadow:0 8px 30px rgba(109,40,255,.32)!important}
-.play-btn{box-shadow:0 0 0 6px rgba(109,40,255,.15),0 12px 34px rgba(109,40,255,.34)!important}
-.section-dark{background:linear-gradient(180deg,transparent,rgba(109,40,255,.06))!important}
-.hero-ticker,.live-card,.schedule-card,.contact-card{background:linear-gradient(145deg,#120a26,#07040f)!important}
-.pip-window{background:radial-gradient(circle at 18% 12%,rgba(109,40,255,.28),transparent 52%),radial-gradient(circle at 92% 90%,rgba(166,107,255,.16),transparent 52%),#02030a!important}
-.btn-install{background:rgba(109,40,255,.1)!important}
-.whatsapp-float{z-index:55}
+/* Tema galáxia NTP */ 
+:root{--bg:#02030a;--purple:#6d28ff;--purple2:#a66bff}
+body{background:radial-gradient(circle at 10% 0%,rgba(109,40,255,.18),transparent 30%),radial-gradient(circle at 90% 30%,rgba(166,107,255,.12),transparent 28%),#02030a}
+.site-header{background:rgba(2,3,10,.86)}.logo b,.hero h1 em{background:linear-gradient(90deg,#c29aff,#6d28ff,#a66bff);-webkit-background-clip:text;background-clip:text;color:transparent}
