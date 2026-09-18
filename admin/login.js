@@ -1,56 +1,90 @@
-const loginForm =
-  document.getElementById("loginForm");
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
 
-const loginError =
-  document.getElementById("loginError");
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
+  <title>Login | NTP RADIO OS</title>
 
-loginForm.addEventListener(
-  "submit",
-  function(event) {
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    event.preventDefault();
+<body class="login-page">
 
-    const username =
-      document
-        .getElementById("username")
-        .value
-        .trim();
+  <main class="login-container">
 
-    const password =
-      document
-        .getElementById("password")
-        .value;
+    <div class="login-logo">
+      NTP
+    </div>
 
+    <h1>NTP RADIO OS</h1>
 
-    /*
-      LOGIN TEMPORÁRIO
+    <p class="login-subtitle">
+      Área administrativa
+    </p>
 
-      Esta etapa serve apenas para
-      estruturar o painel.
+    <form id="loginForm">
 
-      NÃO use esta senha em produção.
-    */
+      <div class="login-field">
 
-    if (
-      username === "admin" &&
-      password === "ntp123"
-    ) {
+        <label for="username">
+          Usuário
+        </label>
 
-      sessionStorage.setItem(
-        "ntp_admin_logged",
-        "true"
-      );
+        <input
+          id="username"
+          type="text"
+          autocomplete="username"
+          placeholder="Digite seu usuário"
+          required
+        >
 
-      window.location.href =
-        "dashboard.html";
+      </div>
 
-      return;
-    }
+      <div class="login-field">
 
+        <label for="password">
+          Senha
+        </label>
 
-    loginError.textContent =
-      "Usuário ou senha incorretos.";
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Digite sua senha"
+          required
+        >
 
-  }
-);
+      </div>
+
+      <button
+        type="submit"
+        class="login-button"
+      >
+        Entrar no painel
+      </button>
+
+      <p
+        id="loginError"
+        class="login-error"
+      ></p>
+
+    </form>
+
+    <a
+      href="../index.html"
+      class="back-site"
+    >
+      ← Voltar para a rádio
+    </a>
+
+  </main>
+
+  <script src="login.js"></script>
+
+</body>
+</html>
