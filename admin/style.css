@@ -1150,3 +1150,396 @@ h2 {
     padding: 22px;
   }
 }
+/* =========================================================
+   NTP RADIO OS — AJUSTE DE ACESSIBILIDADE E TAMANHO
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+}
+
+/* Layout principal */
+.admin-layout {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+}
+
+/* Área principal */
+.admin-main {
+  min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Topbar */
+.admin-topbar {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Conteúdo */
+.admin-content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 10px 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.dashboard-grid,
+.stats-grid,
+.cards-grid {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-card,
+.stat-card,
+.panel-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* =========================================================
+   TABELAS / LISTAS
+   ========================================================= */
+
+.editorial-list {
+  width: 100%;
+  min-width: 0;
+}
+
+.editorial-item {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.editorial-main {
+  min-width: 0;
+}
+
+.editorial-main h3,
+.editorial-main p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* =========================================================
+   BARRA DE BUSCA
+   ========================================================= */
+
+.content-toolbar {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .admin-sidebar {
+    width: 210px;
+    min-width: 210px;
+    max-width: 210px;
+  }
+
+  .admin-content {
+    padding: 18px;
+  }
+
+}
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .admin-layout {
+    display: block;
+    width: 100%;
+  }
+
+  /*
+     Sidebar vira menu horizontal/rolável.
+     Assim nenhum item fica inacessível.
+  */
+
+  .admin-sidebar {
+    position: relative;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+
+    height: auto;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+
+  .admin-sidebar::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .admin-sidebar-inner {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    width: max-content;
+    min-width: 100%;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .admin-nav a {
+    min-height: 38px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .admin-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .admin-content {
+    width: 100%;
+    padding: 14px;
+  }
+
+  /* Topbar menor */
+  .admin-topbar {
+    min-height: 54px;
+    padding: 8px 12px;
+  }
+
+  /* Títulos */
+  .page-header h1 {
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .page-header p {
+    font-size: 13px;
+  }
+
+  /* Cards */
+  .dashboard-grid,
+  .stats-grid,
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-card,
+  .stat-card,
+  .panel-card {
+    width: 100%;
+  }
+
+  /* Lista editorial */
+  .editorial-item {
+    display: block;
+  }
+
+  .editorial-image {
+    width: 100%;
+    height: 150px;
+  }
+
+  .editorial-main {
+    padding: 12px;
+  }
+
+  .editorial-actions {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 12px 12px;
+  }
+
+  /* Toolbar */
+  .content-toolbar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .content-toolbar input,
+  .content-toolbar select,
+  .content-toolbar button {
+    width: 100%;
+  }
+
+}
+
+/* =========================================================
+   CELULARES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .admin-content {
+    padding: 10px;
+  }
+
+  .admin-topbar {
+    padding: 7px 10px;
+  }
+
+  .page-header {
+    margin-bottom: 14px;
+  }
+
+  .page-header h1 {
+    font-size: 21px;
+  }
+
+  .page-header p {
+    font-size: 12px;
+  }
+
+  .admin-nav {
+    padding: 7px;
+  }
+
+  .admin-nav a {
+    font-size: 12px;
+    min-height: 36px;
+    padding: 7px 10px;
+  }
+
+  .editorial-image {
+    height: 130px;
+  }
+
+}
+
+/* =========================================================
+   EVITAR ELEMENTOS SAINDO DA TELA
+   ========================================================= */
+
+img,
+video,
+iframe,
+svg {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+pre,
+code {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Modal */
+.modal {
+  padding: 10px;
+}
+
+.modal-dialog {
+  width: 100%;
+  max-width: 650px;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+/* Formulários no celular */
+@media (max-width: 600px) {
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-dialog {
+    max-height: 90vh;
+  }
+
+  .modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-footer button {
+    width: 100%;
+  }
+
+}
