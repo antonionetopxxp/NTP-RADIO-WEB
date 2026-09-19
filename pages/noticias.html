@@ -1,104 +1,477 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notícias — NTP RÁDIO WEB</title><link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../galaxy-theme.css"></head><body><main class="section"><div class="shell"><span class="section-label">NTP RADIO OS</span><h1>Notícias</h1><p>Módulo da plataforma NTP RÁDIO WEB preparado para receber conteúdo.</p><a class="btn btn-primary" href="../">← Voltar para a rádio</a></div></main></body></html>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Notícias | NTP RÁDIO WEB</title>
-  <meta name="description" content="Notícias e informações da NTP RÁDIO WEB.">
+  <title>NTP RADIO OS — Notícias</title>
 
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="../galaxy-theme.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <strong>NTP RÁDIO WEB</strong>
-    <span>Notícias</span>
+<div class="admin-app">
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+      <div class="brand-mark">NTP</div>
+
+      <div>
+        <strong>NTP RADIO OS</strong>
+        <span>Central da emissora</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+        <span class="nav-title">PRINCIPAL</span>
+
+        <a href="index.html" class="nav-link">
+          <span>▦</span>
+          <span>Dashboard</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+
+        <span class="nav-title">CONTEÚDO</span>
+
+        <a href="noticias.html" class="nav-link active">
+          <span>▤</span>
+          <span>Notícias</span>
+        </a>
+
+        <a href="promocoes.html" class="nav-link">
+          <span>◇</span>
+          <span>Promoções</span>
+        </a>
+
+        <a href="eventos.html" class="nav-link">
+          <span>◷</span>
+          <span>Eventos</span>
+        </a>
+
+      </div>
+
+      <div class="nav-section">
+
+        <span class="nav-title">PROGRAMAÇÃO</span>
+
+        <a href="programacao.html" class="nav-link">
+          <span>▥</span>
+          <span>Programas</span>
+        </a>
+
+        <a href="../index.html#programacao" class="nav-link">
+          <span>☷</span>
+          <span>Grade</span>
+        </a>
+
+        <a href="../index.html" class="nav-link">
+          <span>◉</span>
+          <span>Rádio ao vivo</span>
+        </a>
+
+      </div>
+
+      <div class="nav-section">
+
+        <span class="nav-title">SISTEMA</span>
+
+        <a href="configuracoes.html" class="nav-link">
+          <span>⚙</span>
+          <span>Configurações</span>
+        </a>
+
+        <a href="../index.html" class="nav-link">
+          <span>⇥</span>
+          <span>Sair</span>
+        </a>
+
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+      <div class="station-status">
+        <span class="status-dot"></span>
+
+        <div>
+          <strong>Rádio online</strong>
+          <small>NTP RÁDIO WEB</small>
+        </div>
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <div class="sidebar-overlay" id="overlay"></div>
+
+
+  <main class="main-content">
+
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button
+          class="menu-button"
+          id="menuBtn"
+          type="button"
+        >
+          ☰
+        </button>
+
+        <div class="breadcrumb">
+          <span>NTP RADIO OS</span>
+          <b>/</b>
+          <strong>Notícias</strong>
+        </div>
+
+      </div>
+
+      <div class="topbar-right">
+
+        <a
+          href="../index.html"
+          target="_blank"
+          class="topbar-radio"
+        >
+          <span class="live-dot"></span>
+          Ver rádio
+        </a>
+
+        <div class="user-profile">
+
+          <div class="user-avatar">
+            N
+          </div>
+
+          <div class="user-info">
+            <strong>Administrador</strong>
+            <span>NTP RADIO OS</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <section class="page">
+
+      <div class="page-header">
+
+        <div>
+
+          <span class="eyebrow">
+            CENTRAL EDITORIAL
+          </span>
+
+          <h1>Notícias</h1>
+
+          <p>
+            Gerencie as notícias publicadas no portal da rádio.
+          </p>
+
+        </div>
+
+        <div class="page-actions">
+
+          <button
+            class="button button-primary"
+            id="newNewsBtn"
+            type="button"
+          >
+            + Nova notícia
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- CONTROLES -->
+
+      <section class="content-toolbar">
+
+        <div class="search-box">
+
+          <span>⌕</span>
+
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Pesquisar notícias..."
+          >
+
+        </div>
+
+
+        <select id="statusFilter">
+
+          <option value="all">
+            Todos os status
+          </option>
+
+          <option value="published">
+            Publicadas
+          </option>
+
+          <option value="draft">
+            Rascunhos
+          </option>
+
+        </select>
+
+      </section>
+
+
+      <!-- LISTA -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <span class="panel-kicker">
+              PUBLICAÇÕES
+            </span>
+
+            <h2>
+              Notícias cadastradas
+            </h2>
+
+          </div>
+
+          <span
+            class="list-counter"
+            id="newsTotal"
+          >
+            0 itens
+          </span>
+
+        </div>
+
+
+        <div
+          class="editorial-list"
+          id="newsList"
+        ></div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div
+  class="modal"
+  id="newsModal"
+  aria-hidden="true"
+>
+
+  <div
+    class="modal-backdrop"
+    id="modalBackdrop"
+  ></div>
+
+
+  <div class="modal-dialog">
+
+    <div class="modal-header">
+
+      <div>
+
+        <span class="panel-kicker">
+          EDITORIAL
+        </span>
+
+        <h2 id="modalTitle">
+          Nova notícia
+        </h2>
+
+      </div>
+
+      <button
+        type="button"
+        class="modal-close"
+        id="closeModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <form id="newsForm">
+
+      <input
+        type="hidden"
+        id="newsId"
+      >
+
+
+      <div class="form-grid">
+
+        <div class="form-field full">
+
+          <label for="newsTitle">
+            Título
+          </label>
+
+          <input
+            type="text"
+            id="newsTitle"
+            placeholder="Digite o título da notícia"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="newsCategory">
+            Categoria
+          </label>
+
+          <select id="newsCategory">
+
+            <option value="Rádio">
+              Rádio
+            </option>
+
+            <option value="Entretenimento">
+              Entretenimento
+            </option>
+
+            <option value="Música">
+              Música
+            </option>
+
+            <option value="Eventos">
+              Eventos
+            </option>
+
+            <option value="Local">
+              Local
+            </option>
+
+            <option value="Outros">
+              Outros
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-field">
+
+          <label for="newsDate">
+            Data
+          </label>
+
+          <input
+            type="date"
+            id="newsDate"
+          >
+
+        </div>
+
+
+        <div class="form-field full">
+
+          <label for="newsImage">
+            URL da imagem
+          </label>
+
+          <input
+            type="url"
+            id="newsImage"
+            placeholder="https://..."
+          >
+
+        </div>
+
+
+        <div class="form-field full">
+
+          <label for="newsSummary">
+            Resumo
+          </label>
+
+          <textarea
+            id="newsSummary"
+            rows="4"
+            placeholder="Escreva um resumo da notícia..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-field full">
+
+          <label class="checkbox-field">
+
+            <input
+              type="checkbox"
+              id="newsPublished"
+              checked
+            >
+
+            <span>
+              Publicar notícia
+            </span>
+
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="button button-secondary"
+          id="cancelModal"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="button button-primary"
+        >
+          Salvar notícia
+        </button>
+
+      </div>
+
+    </form>
+
   </div>
 
-  <nav>
-    <a href="../index.html">Início</a>
-    <a href="programacao.html">Programação</a>
-    <a href="noticias.html">Notícias</a>
-    <a href="eventos.html">Eventos</a>
-    <a href="contato.html">Contato</a>
-  </nav>
-</header>
+</div>
 
-<main class="page-container">
 
-  <section class="page-hero">
-    <span class="badge">📰 INFORMAÇÃO</span>
-
-    <h1>Notícias</h1>
-
-    <p>
-      Informação, novidades e conteúdos especiais da NTP RÁDIO WEB.
-    </p>
-
-    <a class="btn-primary" href="../index.html">
-      🎧 Ouvir rádio
-    </a>
-  </section>
-
-  <section class="cards-grid">
-
-    <article class="glass-card news-card">
-      <span class="card-icon">📻</span>
-
-      <small>NTP RÁDIO WEB</small>
-
-      <h2>Nossa rádio está no ar</h2>
-
-      <p>
-        Acompanhe nossa programação online e ouça a NTP RÁDIO WEB
-        diretamente pelo celular ou computador.
-      </p>
-
-      <a href="../index.html">Ouvir agora →</a>
-    </article>
-
-    <article class="glass-card news-card">
-      <span class="card-icon">🎶</span>
-
-      <small>MÚSICA</small>
-
-      <h2>Mais música para você</h2>
-
-      <p>
-        Nossa programação foi desenvolvida para levar música e
-        entretenimento aos ouvintes durante todo o dia.
-      </p>
-
-      <a href="programacao.html">Ver programação →</a>
-    </article>
-
-    <article class="glass-card news-card">
-      <span class="card-icon">⭐</span>
-
-      <small>NOVIDADES</small>
-
-      <h2>Novidades em breve</h2>
-
-      <p>
-        Novos conteúdos, programas e recursos serão adicionados
-        continuamente à plataforma da NTP RÁDIO WEB.
-      </p>
-
-      <a href="contato.html">Fale conosco →</a>
-    </article>
-
-  </section>
-
-</main>
-
-<footer class="footer">
-  <p>© 2026 NTP RÁDIO WEB. Todos os direitos reservados.</p>
-</footer>
+<script src="content.js?v=4"></script>
 
 </body>
-  </html>
+</html>
