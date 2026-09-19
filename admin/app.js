@@ -1,187 +1,348 @@
-const $ = (selector) =>
-  document.querySelector(selector);
+const STORAGE = {
+  news: "ntp_radio_noticias",
+  promotions: "ntp_radio_promocoes",
+  programs: "ntp_radio_programacao"
+};
 
 
-/* DATA */
-
-function updateDate() {
-
-  const element =
-    $("#currentDate");
-
-  if (!element) return;
-
-  element.textContent =
-    new Intl.DateTimeFormat(
-      "pt-BR",
-      {
-        dateStyle: "full"
-      }
-    ).format(new Date());
-
-}
-
-
-/* CONFIGURAÇÃO DA RÁDIO */
-
-async function loadConfig() {
-
+function getData(key) {
   try {
-
-    const response =
-      await fetch(
-        "../config/radio.json",
-        {
-          cache: "no-store"
-        }
-      );
-
-    if (!response.ok) {
-      throw new Error(
-        "Configuração não encontrada."
-      );
-    }
-
-    const config =
-      await response.json();
-
-    const station =
-      config.station || {};
-
-
-    const name =
-      $("#stationName");
-
-    const country =
-      $("#stationCountry");
-
-    const language =
-      $("#stationLanguage");
-
-    const timezone =
-      $("#stationTimezone");
-
-
-    if (name) {
-      name.textContent =
-        station.name ||
-        "NTP RÁDIO WEB";
-    }
-
-
-    if (country) {
-      country.textContent =
-        station.country ||
-        "Brasil";
-    }
-
-
-    if (language) {
-      language.textContent =
-        station.language ||
-        "pt-BR";
-    }
-
-
-    if (timezone) {
-      timezone.textContent =
-        station.timezone ||
-        "America/Sao_Paulo";
-    }
-
-
-    const message =
-      $("#configMessage");
-
-    if (message) {
-
-      message.textContent =
-        "config/radio.json carregado com sucesso.";
-
-    }
-
-  }
-
-  catch (error) {
-
-    const message =
-      $("#configMessage");
-
-    if (message) {
-
-      message.textContent =
-        "Não foi possível carregar config/radio.json.";
-
-    }
-
-  }
-
-}
-
-
-/* ATUALIZAR */
-
-const refresh =
-  $("#refreshBtn");
-
-if (refresh) {
-
-  refresh.addEventListener(
-    "click",
-    async () => {
-
-      refresh.textContent = "…";
-
-      updateDate();
-
-      await loadConfig();
-
-      setTimeout(() => {
-
-        refresh.textContent = "↻";
-
-      }, 500);
-
-    }function atualizarDashboard() {
-  try {
-    const programas = JSON.parse(
-      localStorage.getItem("ntp_radio_programacao") || "[]"
+    const data = JSON.parse(
+      localStorage.getItem(key) || "[]"
     );
 
-    const ativos = programas.filter(programa => programa.active !== false);
+    return Array.isArray(data) ? data : [];
 
-    const elemento = document.getElementById("programCount");
+  } catch (error) {
 
-    if (elemento) {
-      elemento.textContent = ativos.length;
-    }
+    console.error(
+      "Erro ao carregar:",
+      key,
+      error
+    );
 
-    console.log("Programas encontrados:", programas);
-    console.log("Programas ativos:", ativos);
-  } catch (erro) {
-    console.error("Erro ao carregar programação:", erro);
-
-    const elemento = document.getElementById("programCount");
-
-    if (elemento) {
-      elemento.textContent = "0";
-    }
+    return [];
   }
 }
 
-document.addEventListener("DOMContentLoaded", atualizarDashboard);
 
-window.addEventListener("pageshow", atualizarDashboard);
+function updateDashboard() {
 
-window.addEventListener("storage", atualizarDashboard);
+  const noticias = getData(STORAGE.news);
+
+  const promocoes = getData(
+    STORAGE.promotions
   );
-  
+
+  const programas = getData(
+    STORAGE.programs
+  );
+
+
+  const newsCount =
+    document.getElementById("newsCount");
+
+  const promoCount =
+    document.getElementById("promoCount");
+
+  const programCount =
+    document.getElementById("programCount");
+
+
+  if (newsCount) {
+    newsCount.textContent =
+      noticias.length;
+  }
+
+
+  if (promoCount) {
+    promoCount.textContent =
+      promocoes.length;
+  }
+
+
+  if (programCount) {
+
+    const ativos =
+      programas.filter(
+        item => item.active !== false
+      );
+
+    programCount.textContent =
+      ativos.length;
+  }
+
+
+  renderRecentNews(noticias);
+}
+
+
+function renderRecentNews(noticias) {
+
+  const container =
+    document.getElementById(
+      "recentNews"
+    );
+
+  if (!container) return;
+
+
+  if (!noticias.length) {
+
+    container.innerHTML = `
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          ▤
+        </div>
+
+        <strong>
+          Nenhuma notícia cadastrada
+        </strong>
+
+        <span>
+          As notícias criadas no painel aparecerão aqui.
+        </span>
+
+        <a
+          href="noticias.html"
+          class="button button-secondary"
+        >
+          Criar primeira notícia
+        </a>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const recentes =
+    [...noticias]
+      .reverse()
+      .slice(0, 5);
+
+
+  container.innerHTML =
+    recentes.map((noticia) => {
+
+      const titulo =
+        escapeHTML(
+          noticia.title ||
+          noticia.name ||
+          "Sem título"
+        );
+
+
+      const resumo =
+        escapeHTML(
+          noticia.summary ||
+          noticia.description ||
+          "Sem descrição"
+        );
+
+
+      return `
+        <div class="recent-item">
+
+          <div class="recent-thumb">
+            ${noticia.image
+              ? `<img
+                   src="${escapeAttribute(
+                     noticia.image
+                   )}"
+                   alt=""
+                 >`
+              : "N"
+            }
+          </div>
+
+          <div class="recent-content">
+
+            <strong>
+              ${titulo}
+            </strong>
+
+            <span>
+              ${resumo}
+            </span>
+
+          </div>
+
+          <span class="recent-status">
+            Publicado
+          </span>
+
+        </div>
+      `;
+
+    }).join("");
+}
+
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function escapeAttribute(value) {
+
+  return escapeHTML(value);
+}
+
+
+/* MENU MOBILE */
+
+const menuBtn =
+  document.getElementById(
+    "menuBtn"
+  );
+
+const sidebar =
+  document.getElementById(
+    "sidebar"
+  );
+
+const overlay =
+  document.getElementById(
+    "overlay"
+  );
+
+
+function openMenu() {
+
+  if (sidebar) {
+    sidebar.classList.add(
+      "open"
+    );
+  }
+
+  if (overlay) {
+    overlay.classList.add(
+      "show"
+    );
+  }
+
+  document.body.classList.add(
+    "menu-open"
+  );
+}
+
+
+function closeMenu() {
+
+  if (sidebar) {
+    sidebar.classList.remove(
+      "open"
+    );
+  }
+
+  if (overlay) {
+    overlay.classList.remove(
+      "show"
+    );
+  }
+
+  document.body.classList.remove(
+    "menu-open"
+  );
+}
+
+
+if (menuBtn) {
+
+  menuBtn.addEventListener(
+    "click",
+    openMenu
+  );
+}
+
+
+if (overlay) {
+
+  overlay.addEventListener(
+    "click",
+    closeMenu
+  );
+}
+
+
+document
+  .querySelectorAll(".nav-link")
+  .forEach(link => {
+
+    link.addEventListener(
+      "click",
+      () => {
+
+        if (
+          window.innerWidth <= 900
+        ) {
+          closeMenu();
+        }
+
+      }
+    );
+
+  });
+
+
+/* SAIR */
+
+const logoutBtn =
+  document.getElementById(
+    "logoutBtn"
+  );
+
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+    "click",
+    event => {
+
+      event.preventDefault();
+
+      localStorage.removeItem(
+        "ntp_admin_session"
+      );
+
+      window.location.href =
+        "login.html";
+
+    }
+  );
 
 }
 
 
-/* INICIALIZAÇÃO */
+/* ATUALIZAÇÃO */
 
-updateDate();
+document.addEventListener(
+  "DOMContentLoaded",
+  updateDashboard
+);
 
-loadConfig();
+
+window.addEventListener(
+  "pageshow",
+  updateDashboard
+);
+
+
+window.addEventListener(
+  "storage",
+  updateDashboard
+);
+
+
+console.log(
+  "NTP RADIO OS — Dashboard carregado"
+);
