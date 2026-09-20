@@ -2,568 +2,464 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>NTP RADIO OS — Dashboard</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 
 <body>
 
-<div class="admin-app">
+  <!-- OVERLAY MOBILE -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
+  <div class="admin-layout">
 
-    <div class="sidebar-brand">
-      <div class="brand-mark">NTP</div>
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
 
-      <div>
-        <strong>NTP RADIO OS</strong>
-        <span>Central da emissora</span>
+      <div class="admin-sidebar-header">
+
+        <div class="admin-logo">
+          <strong>NTP</strong>
+          <span>RADIO OS</span>
+        </div>
+
+        <button
+          type="button"
+          class="sidebar-close"
+          id="sidebarClose"
+          aria-label="Fechar menu">
+          ×
+        </button>
+
       </div>
-    </div>
 
-    <nav class="sidebar-nav">
+      <nav class="admin-nav">
 
-      <div class="nav-section">
-        <span class="nav-title">PRINCIPAL</span>
-
-        <a href="index.html" class="nav-link active">
-          <span>▦</span>
+        <a href="index.html" class="active">
+          <span class="nav-icon">⌂</span>
           <span>Dashboard</span>
         </a>
-      </div>
 
-      <div class="nav-section">
-
-        <span class="nav-title">CONTEÚDO</span>
-
-        <a href="noticias.html" class="nav-link">
-          <span>▤</span>
+        <a href="noticias.html">
+          <span class="nav-icon">▤</span>
           <span>Notícias</span>
         </a>
 
-        <a href="promocoes.html" class="nav-link">
-          <span>◇</span>
+        <a href="promocoes.html">
+          <span class="nav-icon">★</span>
           <span>Promoções</span>
         </a>
 
-        <a href="eventos.html" class="nav-link">
-          <span>◷</span>
+        <a href="eventos.html">
+          <span class="nav-icon">◷</span>
           <span>Eventos</span>
         </a>
 
-      </div>
-
-      <div class="nav-section">
-
-        <span class="nav-title">PROGRAMAÇÃO</span>
-
-        <a href="programacao.html" class="nav-link">
-          <span>▥</span>
+        <a href="programacao.html">
+          <span class="nav-icon">♫</span>
           <span>Programas</span>
         </a>
 
-        <a href="../index.html#programacao" class="nav-link">
-          <span>☷</span>
+        <a href="../index.html#programacao">
+          <span class="nav-icon">☷</span>
           <span>Grade</span>
         </a>
 
-        <a href="../index.html" class="nav-link">
-          <span>◉</span>
+        <a href="../index.html">
+          <span class="nav-icon">●</span>
           <span>Rádio ao vivo</span>
         </a>
 
-      </div>
-
-      <div class="nav-section">
-
-        <span class="nav-title">SISTEMA</span>
-
-        <a href="configuracoes.html" class="nav-link">
-          <span>⚙</span>
+        <a href="configuracoes.html">
+          <span class="nav-icon">⚙</span>
           <span>Configurações</span>
         </a>
 
-        <a href="#" class="nav-link" id="logoutBtn">
-          <span>⇥</span>
-          <span>Sair</span>
-        </a>
+      </nav>
 
-      </div>
-
-    </nav>
-
-    <div class="sidebar-footer">
-
-      <div class="station-status">
-        <span class="status-dot"></span>
-
-        <div>
-          <strong>Rádio online</strong>
-          <small>NTP RÁDIO WEB</small>
-        </div>
-      </div>
-
-    </div>
-
-  </aside>
-
-
-  <!-- OVERLAY MOBILE -->
-  <div class="sidebar-overlay" id="overlay"></div>
-
-
-  <!-- CONTEÚDO -->
-  <main class="main-content">
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-
-      <div class="topbar-left">
+      <div class="sidebar-bottom">
 
         <button
-          class="menu-button"
-          id="menuBtn"
           type="button"
-          aria-label="Abrir menu"
-        >
-          ☰
+          class="logout-button"
+          id="logoutBtn">
+
+          <span class="nav-icon">⇥</span>
+          <span>Sair</span>
+
         </button>
 
-        <div class="breadcrumb">
-          <span>NTP RADIO OS</span>
-          <b>/</b>
-          <strong>Dashboard</strong>
-        </div>
-
       </div>
 
+    </aside>
 
-      <div class="topbar-right">
 
-        <a
-          href="../index.html"
-          target="_blank"
-          class="topbar-radio"
-        >
-          <span class="live-dot"></span>
-          Ver rádio
-        </a>
+    <!-- ÁREA PRINCIPAL -->
+    <main class="admin-main">
 
-        <div class="user-profile">
+      <!-- TOPBAR -->
+      <header class="admin-topbar">
 
-          <div class="user-avatar">
-            N
-          </div>
+        <div class="topbar-left">
 
-          <div class="user-info">
-            <strong>Administrador</strong>
+          <button
+            type="button"
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Abrir menu">
+
+            ☰
+
+          </button>
+
+          <div class="breadcrumb">
+
             <span>NTP RADIO OS</span>
+            <b>/</b>
+            <strong>Dashboard</strong>
+
           </div>
 
         </div>
 
-      </div>
-
-    </header>
-
-
-    <!-- PAGE -->
-    <section class="page">
-
-      <!-- PAGE HEADER -->
-      <div class="page-header">
-
-        <div>
-
-          <span class="eyebrow">
-            CENTRAL DA EMISSORA
-          </span>
-
-          <h1>Dashboard</h1>
-
-          <p>
-            Controle o conteúdo, a programação e a presença digital
-            da sua rádio.
-          </p>
-
-        </div>
-
-        <div class="page-actions">
+        <div class="topbar-right">
 
           <a
-            href="noticias.html"
-            class="button button-primary"
-          >
-            + Nova notícia
+            href="../index.html"
+            class="radio-button">
+
+            ● Rádio ao vivo
+
           </a>
 
         </div>
 
-      </div>
+      </header>
 
 
-      <!-- MÉTRICAS -->
-      <section class="metrics-grid">
+      <!-- CONTEÚDO -->
+      <section class="admin-content">
 
-        <article class="metric-card live-card">
+        <div class="page-header">
 
-          <div class="metric-icon">
-            ◉
-          </div>
+          <div>
 
-          <div class="metric-content">
+            <span class="page-kicker">
+              NTP RADIO OS
+            </span>
 
-            <span>Rádio</span>
+            <h1>Dashboard</h1>
 
-            <strong>AO VIVO</strong>
-
-            <small>
-              NTP RÁDIO WEB
-            </small>
+            <p>
+              Controle o conteúdo e a programação da sua emissora.
+            </p>
 
           </div>
 
-          <span class="metric-live">
-            ONLINE
-          </span>
+          <a
+            href="noticias.html"
+            class="primary-button">
 
-        </article>
+            + Nova notícia
 
+          </a>
 
-        <article class="metric-card">
-
-          <div class="metric-icon">
-            ▤
-          </div>
-
-          <div class="metric-content">
-
-            <span>Notícias</span>
-
-            <strong id="newsCount">0</strong>
-
-            <small>
-              publicações cadastradas
-            </small>
-
-          </div>
-
-        </article>
+        </div>
 
 
-        <article class="metric-card">
+        <!-- MÉTRICAS -->
+        <div class="stats-grid">
 
-          <div class="metric-icon">
-            ◇
-          </div>
+          <div class="stat-card">
 
-          <div class="metric-content">
-
-            <span>Promoções</span>
-
-            <strong id="promoCount">0</strong>
-
-            <small>
-              campanhas cadastradas
-            </small>
-
-          </div>
-
-        </article>
-
-
-        <article class="metric-card">
-
-          <div class="metric-icon">
-            ▥
-          </div>
-
-          <div class="metric-content">
-
-            <span>Programas</span>
-
-            <strong id="programCount">0</strong>
-
-            <small>
-              programas ativos
-            </small>
-
-          </div>
-
-        </article>
-
-      </section>
-
-
-      <!-- GRID PRINCIPAL -->
-      <section class="dashboard-grid">
-
-
-        <!-- CONTEÚDO RECENTE -->
-        <article class="panel recent-panel">
-
-          <div class="panel-header">
+            <div class="stat-icon live">
+              ●
+            </div>
 
             <div>
 
-              <span class="panel-kicker">
-                EDITORIAL
-              </span>
+              <span>Rádio</span>
 
-              <h2>Conteúdo recente</h2>
+              <strong>AO VIVO</strong>
+
+              <small>NTP RÁDIO WEB</small>
 
             </div>
-
-            <a href="noticias.html">
-              Ver tudo
-            </a>
 
           </div>
 
 
-          <div
-            class="recent-list"
-            id="recentNews"
-          >
+          <div class="stat-card">
 
-            <div class="empty-state">
+            <div class="stat-icon">
+              N
+            </div>
 
-              <div class="empty-icon">
-                ▤
+            <div>
+
+              <span>Notícias</span>
+
+              <strong id="newsCount">0</strong>
+
+              <small>Publicadas</small>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              ★
+            </div>
+
+            <div>
+
+              <span>Promoções</span>
+
+              <strong id="promoCount">0</strong>
+
+              <small>Cadastradas</small>
+
+            </div>
+
+          </div>
+
+
+          <div class="stat-card">
+
+            <div class="stat-icon">
+              ♫
+            </div>
+
+            <div>
+
+              <span>Programas</span>
+
+              <strong id="programCount">0</strong>
+
+              <small>Ativos</small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CONTEÚDO -->
+        <div class="dashboard-columns">
+
+          <section class="panel-card">
+
+            <div class="panel-header">
+
+              <div>
+
+                <span class="panel-kicker">
+                  EDITORIAL
+                </span>
+
+                <h2>Conteúdo recente</h2>
+
               </div>
 
-              <strong>
-                Nenhuma notícia cadastrada
-              </strong>
-
-              <span>
-                As notícias criadas no painel aparecerão aqui.
-              </span>
-
-              <a
-                href="noticias.html"
-                class="button button-secondary"
-              >
-                Criar primeira notícia
+              <a href="noticias.html">
+                Ver tudo →
               </a>
 
             </div>
 
-          </div>
+            <div id="recentNews" class="recent-list">
 
-        </article>
+              <div class="empty-state">
 
+                Nenhuma notícia cadastrada.
 
-        <!-- AÇÕES -->
-        <article class="panel actions-panel">
-
-          <div class="panel-header">
-
-            <div>
-
-              <span class="panel-kicker">
-                ATALHOS
-              </span>
-
-              <h2>Ações rápidas</h2>
-
-            </div>
-
-          </div>
-
-
-          <div class="quick-actions">
-
-            <a
-              href="noticias.html"
-              class="quick-action"
-            >
-
-              <span class="quick-icon">
-                ▤
-              </span>
-
-              <div>
-                <strong>Nova notícia</strong>
-                <small>
-                  Publicar conteúdo editorial
-                </small>
               </div>
 
-              <b>›</b>
+            </div>
 
-            </a>
+          </section>
 
 
-            <a
-              href="promocoes.html"
-              class="quick-action"
-            >
+          <section class="panel-card">
 
-              <span class="quick-icon">
-                ◇
-              </span>
+            <div class="panel-header">
 
               <div>
-                <strong>Nova promoção</strong>
-                <small>
-                  Criar campanha para a audiência
-                </small>
+
+                <span class="panel-kicker">
+                  ATALHOS
+                </span>
+
+                <h2>Ações rápidas</h2>
+
               </div>
 
-              <b>›</b>
-
-            </a>
-
-
-            <a
-              href="eventos.html"
-              class="quick-action"
-            >
-
-              <span class="quick-icon">
-                ◷
-              </span>
-
-              <div>
-                <strong>Novo evento</strong>
-                <small>
-                  Cadastrar evento da rádio
-                </small>
-              </div>
-
-              <b>›</b>
-
-            </a>
-
-
-            <a
-              href="programacao.html"
-              class="quick-action"
-            >
-
-              <span class="quick-icon">
-                ▥
-              </span>
-
-              <div>
-                <strong>Novo programa</strong>
-                <small>
-                  Configurar a programação
-                </small>
-              </div>
-
-              <b>›</b>
-
-            </a>
-
-          </div>
-
-        </article>
-
-      </section>
-
-
-      <!-- STATUS -->
-      <section class="panel system-panel">
-
-        <div class="panel-header">
-
-          <div>
-
-            <span class="panel-kicker">
-              SISTEMA
-            </span>
-
-            <h2>Status da plataforma</h2>
-
-          </div>
-
-        </div>
-
-
-        <div class="system-status-grid">
-
-          <div class="system-status-item">
-
-            <span class="status-indicator online"></span>
-
-            <div>
-              <strong>Player da rádio</strong>
-              <small>Funcionando</small>
             </div>
 
-          </div>
 
+            <div class="quick-actions">
 
-          <div class="system-status-item">
+              <a href="noticias.html">
+                <span>▤</span>
+                <div>
+                  <strong>Nova notícia</strong>
+                  <small>Publicar conteúdo</small>
+                </div>
+              </a>
 
-            <span class="status-indicator online"></span>
+              <a href="programacao.html">
+                <span>♫</span>
+                <div>
+                  <strong>Programação</strong>
+                  <small>Gerenciar programas</small>
+                </div>
+              </a>
 
-            <div>
-              <strong>Programação</strong>
-              <small>Ativa</small>
+              <a href="promocoes.html">
+                <span>★</span>
+                <div>
+                  <strong>Promoções</strong>
+                  <small>Gerenciar promoções</small>
+                </div>
+              </a>
+
+              <a href="eventos.html">
+                <span>◷</span>
+                <div>
+                  <strong>Eventos</strong>
+                  <small>Gerenciar eventos</small>
+                </div>
+              </a>
+
             </div>
 
-          </div>
-
-
-          <div class="system-status-item">
-
-            <span class="status-indicator online"></span>
-
-            <div>
-              <strong>Configuração</strong>
-              <small>Carregada</small>
-            </div>
-
-          </div>
-
-
-          <div class="system-status-item">
-
-            <span class="status-indicator online"></span>
-
-            <div>
-              <strong>Plataforma</strong>
-              <small>NTP RADIO OS</small>
-            </div>
-
-          </div>
+          </section>
 
         </div>
 
       </section>
 
+    </main>
 
-      <footer class="admin-footer">
-
-        <span>
-          NTP RADIO OS
-        </span>
-
-        <span>
-          Plataforma de gestão para rádio web
-        </span>
-
-      </footer>
-
-    </section>
-
-  </main>
-
-</div>
+  </div>
 
 
-<script src="app.js?v=5"></script>
+  <!-- JAVASCRIPT -->
+  <script src="app.js?v=10"></script>
+
+  <script>
+
+    const menuToggle =
+      document.getElementById("menuToggle");
+
+    const sidebar =
+      document.getElementById("adminSidebar");
+
+    const sidebarOverlay =
+      document.getElementById("sidebarOverlay");
+
+    const sidebarClose =
+      document.getElementById("sidebarClose");
+
+
+    function abrirMenu() {
+
+      sidebar.classList.add("open");
+
+      sidebarOverlay.classList.add("show");
+
+      document.body.classList.add("menu-open");
+
+    }
+
+
+    function fecharMenu() {
+
+      sidebar.classList.remove("open");
+
+      sidebarOverlay.classList.remove("show");
+
+      document.body.classList.remove("menu-open");
+
+    }
+
+
+    if (menuToggle) {
+
+      menuToggle.addEventListener(
+        "click",
+        abrirMenu
+      );
+
+    }
+
+
+    if (sidebarClose) {
+
+      sidebarClose.addEventListener(
+        "click",
+        fecharMenu
+      );
+
+    }
+
+
+    if (sidebarOverlay) {
+
+      sidebarOverlay.addEventListener(
+        "click",
+        fecharMenu
+      );
+
+    }
+
+
+    document
+      .querySelectorAll(".admin-nav a")
+      .forEach(link => {
+
+        link.addEventListener(
+          "click",
+          () => {
+
+            if (
+              window.innerWidth <= 800
+            ) {
+
+              fecharMenu();
+
+            }
+
+          }
+        );
+
+      });
+
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        if (
+          window.innerWidth > 800
+        ) {
+
+          fecharMenu();
+
+        }
+
+      }
+    );
+
+
+  </script>
 
 </body>
-            </html>
+</html>
