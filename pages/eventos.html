@@ -1,22 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Eventos | NTP RÁDIO WEB</title>
-  <a href="../admin/index.html" class="button button-secondary">
-    ⚙ Painel
-</a>
-  <meta name="description" content="Eventos e novidades da NTP RÁDIO WEB.">
+
+  <meta
+    name="description"
+    content="Eventos e novidades da NTP RÁDIO WEB."
+  >
 
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../galaxy-theme.css">
+
+  <style>
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .page-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(139, 92, 246, .45);
+      color: #fff;
+      transition: .2s ease;
+    }
+
+    .page-actions a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(166, 107, 255, .9);
+    }
+
+    .page-actions .radio-button {
+      background: rgba(109, 40, 255, .18);
+    }
+
+    .page-actions .admin-button {
+      background: rgba(166, 107, 255, .10);
+    }
+
+    @media (max-width: 600px) {
+      .page-actions {
+        flex-direction: column;
+      }
+
+      .page-actions a {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header class="topbar">
+
   <div class="brand">
     <strong>NTP RÁDIO WEB</strong>
     <span>Eventos</span>
@@ -29,9 +78,22 @@
     <a href="eventos.html">Eventos</a>
     <a href="contato.html">Contato</a>
   </nav>
+
 </header>
 
 <main class="page-container">
+
+  <div class="page-actions">
+
+    <a href="../index.html" class="radio-button">
+      ← Voltar para a Rádio
+    </a>
+
+    <a href="../admin/index.html" class="admin-button">
+      ⚙ Painel Admin
+    </a>
+
+  </div>
 
   <section class="page-hero">
 
@@ -53,6 +115,7 @@
   <section class="cards-grid">
 
     <article class="glass-card">
+
       <span class="card-icon">🎤</span>
 
       <h2>Eventos ao vivo</h2>
@@ -62,10 +125,14 @@
         eventos com cobertura da NTP RÁDIO WEB.
       </p>
 
-      <span class="event-status">EM BREVE</span>
+      <span class="event-status">
+        EM BREVE
+      </span>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">🎧</span>
 
       <h2>Transmissões especiais</h2>
@@ -75,10 +142,14 @@
         diretamente pela nossa rádio online.
       </p>
 
-      <span class="event-status">EM BREVE</span>
+      <span class="event-status">
+        EM BREVE
+      </span>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">📢</span>
 
       <h2>Divulgue seu evento</h2>
@@ -88,7 +159,10 @@
         possibilidades de divulgação.
       </p>
 
-      <a href="contato.html">Entrar em contato →</a>
+      <a href="contato.html">
+        Entrar em contato →
+      </a>
+
     </article>
 
   </section>
@@ -107,7 +181,11 @@
 </main>
 
 <footer class="footer">
-  <p>© 2026 NTP RÁDIO WEB. Todos os direitos reservados.</p>
+
+  <p>
+    © 2026 NTP RÁDIO WEB. Todos os direitos reservados.
+  </p>
+
 </footer>
 
 </body>
