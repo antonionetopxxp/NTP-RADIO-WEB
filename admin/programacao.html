@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -10,399 +8,563 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <meta
-    name="theme-color"
-    content="#02030a"
-  >
+  <title>NTP RADIO OS — Programação</title>
 
-  <title>
-    Programação | NTP RADIO OS
-  </title>
-
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
-
 
 <body>
 
+<div class="admin-app">
 
-<!-- =====================================================
-     CABEÇALHO
-===================================================== -->
+  <!-- SIDEBAR -->
 
-<header class="admin-header">
+  <aside class="sidebar" id="sidebar">
 
-  <div class="admin-brand">
+    <div class="sidebar-brand">
+      <strong>NTP RADIO OS</strong>
+      <span>Painel administrativo</span>
+    </div>
 
-    <strong>NTP</strong>
+    <nav class="sidebar-nav">
 
-    <span>RADIO OS</span>
+      <div class="nav-section">
 
-  </div>
+        <div class="nav-title">
+          Principal
+        </div>
 
+        <a class="nav-link" href="index.html">
+          <span>⌂</span>
+          <span>Dashboard</span>
+        </a>
 
-  <div class="admin-actions">
-
-    <a
-      class="admin-button"
-      href="../index.html"
-    >
-      📻 Ver rádio
-    </a>
-
-
-    <a
-      class="admin-button logout"
-      href="index.html"
-    >
-      ← Painel
-    </a>
-
-  </div>
-
-</header>
+      </div>
 
 
+      <div class="nav-section">
 
-<!-- =====================================================
-     MENU
-===================================================== -->
+        <div class="nav-title">
+          Conteúdo
+        </div>
 
-<nav class="admin-sidebar">
+        <a class="nav-link" href="noticias.html">
+          <span>▤</span>
+          <span>Notícias</span>
+        </a>
 
-  <a<a href="index.html">Dashboard</a>
-    class="sidebar-link"
-    href="index.html"
-  >
-    🏠 Dashboard
-  </a>
+        <a class="nav-link" href="promocoes.html">
+          <span>★</span>
+          <span>Promoções</span>
+        </a>
 
+        <a class="nav-link" href="eventos.html">
+          <span>◷</span>
+          <span>Eventos</span>
+        </a>
 
-  <a
-    class="sidebar-link active"
-    href="programacao.html"
-  >
-    📅 Programação
-  </a>
-
-
-  <a
-    class="sidebar-link"
-    href="../pages/noticias.html"
-  >
-    📰 Notícias
-  </a>
+      </div>
 
 
-  <a
-    class="sidebar-link"
-    href="../pages/eventos.html"
-  >
-    🎫 Eventos
-  </a>
+      <div class="nav-section">
 
-</nav>
+        <div class="nav-title">
+          Rádio
+        </div>
+
+        <a
+          class="nav-link active"
+          href="programacao.html"
+        >
+          <span>♫</span>
+          <span>Programas</span>
+        </a>
+
+        <a
+          class="nav-link"
+          href="../index.html#programacao"
+        >
+          <span>☷</span>
+          <span>Grade</span>
+        </a>
+
+        <a
+          class="nav-link"
+          href="../index.html"
+        >
+          <span>●</span>
+          <span>Rádio ao vivo</span>
+        </a>
+
+      </div>
 
 
+      <div class="nav-section">
 
-<!-- =====================================================
-     CONTEÚDO
-===================================================== -->
+        <div class="nav-title">
+          Sistema
+        </div>
 
-<main class="programacao-page">
+        <a
+          class="nav-link"
+          href="configuracoes.html"
+        >
+          <span>⚙</span>
+          <span>Configurações</span>
+        </a>
 
+      </div>
 
-  <div class="page-header">
-
-    <h1>
-      📅 Gerenciador de Programação
-    </h1>
-
-    <p>
-      Cadastre os programas e horários
-      da NTP RÁDIO WEB.
-    </p>
-
-  </div>
+    </nav>
 
 
+    <div class="sidebar-footer">
 
-  <!-- ===================================================
-       AVISO
-  ==================================================== -->
+      <button
+        class="button button-secondary"
+        id="logoutBtn"
+        type="button"
+        style="width:100%;"
+      >
+        ⇥ Sair
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- OVERLAY MOBILE -->
 
   <div
-    id="notice"
-    class="notice"
+    class="sidebar-overlay"
+    id="overlay"
   ></div>
 
 
+  <!-- CONTEÚDO -->
 
-  <!-- ===================================================
-       GRID
-  ==================================================== -->
+  <main class="main-content">
 
-  <div class="programacao-grid">
+    <!-- TOPBAR -->
 
+    <header class="topbar">
 
-    <!-- ===============================================
-         FORMULÁRIO
-    ================================================ -->
+      <div class="topbar-left">
 
-    <section class="program-form">
-
-      <h2 id="formTitle">
-        Novo programa
-      </h2>
-
-
-      <form id="programForm">
-
-
-        <!-- ID OCULTO -->
-
-        <input
-          type="hidden"
-          id="programId"
+        <button
+          class="menu-button"
+          id="menuBtn"
+          type="button"
+          aria-label="Abrir menu"
         >
+          ☰
+        </button>
 
-
-
-        <!-- NOME -->
-
-        <div class="form-group">
-
-          <label for="programName">
-            Nome do programa
-          </label>
-
-          <input
-            type="text"
-            id="programName"
-            placeholder="Ex.: Manhã NTP"
-            autocomplete="off"
-            required
-          >
-
+        <div class="breadcrumb">
+          NTP RADIO OS
+          <strong>/ Programação</strong>
         </div>
 
+      </div>
 
 
-        <!-- APRESENTADOR -->
+      <div class="topbar-right">
 
-        <div class="form-group">
+        <a
+          class="topbar-radio"
+          href="../index.html"
+        >
+          ● Rádio ao vivo
+        </a>
 
-          <label for="presenter">
-            Apresentador
-          </label>
+        <div class="user-profile">
 
-          <input
-            type="text"
-            id="presenter"
-            placeholder="Ex.: Neto"
-            autocomplete="off"
-          >
-
-        </div>
-
-
-
-        <!-- DIA -->
-
-        <div class="form-group">
-
-          <label for="day">
-            Dia da semana
-          </label>
-
-          <select
-            id="day"
-            required
-          >
-
-            <option value="">
-              Selecione o dia
-            </option>
-
-            <option value="segunda">
-              Segunda-feira
-            </option>
-
-            <option value="terca">
-              Terça-feira
-            </option>
-
-            <option value="quarta">
-              Quarta-feira
-            </option>
-
-            <option value="quinta">
-              Quinta-feira
-            </option>
-
-            <option value="sexta">
-              Sexta-feira
-            </option>
-
-            <option value="sabado">
-              Sábado
-            </option>
-
-            <option value="domingo">
-              Domingo
-            </option>
-
-          </select>
-
-        </div>
-
-
-
-        <!-- HORÁRIOS -->
-
-        <div class="time-grid">
-
-
-          <div class="form-group">
-
-            <label for="startTime">
-              Início
-            </label>
-
-            <input
-              type="time"
-              id="startTime"
-              required
-            >
-
+          <div class="user-avatar">
+            NTP
           </div>
 
-
-
-          <div class="form-group">
-
-            <label for="endTime">
-              Término
-            </label>
-
-            <input
-              type="time"
-              id="endTime"
-              required
-            >
-
+          <div class="user-info">
+            <strong>Administrador</strong>
+            <span>Painel da rádio</span>
           </div>
-
-
-        </div>
-
-
-
-        <!-- DESCRIÇÃO -->
-
-        <div class="form-group">
-
-          <label for="description">
-            Descrição
-          </label>
-
-          <textarea
-            id="description"
-            placeholder="Descreva o programa..."
-          ></textarea>
-
-        </div>
-
-
-
-        <!-- ATIVO -->
-
-        <div class="checkbox-row">
-
-          <input
-            type="checkbox"
-            id="active"
-            checked
-          >
-
-          <label for="active">
-            Programa ativo
-          </label>
-
-        </div>
-
-
-
-        <!-- BOTÕES -->
-
-        <div class="form-buttons">
-
-          <button
-            type="submit"
-            class="btn btn-primary"
-          >
-            💾 Salvar programa
-          </button>
-
-
-          <button
-            type="button"
-            id="cancelEdit"
-            class="btn btn-secondary"
-            style="display:none"
-          >
-            Cancelar
-          </button>
-
-        </div>
-
-
-      </form>
-
-    </section>
-
-
-
-    <!-- ===============================================
-         LISTA
-    ================================================ -->
-
-    <section class="program-list">
-
-      <h2>
-        Programas cadastrados
-      </h2>
-
-
-      <div id="programList">
-
-        <div class="empty">
-
-          Carregando programação...
 
         </div>
 
       </div>
 
+    </header>
+
+
+    <!-- PÁGINA -->
+
+    <section class="page">
+
+
+      <!-- CABEÇALHO -->
+
+      <div class="page-header">
+
+        <div>
+
+          <div class="eyebrow">
+            RÁDIO
+          </div>
+
+          <h1>
+            Programação
+          </h1>
+
+          <p>
+            Cadastre os programas e horários da NTP RÁDIO WEB.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- FORMULÁRIO -->
+
+      <section class="panel program-editor">
+
+        <div class="panel-header">
+
+          <div>
+
+            <div class="panel-kicker">
+              PROGRAMAÇÃO
+            </div>
+
+            <h2 id="formTitle">
+              Novo programa
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <form id="programForm">
+
+          <input
+            type="hidden"
+            id="programId"
+          >
+
+
+          <div class="form-grid">
+
+
+            <!-- NOME -->
+
+            <div class="form-field">
+
+              <label for="programName">
+                Nome do programa
+              </label>
+
+              <input
+                type="text"
+                id="programName"
+                placeholder="Ex.: Manhã NTP"
+                required
+              >
+
+            </div>
+
+
+            <!-- APRESENTADOR -->
+
+            <div class="form-field">
+
+              <label for="presenter">
+                Apresentador
+              </label>
+
+              <input
+                type="text"
+                id="presenter"
+                placeholder="Nome do apresentador"
+              >
+
+            </div>
+
+
+            <!-- DIA -->
+
+            <div class="form-field">
+
+              <label for="day">
+                Dia da semana
+              </label>
+
+              <select id="day" required>
+
+                <option value="">
+                  Selecione o dia
+                </option>
+
+                <option value="segunda">
+                  Segunda-feira
+                </option>
+
+                <option value="terca">
+                  Terça-feira
+                </option>
+
+                <option value="quarta">
+                  Quarta-feira
+                </option>
+
+                <option value="quinta">
+                  Quinta-feira
+                </option>
+
+                <option value="sexta">
+                  Sexta-feira
+                </option>
+
+                <option value="sabado">
+                  Sábado
+                </option>
+
+                <option value="domingo">
+                  Domingo
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- INÍCIO -->
+
+            <div class="form-field">
+
+              <label for="startTime">
+                Início
+              </label>
+
+              <input
+                type="time"
+                id="startTime"
+                required
+              >
+
+            </div>
+
+
+            <!-- TÉRMINO -->
+
+            <div class="form-field">
+
+              <label for="endTime">
+                Término
+              </label>
+
+              <input
+                type="time"
+                id="endTime"
+                required
+              >
+
+            </div>
+
+
+            <!-- DESCRIÇÃO -->
+
+            <div class="form-field full">
+
+              <label for="description">
+                Descrição
+              </label>
+
+              <textarea
+                id="description"
+                placeholder="Descrição do programa..."
+              ></textarea>
+
+            </div>
+
+
+            <!-- ATIVO -->
+
+            <div class="checkbox-field">
+
+              <input
+                type="checkbox"
+                id="active"
+                checked
+              >
+
+              <label for="active">
+                Programa ativo
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- AVISO -->
+
+          <div
+            id="programNotice"
+            class="program-notice"
+            style="display:none;"
+          ></div>
+
+
+          <!-- BOTÕES -->
+
+          <div class="modal-footer program-footer">
+
+            <button
+              type="submit"
+              class="button button-primary"
+            >
+              💾 Salvar programa
+            </button>
+
+            <button
+              type="button"
+              class="button button-secondary"
+              id="cancelEditBtn"
+              style="display:none;"
+            >
+              Cancelar
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- PROGRAMAS CADASTRADOS -->
+
+      <section class="panel programs-panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <div class="panel-kicker">
+              GRADE
+            </div>
+
+            <h2>
+              Programas cadastrados
+            </h2>
+
+          </div>
+
+          <span
+            class="list-counter"
+            id="programTotal"
+          >
+            0
+          </span>
+
+        </div>
+
+
+        <div
+          id="programList"
+          class="program-list"
+        ></div>
+
+      </section>
+
     </section>
 
+  </main>
 
-  </div>
-
-</main>
-
+</div>
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
+<!-- JAVASCRIPT -->
 
-<script src="programacao.js?v=3"></script>
+<script src="programacao.js?v=8"></script>
+
+
+<!-- MENU MOBILE -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const menuBtn = document.getElementById("menuBtn");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+
+  function openMenu() {
+
+    sidebar.classList.add("open");
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+
+    document.body.classList.add("no-scroll");
+
+  }
+
+
+  function closeMenu() {
+
+    sidebar.classList.remove("open");
+    sidebar.classList.remove("active");
+    sidebar.classList.remove("is-open");
+
+    if (overlay) {
+      overlay.classList.remove("active");
+      overlay.classList.remove("show");
+      overlay.classList.remove("is-active");
+    }
+
+    document.body.classList.remove("no-scroll");
+
+  }
+
+
+  if (menuBtn) {
+
+    menuBtn.addEventListener("click", function () {
+
+      if (sidebar.classList.contains("open")) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+
+    });
+
+  }
+
+
+  if (overlay) {
+    overlay.addEventListener("click", closeMenu);
+  }
+
+
+  document.querySelectorAll(".sidebar .nav-link").forEach(function (link) {
+
+    link.addEventListener("click", function () {
+
+      if (window.innerWidth <= 900) {
+        closeMenu();
+      }
+
+    });
+
+  });
+
+});
+
+</script>
 
 </body>
-
-      </html>
+</html>
