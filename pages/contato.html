@@ -5,13 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Contato | NTP RÁDIO WEB</title>
-  <a href="../index.html" class="button button-secondary">
-    ← Rádio
-</a>
-  <meta name="description" content="Entre em contato com a NTP RÁDIO WEB.">
+
+  <meta
+    name="description"
+    content="Entre em contato com a NTP RÁDIO WEB."
+  >
 
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../galaxy-theme.css">
+
+  <style>
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 24px;
+    }
+
+    .page-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(139, 92, 246, .45);
+    }
+
+    .page-actions .back-radio {
+      color: #fff;
+      background: rgba(109, 40, 255, .18);
+    }
+
+    .page-actions .admin-link {
+      color: #fff;
+      background: rgba(166, 107, 255, .10);
+    }
+
+    .page-actions a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(166, 107, 255, .8);
+    }
+
+    @media (max-width: 600px) {
+      .page-actions {
+        flex-direction: column;
+      }
+
+      .page-actions a {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -34,6 +81,19 @@
 </header>
 
 <main class="page-container">
+
+  <!-- NAVEGAÇÃO DA PÁGINA -->
+  <div class="page-actions">
+
+    <a href="../index.html" class="back-radio">
+      ← Voltar para a Rádio
+    </a>
+
+    <a href="../admin/index.html" class="admin-link">
+      ⚙ Painel Admin
+    </a>
+
+  </div>
 
   <section class="page-hero">
 
@@ -76,7 +136,8 @@
         class="btn-primary"
         href="https://wa.me/"
         target="_blank"
-        rel="noopener">
+        rel="noopener"
+      >
         💬 Abrir WhatsApp
       </a>
 
