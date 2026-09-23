@@ -1,22 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Programação | NTP RÁDIO WEB</title>
-  <a href="../admin/index.html" class="button button-secondary">
-    ⚙ Painel
-</a>
-  <meta name="description" content="Confira a programação da NTP RÁDIO WEB.">
+
+  <meta
+    name="description"
+    content="Confira a programação da NTP RÁDIO WEB."
+  >
 
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../galaxy-theme.css">
+
+  <style>
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .page-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(139, 92, 246, .45);
+      color: #fff;
+      transition: .2s ease;
+    }
+
+    .page-actions a:hover {
+      transform: translateY(-1px);
+      border-color: rgba(166, 107, 255, .9);
+    }
+
+    .page-actions .radio-button {
+      background: rgba(109, 40, 255, .18);
+    }
+
+    .page-actions .admin-button {
+      background: rgba(166, 107, 255, .10);
+    }
+
+    @media (max-width: 600px) {
+      .page-actions {
+        flex-direction: column;
+      }
+
+      .page-actions a {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header class="topbar">
+
   <div class="brand">
     <strong>NTP RÁDIO WEB</strong>
     <span>Programação</span>
@@ -29,78 +78,146 @@
     <a href="eventos.html">Eventos</a>
     <a href="contato.html">Contato</a>
   </nav>
+
 </header>
 
 <main class="page-container">
 
+  <div class="page-actions">
+
+    <a href="../index.html" class="radio-button">
+      ← Voltar para a Rádio
+    </a>
+
+    <a href="../admin/index.html" class="admin-button">
+      ⚙ Painel Admin
+    </a>
+
+  </div>
+
   <section class="page-hero">
+
     <span class="badge">📻 NTP RÁDIO WEB</span>
+
     <h1>Programação</h1>
-    <p>Confira nossa programação e acompanhe a NTP RÁDIO WEB ao vivo.</p>
+
+    <p>
+      Confira nossa programação e acompanhe a NTP RÁDIO WEB ao vivo.
+    </p>
 
     <a class="btn-primary" href="../index.html">
       🎧 Ouvir agora
     </a>
+
   </section>
 
   <section class="cards-grid">
 
     <article class="glass-card">
+
       <span class="card-icon">🌅</span>
+
       <h2>Manhã NTP</h2>
+
       <p>06:00 às 09:00</p>
-      <small>Comece o dia com música e informação.</small>
+
+      <small>
+        Comece o dia com música e informação.
+      </small>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">🎵</span>
+
       <h2>Hits NTP</h2>
+
       <p>09:00 às 12:00</p>
-      <small>Os grandes sucessos para acompanhar seu dia.</small>
+
+      <small>
+        Os grandes sucessos para acompanhar seu dia.
+      </small>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">☀️</span>
+
       <h2>Almoço Musical</h2>
+
       <p>12:00 às 14:00</p>
-      <small>Música para deixar seu horário de almoço ainda melhor.</small>
+
+      <small>
+        Música para deixar seu horário de almoço ainda melhor.
+      </small>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">🎙️</span>
+
       <h2>Tarde NTP</h2>
+
       <p>14:00 às 18:00</p>
-      <small>Programação especial para sua tarde.</small>
+
+      <small>
+        Programação especial para sua tarde.
+      </small>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">🌙</span>
+
       <h2>Noite NTP</h2>
+
       <p>18:00 às 22:00</p>
-      <small>Os melhores sons para sua noite.</small>
+
+      <small>
+        Os melhores sons para sua noite.
+      </small>
+
     </article>
 
     <article class="glass-card">
+
       <span class="card-icon">⭐</span>
+
       <h2>NTP Night</h2>
+
       <p>22:00 às 06:00</p>
-      <small>Programação musical durante toda a madrugada.</small>
+
+      <small>
+        Programação musical durante toda a madrugada.
+      </small>
+
     </article>
 
   </section>
 
   <section class="notice-box">
+
     <h2>📻 Rádio online 24 horas</h2>
+
     <p>
       A NTP RÁDIO WEB transmite música e entretenimento pela internet.
       A programação pode sofrer alterações.
     </p>
+
   </section>
 
 </main>
 
 <footer class="footer">
-  <p>© 2026 NTP RÁDIO WEB. Todos os direitos reservados.</p>
+
+  <p>
+    © 2026 NTP RÁDIO WEB. Todos os direitos reservados.
+  </p>
+
 </footer>
 
 </body>
