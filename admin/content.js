@@ -1,740 +1,1427 @@
+/* =========================================================
+   NTP RADIO OS
+   GERENCIADOR DE CONTEÚDO
+   Notícias / Eventos / Promoções
+   ========================================================= */
+
 (() => {
+
   "use strict";
 
-  const CONTENT_TYPE = window.NTP_CONTENT_TYPE || "news";
+  const CONTENT_TYPE =
+    window.NTP_CONTENT_TYPE || "news";
 
   const CONFIG = {
+
     news: {
       key: "ntp_radio_noticias",
       title: "Notícias",
       singular: "notícia"
     },
-    promotions: {
-      key: "ntp_radio_promocoes",
-      title: "Promoções",
-      singular: "promoção"
-    },
+
     events: {
       key: "ntp_radio_eventos",
       title: "Eventos",
       singular: "evento"
+    },
+
+    promotions: {
+      key: "ntp_radio_promocoes",
+      title: "Promoções",
+      singular: "promoção"
     }
+
   };
 
-  const config = CONFIG[CONTENT_TYPE] || CONFIG.news;
-
-  const $ = (selector) => document.querySelector(selector);
-
-  const listEl = $("#newsList");
-  const totalEl = $("#newsTotal");
-  const form = $("#newsForm");
-  const modal = $("#newsModal");
-
-  const newBtn = $("#newNewsBtn");
-  const closeBtn = $("#closeNewsModal");
-  const cancelBtn = $("#cancelNewsBtn");
-
-  const searchInput = $("#searchInput");
-  const statusFilter = $("#statusFilter");
-
-  const idInput = $("#newsId");
-  const titleInput = $("#newsTitle");
-  const categoryInput = $("#newsCategory");
-  const dateInput = $("#newsDate");
-  const imageInput = $("#newsImage");
-  const summaryInput = $("#newsSummary");
-  const publishedInput = $("#newsPublished");
-
-  let items = [];
-
-  /* =========================================================
-     STORAGE
-  ========================================================= */
-
-  function loadItems() {
-    try {
-      const saved = localStorage.getItem(config.key);
-
-      if (!saved) {
-        items = [];
-        return;
-      }
-
-      const parsed = JSON.parse(saved);
-
-      items = Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      console.error("Erro ao carregar conteúdo:", error);
-      items = [];
-    }
-  }
-
-  function saveItems() {
-    try {
-      localStorage.setItem(config.key, JSON.stringify(items));
-      return true;
-    } catch (error) {
-      console.error("Erro ao salvar conteúdo:", error);
-      showToast("Não foi possível salvar os dados.", "error");
-      return false;
-    }
-  }
-
-  /* =========================================================
-     SEGURANÇA
-  ========================================================= */
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  /* =========================================================
-     DATA
-  ========================================================= */
-
-  function formatDate(date) {
-    if (!date) return "";
-
-    const parts = String(date).split("-");
-
-    if (parts.length !== 3) {
-      return escapeHTML(date);
-    }
-
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  }
-
-  /* =========================================================
-     RENDER
-  ========================================================= */
-
-  function getFilteredItems() {
-    const search = (searchInput?.value || "")
-      .trim()
-      .toLowerCase();
-
-    const status = statusFilter?.value || "all";
-
-    return items
-      .filter((item) => {
-        const matchesSearch =
-          !search ||
-          String(item.title || "")
-            .toLowerCase()
-            .includes(search) ||
-          String(item.category || "")
-            .toLowerCase()
-            .includes(search) ||
-          String(item.summary || "")
-            .toLowerCase()
-            .includes(search);
-
-        let matchesStatus = true;
-
-        if (status === "published") {
-          matchesStatus = item.published === true;
-        }
-
-        if (status === "draft") {
-          matchesStatus = item.published !== true;
-        }
-
-        return matchesSearch && matchesStatus;
-      })
-      .sort((a, b) => {
-        const dateA = new Date(
-          a.updatedAt || a.createdAt || 0
-        ).getTime();
-
-        const dateB = new Date(
-          b.updatedAt || b.createdAt || 0
-        ).getTime();
-
-        return dateB - dateA;
-      });
-  }
-
-  function render() {
-    if (!listEl) return;
-
-    const filtered = getFilteredItems();
-
-    if (totalEl) {
-      totalEl.textContent = filtered.length;
-    }
-
-    if (!filtered.length) {
-      listEl.innerHTML = `
-        <div class="editorial-empty">
-          <div class="empty-icon">📰</div>
-          <h3>Nenhuma ${escapeHTML(config.singular)} encontrada</h3>
-          <p>
-            ${
-              items.length
-                ? "Tente alterar a pesquisa ou o filtro."
-                : `Clique em "+ Nova ${escapeHTML(
-                    config.singular
-                  )}" para começar.`
-            }
-          </p>
-        </div>
-      `;
-
-      return;
-    }
-
-    listEl.innerHTML = filtered
-      .map(createItemHTML)
-      .join("");
-  }
-
-  function createItemHTML(item) {
-    const image = item.image
-      ? `
-        <img
-          class="editorial-image"
-          src="${escapeHTML(item.image)}"
-          alt="${escapeHTML(item.title)}"
-        >
-      `
-      : `
-        <div class="editorial-placeholder">
-          📰
-        </div>
-      `;
-
-    const status = item.published
-      ? `
-        <span class="content-status published">
-          Publicado
-        </span>
-      `
-      : `
-        <span class="content-status draft">
-          Rascunho
-        </span>
-      `;
-
-    return `
-      <article class="editorial-item">
-
-        <div class="editorial-media">
-          ${image}
-        </div>
-
-        <div class="editorial-main">
-
-          <div class="editorial-meta">
-            ${
-              item.category
-                ? `<span>${escapeHTML(item.category)}</span>`
-                : ""
-            }
-
-            ${
-              item.date
-                ? `<span>${formatDate(item.date)}</span>`
-                : ""
-            }
-
-            ${status}
-          </div>
-
-          <h3>
-            ${escapeHTML(item.title || "Sem título")}
-          </h3>
-
-          <p>
-            ${escapeHTML(item.summary || "")}
-          </p>
-
-          <div class="editorial-actions">
-
-            <button
-              type="button"
-              class="icon-button edit-button"
-              data-action="edit"
-              data-id="${escapeHTML(item.id)}"
-            >
-              ✏️ Editar
-            </button>
-
-            <button
-              type="button"
-              class="icon-button delete-button"
-              data-action="delete"
-              data-id="${escapeHTML(item.id)}"
-            >
-              🗑️ Excluir
-            </button>
-
-          </div>
-
-        </div>
-
-      </article>
-    `;
-  }
-
-  /* =========================================================
-     MODAL
-  ========================================================= */
-
-  function openModal() {
-    if (!modal) return;
-
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-
-    setTimeout(() => {
-      titleInput?.focus();
-    }, 100);
-  }
-
-  function closeModal() {
-    if (!modal) return;
-
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
-
-    resetForm();
-  }
-
-  function resetForm() {
-    form?.reset();
-
-    if (idInput) {
-      idInput.value = "";
-    }
-
-    if (publishedInput) {
-      publishedInput.checked = true;
-    }
-
-    const title = document.querySelector("#newsModalTitle");
-
-    if (title) {
-      title.textContent = `Nova ${config.singular}`;
-    }
-  }
-
-  /* =========================================================
-     NOVO
-  ========================================================= */
-
-  function openCreate() {
-    resetForm();
-    openModal();
-  }
-
-  /* =========================================================
-     EDITAR
-  ========================================================= */
-
-  function openEdit(id) {
-    const item = items.find(
-      (entry) => String(entry.id) === String(id)
+  const current =
+    CONFIG[CONTENT_TYPE] || CONFIG.news;
+
+
+  /* =======================================================
+     ELEMENTOS
+     ======================================================= */
+
+  const form =
+    document.getElementById(
+      CONTENT_TYPE === "news"
+        ? "newsForm"
+        : CONTENT_TYPE === "events"
+        ? "eventForm"
+        : "promotionForm"
     );
 
-    if (!item) {
-      showToast("Conteúdo não encontrado.", "error");
-      return;
-    }
+  const list =
+    document.getElementById(
+      CONTENT_TYPE === "news"
+        ? "newsList"
+        : CONTENT_TYPE === "events"
+        ? "eventList"
+        : "promotionList"
+    );
 
-    if (idInput) idInput.value = item.id || "";
-    if (titleInput) titleInput.value = item.title || "";
-    if (categoryInput) categoryInput.value = item.category || "";
-    if (dateInput) dateInput.value = item.date || "";
-    if (imageInput) imageInput.value = item.image || "";
-    if (summaryInput) summaryInput.value = item.summary || "";
+  const total =
+    document.getElementById(
+      CONTENT_TYPE === "news"
+        ? "newsTotal"
+        : CONTENT_TYPE === "events"
+        ? "eventTotal"
+        : "promotionTotal"
+    );
 
-    if (publishedInput) {
-      publishedInput.checked = item.published === true;
-    }
 
-    const title = document.querySelector("#newsModalTitle");
+  /* =======================================================
+     HELPERS
+     ======================================================= */
 
-    if (title) {
-      title.textContent = `Editar ${config.singular}`;
-    }
-
-    openModal();
+  function $(id) {
+    return document.getElementById(id);
   }
 
-  /* =========================================================
-     SALVAR
-  ========================================================= */
 
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    const title = titleInput?.value.trim() || "";
-
-    if (!title) {
-      showToast(
-        `Digite o título da ${config.singular}.`,
-        "error"
-      );
-
-      titleInput?.focus();
-      return;
-    }
-
-    const existingId = idInput?.value.trim() || "";
-
-    const now = new Date().toISOString();
-
-    const data = {
-      id: existingId || createId(),
-      title,
-      category: categoryInput?.value.trim() || "",
-      date: dateInput?.value || "",
-      image: imageInput?.value.trim() || "",
-      summary: summaryInput?.value.trim() || "",
-      published: publishedInput
-        ? publishedInput.checked
-        : true,
-      updatedAt: now
-    };
-
-    if (existingId) {
-      const index = items.findIndex(
-        (item) =>
-          String(item.id) === String(existingId)
-      );
-
-      if (index === -1) {
-        showToast(
-          "O conteúdo não foi encontrado.",
-          "error"
-        );
-        return;
-      }
-
-      data.createdAt =
-        items[index].createdAt || now;
-
-      items[index] = data;
-
-      if (!saveItems()) return;
-
-      showToast(
-        `${capitalize(config.singular)} atualizada com sucesso.`
-      );
-    } else {
-      data.createdAt = now;
-
-      items.unshift(data);
-
-      if (!saveItems()) return;
-
-      showToast(
-        `${capitalize(config.singular)} criada com sucesso.`
-      );
-    }
-
-    closeModal();
-    render();
-
-    notifyOtherPages();
-  }
-
-  /* =========================================================
-     EXCLUIR
-  ========================================================= */
-
-  function deleteItem(id) {
-    const item = items.find(
-      (entry) => String(entry.id) === String(id)
-    );
-
-    if (!item) {
-      showToast("Conteúdo não encontrado.", "error");
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Excluir esta ${config.singular}?\n\n"${item.title}"`
-    );
-
-    if (!confirmed) return;
-
-    items = items.filter(
-      (entry) =>
-        String(entry.id) !== String(id)
-    );
-
-    if (!saveItems()) return;
-
-    render();
-
-    showToast(
-      `${capitalize(config.singular)} excluída.`
-    );
-
-    notifyOtherPages();
-  }
-
-  /* =========================================================
-     ID
-  ========================================================= */
-
-  function createId() {
-    if (
-      window.crypto &&
-      typeof window.crypto.randomUUID === "function"
-    ) {
-      return window.crypto.randomUUID();
-    }
+  function uid() {
 
     return (
       Date.now().toString(36) +
       Math.random()
         .toString(36)
-        .substring(2, 10)
+        .substring(2, 8)
     );
+
   }
 
-  /* =========================================================
-     TOAST
-  ========================================================= */
 
-  function showToast(message, type = "success") {
-    let toast = document.querySelector(
-      ".toast-message"
+  function escapeHTML(value = "") {
+
+    return String(value).replace(
+      /[&<>"']/g,
+      character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]
     );
 
-    if (!toast) {
-      toast = document.createElement("div");
+  }
 
-      toast.className = "toast-message";
 
-      document.body.appendChild(toast);
+  function loadItems() {
+
+    try {
+
+      const raw =
+        localStorage.getItem(current.key);
+
+      if (!raw) return [];
+
+      const data =
+        JSON.parse(raw);
+
+      return Array.isArray(data)
+        ? data
+        : [];
+
+    } catch (error) {
+
+      console.error(
+        "Erro ao carregar conteúdo:",
+        error
+      );
+
+      return [];
+
     }
 
-    toast.textContent = message;
+  }
 
-    toast.classList.remove(
-      "success",
-      "error",
-      "show"
+
+  function saveItems(items) {
+
+    localStorage.setItem(
+      current.key,
+      JSON.stringify(items)
     );
 
-    toast.classList.add(type);
+    window.dispatchEvent(
+      new CustomEvent(
+        "ntp-content-updated",
+        {
+          detail: {
+            type: CONTENT_TYPE
+          }
+        }
+      )
+    );
 
-    requestAnimationFrame(() => {
-      toast.classList.add("show");
-    });
+  }
+
+
+  function showNotice(
+    message,
+    type = "success"
+  ) {
+
+    const notice =
+      $(
+        CONTENT_TYPE === "news"
+          ? "newsNotice"
+          : CONTENT_TYPE === "events"
+          ? "eventNotice"
+          : "promotionNotice"
+      );
+
+    if (!notice) return;
+
+    notice.textContent = message;
+
+    notice.style.display = "block";
+
+    notice.style.background =
+      type === "error"
+        ? "rgba(255,92,112,.12)"
+        : "rgba(50,213,131,.12)";
+
+    notice.style.color =
+      type === "error"
+        ? "#ff7585"
+        : "#32d583";
+
+    notice.style.border =
+      type === "error"
+        ? "1px solid rgba(255,92,112,.25)"
+        : "1px solid rgba(50,213,131,.25)";
 
     clearTimeout(
-      toast._timeout
+      notice._timer
     );
 
-    toast._timeout = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 3000);
+    notice._timer =
+      setTimeout(() => {
+
+        notice.style.display =
+          "none";
+
+      }, 3500);
+
   }
 
-  /* =========================================================
-     CAPITALIZE
-  ========================================================= */
 
-  function capitalize(value) {
-    if (!value) return "";
+  /* =======================================================
+     FORMULÁRIO
+     ======================================================= */
 
-    return (
-      value.charAt(0).toUpperCase() +
-      value.slice(1)
-    );
-  }
+  function resetForm() {
 
-  /* =========================================================
-     EVENTOS DA LISTA
-  ========================================================= */
+    if (!form) return;
 
-  function handleListClick(event) {
-    const button =
-      event.target.closest("[data-action]");
+    form.reset();
 
-    if (!button) return;
+    const idField =
+      CONTENT_TYPE === "news"
+        ? $("newsId")
+        : CONTENT_TYPE === "events"
+        ? $("eventId")
+        : $("promotionId");
 
-    const action =
-      button.dataset.action;
-
-    const id =
-      button.dataset.id;
-
-    if (action === "edit") {
-      openEdit(id);
+    if (idField) {
+      idField.value = "";
     }
 
-    if (action === "delete") {
-      deleteItem(id);
-    }
-  }
+    if (CONTENT_TYPE === "news") {
 
-  /* =========================================================
-     MENU MOBILE
-  ========================================================= */
+      const published =
+        $("newsPublished");
 
-  function setupMobileMenu() {
-    const menuBtn =
-      document.querySelector("#menuBtn");
-
-    const sidebar =
-      document.querySelector("#sidebar");
-
-    const overlay =
-      document.querySelector("#overlay");
-
-    if (!menuBtn || !sidebar) return;
-
-    function toggleMenu() {
-      sidebar.classList.toggle("open");
-
-      overlay?.classList.toggle("open");
-
-      document.body.classList.toggle(
-        "menu-open"
-      );
-    }
-
-    function closeMenu() {
-      sidebar.classList.remove("open");
-
-      overlay?.classList.remove("open");
-
-      document.body.classList.remove(
-        "menu-open"
-      );
-    }
-
-    menuBtn.addEventListener(
-      "click",
-      toggleMenu
-    );
-
-    overlay?.addEventListener(
-      "click",
-      closeMenu
-    );
-
-    sidebar
-      .querySelectorAll("a")
-      .forEach((link) => {
-        link.addEventListener(
-          "click",
-          closeMenu
-        );
-      });
-  }
-
-  /* =========================================================
-     SINCRONIZAÇÃO
-  ========================================================= */
-
-  function notifyOtherPages() {
-    window.dispatchEvent(
-      new Event("ntp-content-updated")
-    );
-  }
-
-  window.addEventListener(
-    "storage",
-    (event) => {
-      if (event.key === config.key) {
-        loadItems();
-        render();
+      if (published) {
+        published.checked = true;
       }
+
     }
-  );
 
-  /* =========================================================
-     INICIALIZAÇÃO
-  ========================================================= */
+    if (CONTENT_TYPE === "events") {
 
-  function init() {
-    loadItems();
+      const published =
+        $("eventPublished");
+
+      if (published) {
+        published.checked = true;
+      }
+
+    }
+
+    if (CONTENT_TYPE === "promotions") {
+
+      const published =
+        $("promotionPublished");
+
+      if (published) {
+        published.checked = true;
+      }
+
+    }
+
+  }
+
+
+  function fillForm(item) {
+
+    if (!item || !form) return;
+
+    if (CONTENT_TYPE === "news") {
+
+      $("newsId").value =
+        item.id || "";
+
+      $("newsTitle").value =
+        item.title || "";
+
+      $("newsCategory").value =
+        item.category || "";
+
+      $("newsDate").value =
+        item.date || "";
+
+      $("newsImage").value =
+        item.image || "";
+
+      $("newsSummary").value =
+        item.summary || "";
+
+      $("newsPublished").checked =
+        item.published !== false;
+
+    }
+
+
+    if (CONTENT_TYPE === "events") {
+
+      $("eventId").value =
+        item.id || "";
+
+      $("eventTitle").value =
+        item.title || "";
+
+      $("eventDate").value =
+        item.date || "";
+
+      $("eventTime").value =
+        item.time || "";
+
+      $("eventLocation").value =
+        item.location || "";
+
+      $("eventImage").value =
+        item.image || "";
+
+      $("eventDescription").value =
+        item.description || "";
+
+      $("eventPublished").checked =
+        item.published !== false;
+
+    }
+
+
+    if (CONTENT_TYPE === "promotions") {
+
+      $("promotionId").value =
+        item.id || "";
+
+      $("promotionTitle").value =
+        item.title || "";
+
+      $("promotionDate").value =
+        item.date || "";
+
+      $("promotionImage").value =
+        item.image || "";
+
+      $("promotionDescription").value =
+        item.description || "";
+
+      $("promotionPrize").value =
+        item.prize || "";
+
+      $("promotionPublished").checked =
+        item.published !== false;
+
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  /* =======================================================
+     CRIAR OBJETO
+     ======================================================= */
+
+  function getFormData() {
+
+    const now =
+      new Date().toISOString();
+
+
+    if (CONTENT_TYPE === "news") {
+
+      return {
+
+        title:
+          $("newsTitle").value.trim(),
+
+        category:
+          $("newsCategory").value.trim(),
+
+        date:
+          $("newsDate").value,
+
+        image:
+          $("newsImage").value.trim(),
+
+        summary:
+          $("newsSummary").value.trim(),
+
+        published:
+          $("newsPublished").checked,
+
+        updatedAt:
+          now
+
+      };
+
+    }
+
+
+    if (CONTENT_TYPE === "events") {
+
+      return {
+
+        title:
+          $("eventTitle").value.trim(),
+
+        date:
+          $("eventDate").value,
+
+        time:
+          $("eventTime").value,
+
+        location:
+          $("eventLocation").value.trim(),
+
+        image:
+          $("eventImage").value.trim(),
+
+        description:
+          $("eventDescription").value.trim(),
+
+        published:
+          $("eventPublished").checked,
+
+        updatedAt:
+          now
+
+      };
+
+    }
+
+
+    return {
+
+      title:
+        $("promotionTitle").value.trim(),
+
+      date:
+        $("promotionDate").value,
+
+      image:
+        $("promotionImage").value.trim(),
+
+      description:
+        $("promotionDescription").value.trim(),
+
+      prize:
+        $("promotionPrize").value.trim(),
+
+      published:
+        $("promotionPublished").checked,
+
+      updatedAt:
+        now
+
+    };
+
+  }
+
+
+  /* =======================================================
+     VALIDAÇÃO
+     ======================================================= */
+
+  function validate(data) {
+
+    if (!data.title) {
+
+      showNotice(
+        `Digite o título da ${current.singular}.`,
+        "error"
+      );
+
+      return false;
+
+    }
+
+    return true;
+
+  }
+
+
+  /* =======================================================
+     SALVAR
+     ======================================================= */
+
+  function handleSubmit(event) {
+
+    event.preventDefault();
+
+    const data =
+      getFormData();
+
+    if (!validate(data)) {
+      return;
+    }
+
+    const items =
+      loadItems();
+
+    const idField =
+      CONTENT_TYPE === "news"
+        ? $("newsId")
+        : CONTENT_TYPE === "events"
+        ? $("eventId")
+        : $("promotionId");
+
+    const editingId =
+      idField
+        ? idField.value.trim()
+        : "";
+
+    if (editingId) {
+
+      const index =
+        items.findIndex(
+          item =>
+            item.id === editingId
+        );
+
+      if (index !== -1) {
+
+        items[index] = {
+          ...items[index],
+          ...data,
+          id: editingId
+        };
+
+      }
+
+      saveItems(items);
+
+      showNotice(
+        `${current.singular} atualizada com sucesso.`
+      );
+
+    } else {
+
+      const newItem = {
+
+        id: uid(),
+
+        ...data,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+      items.unshift(newItem);
+
+      saveItems(items);
+
+      showNotice(
+        `${current.singular} criada com sucesso.`
+      );
+
+    }
+
+    resetForm();
 
     render();
 
-    newBtn?.addEventListener(
-      "click",
-      openCreate
+  }
+
+
+  /* =======================================================
+     EDITAR
+     ======================================================= */
+
+  function editItem(id) {
+
+    const items =
+      loadItems();
+
+    const item =
+      items.find(
+        entry => entry.id === id
+      );
+
+    if (!item) return;
+
+    fillForm(item);
+
+  }
+
+
+  /* =======================================================
+     PUBLICAR / DESPUBLICAR
+     ======================================================= */
+
+  function togglePublished(id) {
+
+    const items =
+      loadItems();
+
+    const index =
+      items.findIndex(
+        item => item.id === id
+      );
+
+    if (index === -1) return;
+
+    items[index].published =
+      items[index].published === false;
+
+    items[index].updatedAt =
+      new Date().toISOString();
+
+    saveItems(items);
+
+    render();
+
+  }
+
+
+  /* =======================================================
+     EXCLUIR
+     ======================================================= */
+
+  function deleteItem(id) {
+
+    const items =
+      loadItems();
+
+    const item =
+      items.find(
+        entry => entry.id === id
+      );
+
+    if (!item) return;
+
+    const confirmed =
+      window.confirm(
+        `Excluir esta ${current.singular}?\n\nEsta ação não pode ser desfeita.`
+      );
+
+    if (!confirmed) return;
+
+    const filtered =
+      items.filter(
+        entry => entry.id !== id
+      );
+
+    saveItems(filtered);
+
+    showNotice(
+      `${current.singular} excluída com sucesso.`
     );
 
-    closeBtn?.addEventListener(
-      "click",
-      closeModal
+    render();
+
+  }
+
+
+  /* =======================================================
+     DATA FORMAT
+     ======================================================= */
+
+  function formatDate(value) {
+
+    if (!value) return "";
+
+    const date =
+      new Date(
+        value + "T00:00:00"
+      );
+
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    return date.toLocaleDateString(
+      "pt-BR"
     );
 
-    cancelBtn?.addEventListener(
-      "click",
-      closeModal
-    );
+  }
 
-    form?.addEventListener(
+
+  /* =======================================================
+     RENDER NOTÍCIAS
+     ======================================================= */
+
+  function renderNews(items) {
+
+    if (!list) return;
+
+    if (!items.length) {
+
+      list.innerHTML = `
+        <div class="empty-state">
+          <strong>Nenhuma notícia cadastrada</strong>
+          <span>Crie sua primeira notícia.</span>
+        </div>
+      `;
+
+      return;
+
+    }
+
+    list.innerHTML =
+      items.map(item => {
+
+        const status =
+          item.published !== false;
+
+        return `
+
+          <article class="content-item">
+
+            <div class="content-main">
+
+              ${
+                item.image
+                  ? `
+                    <img
+                      class="content-thumb"
+                      src="${escapeHTML(item.image)}"
+                      alt=""
+                      loading="lazy"
+                    >
+                  `
+                  : ""
+              }
+
+              <div>
+
+                <div class="content-title">
+                  ${escapeHTML(item.title)}
+                </div>
+
+                <div class="content-meta">
+
+                  ${
+                    item.category
+                      ? escapeHTML(item.category) + " · "
+                      : ""
+                  }
+
+                  ${
+                    formatDate(item.date)
+                  }
+
+                </div>
+
+                ${
+                  item.summary
+                    ? `
+                      <div class="content-description">
+                        ${escapeHTML(item.summary)}
+                      </div>
+                    `
+                    : ""
+                }
+
+                <span
+                  class="content-status ${
+                    status
+                      ? "published"
+                      : "draft"
+                  }"
+                >
+                  ${
+                    status
+                      ? "PUBLICADA"
+                      : "DESATIVADA"
+                  }
+                </span>
+
+              </div>
+
+            </div>
+
+            <div class="editorial-actions">
+
+              <button
+                class="icon-button"
+                type="button"
+                data-action="edit"
+                data-id="${escapeHTML(item.id)}"
+                title="Editar"
+              >
+                ✏️
+              </button>
+
+              <button
+                class="icon-button"
+                type="button"
+                data-action="toggle"
+                data-id="${escapeHTML(item.id)}"
+                title="${
+                  status
+                    ? "Desativar"
+                    : "Publicar"
+                }"
+              >
+                ${
+                  status
+                    ? "⏸️"
+                    : "▶️"
+                }
+              </button>
+
+              <button
+                class="icon-button danger"
+                type="button"
+                data-action="delete"
+                data-id="${escapeHTML(item.id)}"
+                title="Excluir"
+              >
+                🗑️
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =======================================================
+     RENDER EVENTOS
+     ======================================================= */
+
+  function renderEvents(items) {
+
+    if (!list) return;
+
+    if (!items.length) {
+
+      list.innerHTML = `
+        <div class="event-empty">
+          Nenhum evento cadastrado.
+        </div>
+      `;
+
+      return;
+
+    }
+
+    list.innerHTML =
+      items.map(item => {
+
+        const status =
+          item.published !== false;
+
+        const date =
+          formatDate(item.date);
+
+        return `
+
+          <article class="event-card">
+
+            <div>
+
+              <div class="event-title">
+                ${escapeHTML(item.title)}
+              </div>
+
+              <div class="event-meta">
+
+                ${
+                  date
+                    ? "📅 " + escapeHTML(date)
+                    : ""
+                }
+
+                ${
+                  item.time
+                    ? " · 🕐 " +
+                      escapeHTML(item.time)
+                    : ""
+                }
+
+                ${
+                  item.location
+                    ? " · 📍 " +
+                      escapeHTML(item.location)
+                    : ""
+                }
+
+              </div>
+
+              ${
+                item.description
+                  ? `
+                    <div class="event-description">
+                      ${escapeHTML(item.description)}
+                    </div>
+                  `
+                  : ""
+              }
+
+              <span
+                class="event-status ${
+                  status
+                    ? "active"
+                    : "inactive"
+                }"
+              >
+                ${
+                  status
+                    ? "PUBLICADO"
+                    : "DESATIVADO"
+                }
+              </span>
+
+            </div>
+
+            <div class="event-actions">
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="edit"
+                data-id="${escapeHTML(item.id)}"
+              >
+                ✏️ Editar
+              </button>
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="toggle"
+                data-id="${escapeHTML(item.id)}"
+              >
+                ${
+                  status
+                    ? "⏸️ Desativar"
+                    : "▶️ Ativar"
+                }
+              </button>
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="delete"
+                data-id="${escapeHTML(item.id)}"
+              >
+                🗑️ Excluir
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =======================================================
+     RENDER PROMOÇÕES
+     ======================================================= */
+
+  function renderPromotions(items) {
+
+    if (!list) return;
+
+    if (!items.length) {
+
+      list.innerHTML = `
+        <div class="promotion-empty">
+          Nenhuma promoção cadastrada.
+        </div>
+      `;
+
+      return;
+
+    }
+
+    list.innerHTML =
+      items.map(item => {
+
+        const status =
+          item.published !== false;
+
+        return `
+
+          <article class="promotion-card">
+
+            <div>
+
+              <div class="promotion-title">
+                ${escapeHTML(item.title)}
+              </div>
+
+              <div class="promotion-meta">
+
+                ${
+                  item.date
+                    ? "📅 Até " +
+                      escapeHTML(
+                        formatDate(item.date)
+                      )
+                    : ""
+                }
+
+                ${
+                  item.prize
+                    ? " · 🏆 " +
+                      escapeHTML(item.prize)
+                    : ""
+                }
+
+              </div>
+
+              ${
+                item.description
+                  ? `
+                    <div class="promotion-description">
+                      ${escapeHTML(item.description)}
+                    </div>
+                  `
+                  : ""
+              }
+
+              <span
+                class="promotion-status ${
+                  status
+                    ? "active"
+                    : "inactive"
+                }"
+              >
+                ${
+                  status
+                    ? "PUBLICADA"
+                    : "DESATIVADA"
+                }
+              </span>
+
+            </div>
+
+            <div class="promotion-actions">
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="edit"
+                data-id="${escapeHTML(item.id)}"
+              >
+                ✏️ Editar
+              </button>
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="toggle"
+                data-id="${escapeHTML(item.id)}"
+              >
+                ${
+                  status
+                    ? "⏸️ Desativar"
+                    : "▶️ Ativar"
+                }
+              </button>
+
+              <button
+                class="btn btn-ghost"
+                type="button"
+                data-action="delete"
+                data-id="${escapeHTML(item.id)}"
+              >
+                🗑️ Excluir
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  /* =======================================================
+     RENDER
+     ======================================================= */
+
+  function render() {
+
+    const items =
+      loadItems();
+
+    if (total) {
+      total.textContent =
+        items.length;
+    }
+
+    if (CONTENT_TYPE === "news") {
+
+      renderNews(items);
+
+      return;
+
+    }
+
+    if (CONTENT_TYPE === "events") {
+
+      renderEvents(items);
+
+      return;
+
+    }
+
+    renderPromotions(items);
+
+  }
+
+
+  /* =======================================================
+     BOTÕES
+     ======================================================= */
+
+  function bindButtons() {
+
+    if (list) {
+
+      list.addEventListener(
+        "click",
+        event => {
+
+          const button =
+            event.target.closest(
+              "[data-action]"
+            );
+
+          if (!button) return;
+
+          const action =
+            button.dataset.action;
+
+          const id =
+            button.dataset.id;
+
+          if (!id) return;
+
+          if (action === "edit") {
+            editItem(id);
+          }
+
+          if (action === "toggle") {
+            togglePublished(id);
+          }
+
+          if (action === "delete") {
+            deleteItem(id);
+          }
+
+        }
+      );
+
+    }
+
+
+    const newButton =
+      $(
+        CONTENT_TYPE === "news"
+          ? "newNewsBtn"
+          : CONTENT_TYPE === "events"
+          ? "newEventBtn"
+          : "newPromotionBtn"
+      );
+
+    if (newButton) {
+
+      newButton.addEventListener(
+        "click",
+        () => {
+
+          resetForm();
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+        }
+      );
+
+    }
+
+
+    const cancelButton =
+      $(
+        CONTENT_TYPE === "news"
+          ? "cancelNewsBtn"
+          : CONTENT_TYPE === "events"
+          ? "cancelEventBtn"
+          : "cancelPromotionBtn"
+      );
+
+    if (cancelButton) {
+
+      cancelButton.addEventListener(
+        "click",
+        resetForm
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     FORM
+     ======================================================= */
+
+  if (form) {
+
+    form.addEventListener(
       "submit",
       handleSubmit
     );
 
-    listEl?.addEventListener(
-      "click",
-      handleListClick
-    );
-
-    searchInput?.addEventListener(
-      "input",
-      render
-    );
-
-    statusFilter?.addEventListener(
-      "change",
-      render
-    );
-
-    modal?.addEventListener(
-      "click",
-      (event) => {
-        if (
-          event.target === modal
-        ) {
-          closeModal();
-        }
-      }
-    );
-
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        if (
-          event.key === "Escape"
-        ) {
-          closeModal();
-        }
-      }
-    );
-
-    setupMobileMenu();
-
-    console.log(
-      `NTP RADIO OS: ${config.title} carregado.`
-    );
   }
+
+
+  /* =======================================================
+     PESQUISA DE NOTÍCIAS
+     ======================================================= */
+
+  if (CONTENT_TYPE === "news") {
+
+    const search =
+      $("searchInput");
+
+    const statusFilter =
+      $("statusFilter");
+
+    function filterNews() {
+
+      let items =
+        loadItems();
+
+      const term =
+        search
+          ? search.value
+              .trim()
+              .toLowerCase()
+          : "";
+
+      const status =
+        statusFilter
+          ? statusFilter.value
+          : "all";
+
+      if (term) {
+
+        items =
+          items.filter(item =>
+            [
+              item.title,
+              item.category,
+              item.summary
+            ]
+              .join(" ")
+              .toLowerCase()
+              .includes(term)
+          );
+
+      }
+
+      if (status === "published") {
+
+        items =
+          items.filter(
+            item =>
+              item.published !== false
+          );
+
+      }
+
+      if (status === "draft") {
+
+        items =
+          items.filter(
+            item =>
+              item.published === false
+          );
+
+      }
+
+      renderNews(items);
+
+    }
+
+
+    if (search) {
+
+      search.addEventListener(
+        "input",
+        filterNews
+      );
+
+    }
+
+
+    if (statusFilter) {
+
+      statusFilter.addEventListener(
+        "change",
+        filterNews
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
+     SINCRONIZAÇÃO
+     ======================================================= */
+
+  window.addEventListener(
+    "storage",
+    event => {
+
+      if (
+        event.key === current.key
+      ) {
+
+        render();
+
+      }
+
+    }
+  );
+
+
+  window.addEventListener(
+    "ntp-content-updated",
+    event => {
+
+      if (
+        !event.detail ||
+        event.detail.type === CONTENT_TYPE
+      ) {
+
+        render();
+
+      }
+
+    }
+  );
+
+
+  /* =======================================================
+     MENU MOBILE
+     ======================================================= */
+
+  const menuButton =
+    $("menuBtn");
+
+  const sidebar =
+    $("sidebar");
+
+  const overlay =
+    $("overlay");
 
   if (
-    document.readyState === "loading"
+    menuButton &&
+    sidebar
   ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init
+
+    menuButton.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.toggle(
+          "open"
+        );
+
+        if (overlay) {
+
+          overlay.classList.toggle(
+            "active"
+          );
+
+        }
+
+      }
     );
-  } else {
-    init();
+
   }
+
+
+  if (overlay) {
+
+    overlay.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.remove(
+          "open"
+        );
+
+        overlay.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     INICIALIZAÇÃO
+     ======================================================= */
+
+  bindButtons();
+
+  render();
+
+  console.log(
+    `NTP RADIO OS: ${current.title} carregado.`
+  );
+
 })();
