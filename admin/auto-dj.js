@@ -51,13 +51,12 @@ function loadData() {
 const DAYS = [
   "domingo",
   "segunda",
-  "terça",
+  "terca",
   "quarta",
   "quinta",
   "sexta",
-  "sábado"
+  "sabado"
 ];
-
 function normalizeDay(day) {
   return String(day || "")
     .trim()
