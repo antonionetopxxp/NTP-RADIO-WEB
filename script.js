@@ -56,7 +56,7 @@ async function loadRadioConfig() {
     const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
 const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
 
-    initializeRadio();
+   
   }
 }
 
