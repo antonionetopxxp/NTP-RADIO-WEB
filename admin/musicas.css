@@ -666,3 +666,49 @@ body::before{
   }
 
 }
+/* =========================================================
+   UPLOAD DE ÁUDIO
+   ========================================================= */
+
+.field-help {
+  display: block;
+  margin-top: 8px;
+  color: #9d94b8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#audioFile {
+  width: 100%;
+  padding: 12px;
+  border: 1px dashed rgba(166, 107, 255, 0.5);
+  border-radius: 10px;
+  background: rgba(109, 40, 255, 0.06);
+  color: #f7f5ff;
+  cursor: pointer;
+}
+
+#audioFile:hover {
+  border-color: rgba(166, 107, 255, 0.9);
+  background: rgba(109, 40, 255, 0.1);
+}
+
+.audio-file-info {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(166, 107, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(109, 40, 255, 0.08);
+  color: #f7f5ff;
+}
+
+.audio-file-info strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.audio-file-info span {
+  display: block;
+  color: #a79bc4;
+  font-size: 13px;
+}
