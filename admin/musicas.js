@@ -1,34 +1,292 @@
 /* =========================================================
    NTP RADIO OS
    Biblioteca de Músicas
+   Upload + IndexedDB
    ========================================================= */
 
 const STORAGE_KEY = "ntp_radio_music";
 const STATIONS_URL = "../config/stations.json";
 
-const $ = (selector) => document.querySelector(selector);
+const DB_NAME = "ntp_radio_os_audio";
+const DB_VERSION = 1;
+const AUDIO_STORE = "audioFiles";
+
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+
+const $ = (selector) =>
+  document.querySelector(selector);
 
 let musicas = [];
 let radios = [];
-
 let editingId = null;
+
+let audioDatabase = null;
 
 
 /* =========================================================
    INICIALIZAÇÃO
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
 
-  await carregarRadios();
+    try {
 
-  carregarMusicas();
+      await abrirBancoAudio();
 
-  configurarEventos();
+      await carregarRadios();
 
-  renderizar();
+      carregarMusicas();
 
-});
+      configurarEventos();
+
+      renderizar();
+
+    } catch (error) {
+
+      console.error(
+        "[MÚSICAS] Erro na inicialização:",
+        error
+      );
+
+      mostrarToast(
+        "Erro ao inicializar a biblioteca de áudio.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INDEXEDDB
+   ========================================================= */
+
+function abrirBancoAudio() {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION
+        );
+
+      request.onupgradeneeded =
+        (event) => {
+
+          const db =
+            event.target.result;
+
+          if (
+            !db.objectStoreNames.contains(
+              AUDIO_STORE
+            )
+          ) {
+
+            db.createObjectStore(
+              AUDIO_STORE
+            );
+
+          }
+
+        };
+
+      request.onsuccess =
+        (event) => {
+
+          audioDatabase =
+            event.target.result;
+
+          console.log(
+            "[MÚSICAS] Banco de áudio iniciado."
+          );
+
+          resolve(
+            audioDatabase
+          );
+
+        };
+
+      request.onerror =
+        () => {
+
+          reject(
+            request.error ||
+            new Error(
+              "Não foi possível abrir o banco de áudio."
+            )
+          );
+
+        };
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SALVAR ARQUIVO NO INDEXEDDB
+   ========================================================= */
+
+function salvarArquivoAudio(
+  id,
+  file
+) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      if (!audioDatabase) {
+
+        reject(
+          new Error(
+            "Banco de áudio não inicializado."
+          )
+        );
+
+        return;
+
+      }
+
+      const transaction =
+        audioDatabase.transaction(
+          AUDIO_STORE,
+          "readwrite"
+        );
+
+      const store =
+        transaction.objectStore(
+          AUDIO_STORE
+        );
+
+      const request =
+        store.put(
+          file,
+          id
+        );
+
+      request.onsuccess =
+        () => resolve(id);
+
+      request.onerror =
+        () => reject(
+          request.error
+        );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   OBTER ARQUIVO
+   ========================================================= */
+
+function obterArquivoAudio(id) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      if (!audioDatabase) {
+
+        reject(
+          new Error(
+            "Banco de áudio não inicializado."
+          )
+        );
+
+        return;
+
+      }
+
+      const transaction =
+        audioDatabase.transaction(
+          AUDIO_STORE,
+          "readonly"
+        );
+
+      const store =
+        transaction.objectStore(
+          AUDIO_STORE
+        );
+
+      const request =
+        store.get(id);
+
+      request.onsuccess =
+        () => {
+
+          resolve(
+            request.result || null
+          );
+
+        };
+
+      request.onerror =
+        () => {
+
+          reject(
+            request.error
+          );
+
+        };
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   EXCLUIR ARQUIVO
+   ========================================================= */
+
+function excluirArquivoAudio(id) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      if (!audioDatabase) {
+
+        resolve();
+
+        return;
+
+      }
+
+      const transaction =
+        audioDatabase.transaction(
+          AUDIO_STORE,
+          "readwrite"
+        );
+
+      const store =
+        transaction.objectStore(
+          AUDIO_STORE
+        );
+
+      const request =
+        store.delete(id);
+
+      request.onsuccess =
+        () => resolve();
+
+      request.onerror =
+        () => reject(
+          request.error
+        );
+
+    }
+  );
+
+}
 
 
 /* =========================================================
@@ -39,25 +297,36 @@ async function carregarRadios() {
 
   try {
 
-    const response = await fetch(
-      `${STATIONS_URL}?v=${Date.now()}`
-    );
+    const response =
+      await fetch(
+        `${STATIONS_URL}?v=${Date.now()}`
+      );
 
     if (!response.ok) {
-      throw new Error("Não foi possível carregar as rádios.");
+
+      throw new Error(
+        "Não foi possível carregar as rádios."
+      );
+
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
-    radios = Array.isArray(data.stations)
-      ? data.stations
-      : [];
+    radios =
+      Array.isArray(data)
+        ? data
+        : Array.isArray(data.stations)
+        ? data.stations
+        : [];
 
     preencherFiltros();
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
     radios = [];
 
@@ -79,19 +348,27 @@ function carregarMusicas() {
 
   try {
 
-    const dados = localStorage.getItem(STORAGE_KEY);
+    const dados =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
 
-    musicas = dados
-      ? JSON.parse(dados)
-      : [];
+    musicas =
+      dados
+        ? JSON.parse(dados)
+        : [];
 
     if (!Array.isArray(musicas)) {
+
       musicas = [];
+
     }
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
     musicas = [];
 
@@ -101,7 +378,7 @@ function carregarMusicas() {
 
 
 /* =========================================================
-   SALVAR
+   SALVAR MÚSICAS
    ========================================================= */
 
 function salvarMusicas() {
@@ -111,36 +388,49 @@ function salvarMusicas() {
     JSON.stringify(musicas)
   );
 
+  window.dispatchEvent(
+    new CustomEvent(
+      "ntp-music-updated"
+    )
+  );
+
 }
 
 
 /* =========================================================
-   ELEMENTOS / EVENTOS
+   EVENTOS
    ========================================================= */
 
 function configurarEventos() {
 
-  const newBtn = $("#newMusicBtn");
+  const newBtn =
+    $("#newMusicBtn");
 
   if (newBtn) {
+
     newBtn.addEventListener(
       "click",
       () => abrirModal()
     );
+
   }
 
 
-  const emptyBtn = $("#emptyNewBtn");
+  const emptyBtn =
+    $("#emptyNewBtn");
 
   if (emptyBtn) {
+
     emptyBtn.addEventListener(
       "click",
       () => abrirModal()
     );
+
   }
 
 
-  const searchInput = $("#searchInput");
+  const searchInput =
+    $("#searchInput");
 
   if (searchInput) {
 
@@ -152,7 +442,8 @@ function configurarEventos() {
   }
 
 
-  const radioFilter = $("#radioFilter");
+  const radioFilter =
+    $("#radioFilter");
 
   if (radioFilter) {
 
@@ -164,7 +455,8 @@ function configurarEventos() {
   }
 
 
-  const categoryFilter = $("#categoryFilter");
+  const categoryFilter =
+    $("#categoryFilter");
 
   if (categoryFilter) {
 
@@ -176,7 +468,8 @@ function configurarEventos() {
   }
 
 
-  const form = $("#musicForm");
+  const form =
+    $("#musicForm");
 
   if (form) {
 
@@ -188,13 +481,27 @@ function configurarEventos() {
   }
 
 
+  const audioFile =
+    $("#audioFile");
+
+  if (audioFile) {
+
+    audioFile.addEventListener(
+      "change",
+      analisarArquivoSelecionado
+    );
+
+  }
+
+
   document.addEventListener(
     "click",
     tratarClique
   );
 
 
-  const stationSelect = $("#stationId");
+  const stationSelect =
+    $("#stationId");
 
   if (stationSelect) {
 
@@ -209,19 +516,312 @@ function configurarEventos() {
 
 
 /* =========================================================
+   ARQUIVO SELECIONADO
+   ========================================================= */
+
+async function analisarArquivoSelecionado(
+  event
+) {
+
+  const file =
+    event.target.files?.[0];
+
+  if (!file) {
+
+    return;
+
+  }
+
+
+  if (
+    file.size >
+    MAX_FILE_SIZE
+  ) {
+
+    mostrarToast(
+      "O arquivo ultrapassa o limite de 100 MB.",
+      "error"
+    );
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+
+  const permitido =
+    [
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/wav",
+      "audio/x-wav",
+      "audio/ogg",
+      "audio/aac",
+      "audio/mp4",
+      "audio/x-m4a"
+    ];
+
+
+  const extensao =
+    file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+
+  const extensoesPermitidas =
+    [
+      "mp3",
+      "wav",
+      "ogg",
+      "oga",
+      "aac",
+      "m4a"
+    ];
+
+
+  if (
+    !permitido.includes(
+      file.type
+    ) &&
+    !extensoesPermitidas.includes(
+      extensao
+    )
+  ) {
+
+    mostrarToast(
+      "Formato de áudio não suportado.",
+      "error"
+    );
+
+    event.target.value = "";
+
+    return;
+
+  }
+
+
+  mostrarInformacoesArquivo(
+    file
+  );
+
+
+  const duracao =
+    await obterDuracaoAudio(
+      file
+    );
+
+
+  if (duracao) {
+
+    const durationInput =
+      $("#duration");
+
+    if (
+      durationInput &&
+      !durationInput.value
+    ) {
+
+      durationInput.value =
+        formatarDuracao(
+          duracao
+        );
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   INFORMAÇÕES DO ARQUIVO
+   ========================================================= */
+
+function mostrarInformacoesArquivo(
+  file
+) {
+
+  const info =
+    $("#audioFileInfo");
+
+  if (!info) {
+
+    return;
+
+  }
+
+
+  info.hidden = false;
+
+  info.innerHTML = `
+    <strong>🎵 ${escapeHtml(
+      file.name
+    )}</strong>
+
+    <span>
+      ${formatarTamanho(
+        file.size
+      )}
+    </span>
+  `;
+
+}
+
+
+/* =========================================================
+   DURAÇÃO DO ÁUDIO
+   ========================================================= */
+
+function obterDuracaoAudio(
+  file
+) {
+
+  return new Promise(
+    (resolve) => {
+
+      const url =
+        URL.createObjectURL(
+          file
+        );
+
+      const audio =
+        document.createElement(
+          "audio"
+        );
+
+      audio.preload =
+        "metadata";
+
+      audio.onloadedmetadata =
+        () => {
+
+          const duration =
+            audio.duration;
+
+          URL.revokeObjectURL(
+            url
+          );
+
+          resolve(
+            Number.isFinite(
+              duration
+            )
+              ? duration
+              : null
+          );
+
+        };
+
+      audio.onerror =
+        () => {
+
+          URL.revokeObjectURL(
+            url
+          );
+
+          resolve(null);
+
+        };
+
+      audio.src =
+        url;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   FORMATAR DURAÇÃO
+   ========================================================= */
+
+function formatarDuracao(
+  seconds
+) {
+
+  const total =
+    Math.floor(
+      Number(seconds)
+    );
+
+  const minutes =
+    Math.floor(
+      total / 60
+    );
+
+  const remaining =
+    total % 60;
+
+  return `${String(
+    minutes
+  ).padStart(2, "0")}:${String(
+    remaining
+  ).padStart(2, "0")}`;
+
+}
+
+
+/* =========================================================
+   FORMATAR TAMANHO
+   ========================================================= */
+
+function formatarTamanho(
+  bytes
+) {
+
+  if (
+    !Number.isFinite(
+      bytes
+    )
+  ) {
+
+    return "0 KB";
+
+  }
+
+
+  if (
+    bytes <
+    1024 * 1024
+  ) {
+
+    return `${(
+      bytes / 1024
+    ).toFixed(1)} KB`;
+
+  }
+
+
+  return `${(
+    bytes /
+    (1024 * 1024)
+  ).toFixed(2)} MB`;
+
+}
+
+
+/* =========================================================
    CLIQUES
    ========================================================= */
 
-function tratarClique(event) {
+function tratarClique(
+  event
+) {
 
-  const target = event.target;
+  const target =
+    event.target;
 
-
-  /* FECHAR MODAL */
 
   if (
-    target.matches("[data-close]") ||
-    target.closest("[data-close]")
+    target.matches(
+      "[data-close]"
+    ) ||
+    target.closest(
+      "[data-close]"
+    )
   ) {
 
     fecharModal();
@@ -231,10 +831,10 @@ function tratarClique(event) {
   }
 
 
-  /* EDITAR */
-
   const editButton =
-    target.closest("[data-edit]");
+    target.closest(
+      "[data-edit]"
+    );
 
   if (editButton) {
 
@@ -247,10 +847,10 @@ function tratarClique(event) {
   }
 
 
-  /* EXCLUIR */
-
   const deleteButton =
-    target.closest("[data-delete]");
+    target.closest(
+      "[data-delete]"
+    );
 
   if (deleteButton) {
 
@@ -263,10 +863,10 @@ function tratarClique(event) {
   }
 
 
-  /* ATIVAR / DESATIVAR */
-
   const toggleButton =
-    target.closest("[data-toggle]");
+    target.closest(
+      "[data-toggle]"
+    );
 
   if (toggleButton) {
 
@@ -279,10 +879,10 @@ function tratarClique(event) {
   }
 
 
-  /* TOCAR */
-
   const playButton =
-    target.closest("[data-play-music]");
+    target.closest(
+      "[data-play-music]"
+    );
 
   if (playButton) {
 
@@ -301,7 +901,8 @@ function tratarClique(event) {
 
 function preencherFiltros() {
 
-  const radioFilter = $("#radioFilter");
+  const radioFilter =
+    $("#radioFilter");
 
   if (radioFilter) {
 
@@ -311,23 +912,30 @@ function preencherFiltros() {
       </option>
     `;
 
-    radios.forEach((radio) => {
+    radios.forEach(
+      (radio) => {
 
-      radioFilter.insertAdjacentHTML(
-        "beforeend",
-        `
-        <option value="${escapeHtml(radio.id)}">
-          ${escapeHtml(radio.name)}
-        </option>
-        `
-      );
+        radioFilter.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHtml(
+            radio.id
+          )}">
+            ${escapeHtml(
+              radio.name
+            )}
+          </option>
+          `
+        );
 
-    });
+      }
+    );
 
   }
 
 
-  const stationSelect = $("#stationId");
+  const stationSelect =
+    $("#stationId");
 
   if (stationSelect) {
 
@@ -337,18 +945,24 @@ function preencherFiltros() {
       </option>
     `;
 
-    radios.forEach((radio) => {
+    radios.forEach(
+      (radio) => {
 
-      stationSelect.insertAdjacentHTML(
-        "beforeend",
-        `
-        <option value="${escapeHtml(radio.id)}">
-          ${escapeHtml(radio.name)}
-        </option>
-        `
-      );
+        stationSelect.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHtml(
+            radio.id
+          )}">
+            ${escapeHtml(
+              radio.name
+            )}
+          </option>
+          `
+        );
 
-    });
+      }
+    );
 
   }
 
@@ -361,79 +975,93 @@ function preencherFiltros() {
 
 function renderizar() {
 
-  const grid = $("#musicGrid");
+  const grid =
+    $("#musicGrid");
 
   if (!grid) {
+
     return;
+
   }
 
 
   const search =
-    ($("#searchInput")?.value || "")
+    (
+      $("#searchInput")
+        ?.value || ""
+    )
       .trim()
       .toLowerCase();
 
 
   const radio =
-    $("#radioFilter")?.value || "all";
+    $("#radioFilter")
+      ?.value ||
+    "all";
 
 
   const category =
-    $("#categoryFilter")?.value || "all";
+    $("#categoryFilter")
+      ?.value ||
+    "all";
 
 
-  let lista = [...musicas];
+  let lista =
+    [...musicas];
 
-
-  /* BUSCA */
 
   if (search) {
 
-    lista = lista.filter((music) => {
+    lista =
+      lista.filter(
+        (music) => {
 
-      const texto = [
+          const texto =
+            [
+              music.title,
+              music.artist,
+              music.album
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
 
-        music.title,
-        music.artist,
-        music.album
+          return texto.includes(
+            search
+          );
 
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return texto.includes(search);
-
-    });
+        }
+      );
 
   }
 
-
-  /* RÁDIO */
 
   if (radio !== "all") {
 
-    lista = lista.filter(
-      (music) =>
-        music.stationId === radio
-    );
+    lista =
+      lista.filter(
+        (music) =>
+          music.stationId ===
+          radio
+      );
 
   }
 
-
-  /* CATEGORIA */
 
   if (category !== "all") {
 
-    lista = lista.filter(
-      (music) =>
-        music.category === category
-    );
+    lista =
+      lista.filter(
+        (music) =>
+          music.category ===
+          category
+      );
 
   }
 
 
-  grid.innerHTML = "";
+  grid.innerHTML =
+    "";
 
 
   if (!lista.length) {
@@ -450,14 +1078,16 @@ function renderizar() {
   esconderVazio();
 
 
-  lista.forEach((music) => {
+  lista.forEach(
+    (music) => {
 
-    grid.insertAdjacentHTML(
-      "beforeend",
-      criarCard(music)
-    );
+      grid.insertAdjacentHTML(
+        "beforeend",
+        criarCard(music)
+      );
 
-  });
+    }
+  );
 
 
   atualizarStats();
@@ -469,12 +1099,16 @@ function renderizar() {
    CARD
    ========================================================= */
 
-function criarCard(music) {
+function criarCard(
+  music
+) {
 
-  const radio = radios.find(
-    (item) =>
-      item.id === music.stationId
-  );
+  const radio =
+    radios.find(
+      (item) =>
+        item.id ===
+        music.stationId
+    );
 
 
   const radioName =
@@ -497,26 +1131,27 @@ function criarCard(music) {
   const categoryNames = {
 
     music: "Música",
-
     jingle: "Vinheta",
-
     commercial: "Comercial",
-
     program: "Programa"
 
   };
 
 
   const category =
-    categoryNames[music.category]
-    || "Música";
+    categoryNames[
+      music.category
+    ] ||
+    "Música";
 
 
   return `
 
     <article
       class="music-card ${statusClass}"
-      data-id="${escapeHtml(music.id)}">
+      data-id="${escapeHtml(
+        music.id
+      )}">
 
       <div class="music-cover">
 
@@ -526,7 +1161,9 @@ function criarCard(music) {
 
         <button
           class="play-music"
-          data-play-music="${escapeHtml(music.id)}"
+          data-play-music="${escapeHtml(
+            music.id
+          )}"
           title="Tocar">
 
           ▶
@@ -541,7 +1178,9 @@ function criarCard(music) {
         <div class="music-top">
 
           <span class="music-category">
-            ${escapeHtml(category)}
+            ${escapeHtml(
+              category
+            )}
           </span>
 
           <span class="status ${statusClass}">
@@ -553,14 +1192,16 @@ function criarCard(music) {
 
         <h3>
           ${escapeHtml(
-            music.title || "Sem título"
+            music.title ||
+            "Sem título"
           )}
         </h3>
 
 
         <p>
           ${escapeHtml(
-            music.artist || "Artista desconhecido"
+            music.artist ||
+            "Artista desconhecido"
           )}
         </p>
 
@@ -569,7 +1210,9 @@ function criarCard(music) {
           music.album
             ? `
               <small>
-                ${escapeHtml(music.album)}
+                ${escapeHtml(
+                  music.album
+                )}
               </small>
             `
             : ""
@@ -579,7 +1222,9 @@ function criarCard(music) {
         <div class="music-meta">
 
           <span>
-            📻 ${escapeHtml(radioName)}
+            📻 ${escapeHtml(
+              radioName
+            )}
           </span>
 
           ${
@@ -594,6 +1239,16 @@ function criarCard(music) {
               : ""
           }
 
+          ${
+            music.hasAudio
+              ? `
+                <span>
+                  💾 Upload
+                </span>
+              `
+              : ""
+          }
+
         </div>
 
 
@@ -601,7 +1256,9 @@ function criarCard(music) {
 
           <button
             class="btn ghost"
-            data-edit="${escapeHtml(music.id)}">
+            data-edit="${escapeHtml(
+              music.id
+            )}">
 
             Editar
 
@@ -610,7 +1267,9 @@ function criarCard(music) {
 
           <button
             class="btn ghost"
-            data-toggle="${escapeHtml(music.id)}">
+            data-toggle="${escapeHtml(
+              music.id
+            )}">
 
             ${
               music.active
@@ -623,7 +1282,9 @@ function criarCard(music) {
 
           <button
             class="btn danger"
-            data-delete="${escapeHtml(music.id)}">
+            data-delete="${escapeHtml(
+              music.id
+            )}">
 
             Excluir
 
@@ -641,22 +1302,29 @@ function criarCard(music) {
 
 
 /* =========================================================
-   MODAL
+   ABRIR MODAL
    ========================================================= */
 
-function abrirModal(music = null) {
+function abrirModal(
+  music = null
+) {
 
-  const modal = $("#musicModal");
+  const modal =
+    $("#musicModal");
 
-  const form = $("#musicForm");
+  const form =
+    $("#musicForm");
 
   if (!modal || !form) {
+
     return;
+
   }
 
 
   editingId =
-    music?.id || null;
+    music?.id ||
+    null;
 
 
   if (music) {
@@ -664,7 +1332,9 @@ function abrirModal(music = null) {
     $("#modalTitle").textContent =
       "Editar música";
 
-    preencherFormulario(music);
+    preencherFormulario(
+      music
+    );
 
   } else {
 
@@ -674,19 +1344,31 @@ function abrirModal(music = null) {
     form.reset();
 
     if ($("#active")) {
-      $("#active").checked = true;
+
+      $("#active").checked =
+        true;
+
     }
 
     if ($("#category")) {
-      $("#category").value = "music";
+
+      $("#category").value =
+        "music";
+
     }
+
+    limparArquivoSelecionado();
 
   }
 
 
-  modal.classList.add("open");
+  modal.classList.add(
+    "open"
+  );
 
-  modal.removeAttribute("hidden");
+  modal.removeAttribute(
+    "hidden"
+  );
 
 }
 
@@ -695,12 +1377,15 @@ function abrirModal(music = null) {
    EDITAR
    ========================================================= */
 
-function abrirEdicao(id) {
+function abrirEdicao(
+  id
+) {
 
-  const music = musicas.find(
-    (item) =>
-      item.id === id
-  );
+  const music =
+    musicas.find(
+      (item) =>
+        item.id === id
+    );
 
 
   if (!music) {
@@ -715,7 +1400,9 @@ function abrirEdicao(id) {
   }
 
 
-  abrirModal(music);
+  abrirModal(
+    music
+  );
 
 }
 
@@ -724,7 +1411,9 @@ function abrirEdicao(id) {
    PREENCHER FORMULÁRIO
    ========================================================= */
 
-function preencherFormulario(music) {
+function preencherFormulario(
+  music
+) {
 
   setValue(
     "#title",
@@ -743,7 +1432,8 @@ function preencherFormulario(music) {
 
   setValue(
     "#category",
-    music.category || "music"
+    music.category ||
+    "music"
   );
 
   setValue(
@@ -758,8 +1448,54 @@ function preencherFormulario(music) {
 
   setValue(
     "#audioUrl",
-    music.audioUrl
+    music.audioUrl ||
+    ""
   );
+
+
+  const fileInput =
+    $("#audioFile");
+
+  if (fileInput) {
+
+    fileInput.value =
+      "";
+
+  }
+
+
+  const info =
+    $("#audioFileInfo");
+
+  if (info) {
+
+    if (music.hasAudio) {
+
+      info.hidden =
+        false;
+
+      info.innerHTML = `
+        <strong>
+          💾 Arquivo de áudio cadastrado
+        </strong>
+
+        <span>
+          Selecione outro arquivo
+          somente se quiser substituí-lo.
+        </span>
+      `;
+
+    } else {
+
+      info.hidden =
+        true;
+
+      info.innerHTML =
+        "";
+
+    }
+
+  }
 
 
   if ($("#active")) {
@@ -776,37 +1512,42 @@ function preencherFormulario(music) {
    SALVAR FORMULÁRIO
    ========================================================= */
 
-function salvarFormulario(event) {
+async function salvarFormulario(
+  event
+) {
 
   event.preventDefault();
 
 
   const title =
-    $("#title")?.value.trim();
+    $("#title")
+      ?.value.trim();
 
 
   const artist =
-    $("#artist")?.value.trim();
+    $("#artist")
+      ?.value.trim();
 
 
   const stationId =
-    $("#stationId")?.value;
+    $("#stationId")
+      ?.value;
 
 
   const category =
-    $("#category")?.value || "music";
-
-
-  const duration =
-    $("#duration")?.value.trim();
-
-
-  const audioUrl =
-    $("#audioUrl")?.value.trim();
+    $("#category")
+      ?.value ||
+    "music";
 
 
   const album =
-    $("#album")?.value.trim();
+    $("#album")
+      ?.value.trim();
+
+
+  const duration =
+    $("#duration")
+      ?.value.trim();
 
 
   const active =
@@ -815,12 +1556,32 @@ function salvarFormulario(event) {
       : true;
 
 
-  /* VALIDAÇÃO */
+  const fileInput =
+    $("#audioFile");
+
+
+  const file =
+    fileInput
+      ?.files?.[0] ||
+    null;
+
 
   if (!title) {
 
     mostrarToast(
       "Digite o nome da música.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (!artist) {
+
+    mostrarToast(
+      "Digite o nome do artista.",
       "error"
     );
 
@@ -841,89 +1602,178 @@ function salvarFormulario(event) {
   }
 
 
-  /* OBJETO */
+  if (
+    file &&
+    file.size >
+    MAX_FILE_SIZE
+  ) {
 
-  const music = {
+    mostrarToast(
+      "O arquivo ultrapassa 100 MB.",
+      "error"
+    );
 
-    id:
-      editingId ||
-      criarId("music"),
+    return;
 
-    title,
-
-    artist,
-
-    album,
-
-    category,
-
-    stationId,
-
-    duration,
-
-    audioUrl,
-
-    active,
-
-    updatedAt:
-      new Date().toISOString()
-
-  };
+  }
 
 
-  /* EDITAR */
+  const existing =
+    editingId
+      ? musicas.find(
+          (item) =>
+            item.id ===
+            editingId
+        )
+      : null;
 
-  if (editingId) {
 
-    const index =
-      musicas.findIndex(
-        (item) =>
-          item.id === editingId
+  const id =
+    editingId ||
+    criarId("music");
+
+
+  try {
+
+    /* =========================
+       UPLOAD DO ARQUIVO
+       ========================= */
+
+    if (file) {
+
+      mostrarToast(
+        "Salvando arquivo de áudio...",
+        "info"
       );
 
-
-    if (index !== -1) {
-
-      musicas[index] = {
-
-        ...musicas[index],
-
-        ...music
-
-      };
+      await salvarArquivoAudio(
+        id,
+        file
+      );
 
     }
 
+
+    /* =========================
+       OBJETO DA MÚSICA
+       ========================= */
+
+    const music = {
+
+      id,
+
+      title,
+
+      artist,
+
+      album,
+
+      category,
+
+      stationId,
+
+      duration,
+
+      audioUrl:
+        existing?.audioUrl ||
+        "",
+
+      hasAudio:
+        Boolean(
+          file ||
+          existing?.hasAudio
+        ),
+
+      audioFileName:
+        file?.name ||
+        existing?.audioFileName ||
+        "",
+
+      audioMimeType:
+        file?.type ||
+        existing?.audioMimeType ||
+        "",
+
+      audioSize:
+        file?.size ||
+        existing?.audioSize ||
+        0,
+
+      active,
+
+      createdAt:
+        existing?.createdAt ||
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString()
+
+    };
+
+
+    if (editingId) {
+
+      const index =
+        musicas.findIndex(
+          (item) =>
+            item.id ===
+            editingId
+        );
+
+
+      if (index !== -1) {
+
+        musicas[index] = {
+
+          ...musicas[index],
+
+          ...music
+
+        };
+
+      }
+
+    } else {
+
+      musicas.unshift(
+        music
+      );
+
+    }
+
+
+    salvarMusicas();
+
+    fecharModal();
+
+    renderizar();
+
+
+    mostrarToast(
+      editingId
+        ? "Música atualizada com sucesso."
+        : "Música enviada com sucesso.",
+      "success"
+    );
+
+
+    editingId =
+      null;
+
+
+  } catch (error) {
+
+    console.error(
+      "[MÚSICAS] Erro ao salvar:",
+      error
+    );
+
+    mostrarToast(
+      "Não foi possível salvar o arquivo de áudio.",
+      "error"
+    );
+
   }
-
-  /* NOVA */
-
-  else {
-
-    music.createdAt =
-      new Date().toISOString();
-
-    musicas.unshift(music);
-
-  }
-
-
-  salvarMusicas();
-
-  fecharModal();
-
-  renderizar();
-
-
-  mostrarToast(
-    editingId
-      ? "Música atualizada."
-      : "Música cadastrada.",
-    "success"
-  );
-
-
-  editingId = null;
 
 }
 
@@ -932,16 +1782,21 @@ function salvarFormulario(event) {
    EXCLUIR
    ========================================================= */
 
-function excluirMusica(id) {
+async function excluirMusica(
+  id
+) {
 
-  const music = musicas.find(
-    (item) =>
-      item.id === id
-  );
+  const music =
+    musicas.find(
+      (item) =>
+        item.id === id
+    );
 
 
   if (!music) {
+
     return;
+
   }
 
 
@@ -952,7 +1807,25 @@ function excluirMusica(id) {
 
 
   if (!confirmar) {
+
     return;
+
+  }
+
+
+  try {
+
+    await excluirArquivoAudio(
+      id
+    );
+
+  } catch (error) {
+
+    console.error(
+      "[MÚSICAS] Erro ao excluir áudio:",
+      error
+    );
+
   }
 
 
@@ -980,16 +1853,21 @@ function excluirMusica(id) {
    ATIVAR / DESATIVAR
    ========================================================= */
 
-function alternarMusica(id) {
+function alternarMusica(
+  id
+) {
 
-  const music = musicas.find(
-    (item) =>
-      item.id === id
-  );
+  const music =
+    musicas.find(
+      (item) =>
+        item.id === id
+    );
 
 
   if (!music) {
+
     return;
+
   }
 
 
@@ -1007,13 +1885,10 @@ function alternarMusica(id) {
 
 
   mostrarToast(
-
     music.active
       ? "Música ativada."
       : "Música desativada.",
-
     "success"
-
   );
 
 }
@@ -1023,80 +1898,152 @@ function alternarMusica(id) {
    TOCAR MÚSICA
    ========================================================= */
 
-function tocarMusica(id) {
+async function tocarMusica(
+  id
+) {
 
-  const music = musicas.find(
-    (item) =>
-      item.id === id
-  );
+  const music =
+    musicas.find(
+      (item) =>
+        item.id === id
+    );
 
 
   if (!music) {
-    return;
-  }
-
-
-  if (!music.audioUrl) {
-
-    mostrarToast(
-      "Esta música ainda não possui URL de áudio.",
-      "error"
-    );
 
     return;
 
   }
 
 
-  let player =
-    document.querySelector(
-      "#musicPreviewPlayer"
-    );
+  try {
 
-
-  if (!player) {
-
-    player =
-      document.createElement(
-        "audio"
+    let file =
+      await obterArquivoAudio(
+        id
       );
 
-    player.id =
-      "musicPreviewPlayer";
 
-    player.controls = true;
-
-    player.style.display =
-      "none";
-
-    document.body.appendChild(
-      player
-    );
-
-  }
-
-
-  player.src =
-    music.audioUrl;
-
-
-  player.play()
-    .then(() => {
+    if (!file) {
 
       mostrarToast(
-        `Tocando: ${music.title}`,
-        "success"
-      );
-
-    })
-    .catch(() => {
-
-      mostrarToast(
-        "Não foi possível reproduzir este áudio.",
+        "Arquivo de áudio não encontrado.",
         "error"
       );
 
-    });
+      return;
+
+    }
+
+
+    const url =
+      URL.createObjectURL(
+        file
+      );
+
+
+    let player =
+      document.querySelector(
+        "#musicPreviewPlayer"
+      );
+
+
+    if (!player) {
+
+      player =
+        document.createElement(
+          "audio"
+        );
+
+      player.id =
+        "musicPreviewPlayer";
+
+      player.controls =
+        true;
+
+      player.style.display =
+        "none";
+
+      document.body.appendChild(
+        player
+      );
+
+    }
+
+
+    if (
+      player.dataset.objectUrl
+    ) {
+
+      URL.revokeObjectURL(
+        player.dataset.objectUrl
+      );
+
+    }
+
+
+    player.src =
+      url;
+
+    player.dataset.objectUrl =
+      url;
+
+
+    await player.play();
+
+
+    mostrarToast(
+      `Tocando: ${music.title}`,
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "[MÚSICAS] Erro ao tocar:",
+      error
+    );
+
+    mostrarToast(
+      "Não foi possível reproduzir este áudio.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LIMPAR ARQUIVO
+   ========================================================= */
+
+function limparArquivoSelecionado() {
+
+  const fileInput =
+    $("#audioFile");
+
+  if (fileInput) {
+
+    fileInput.value =
+      "";
+
+  }
+
+
+  const info =
+    $("#audioFileInfo");
+
+  if (info) {
+
+    info.hidden =
+      true;
+
+    info.innerHTML =
+      "";
+
+  }
 
 }
 
@@ -1112,7 +2059,9 @@ function fecharModal() {
 
 
   if (!modal) {
+
     return;
+
   }
 
 
@@ -1120,14 +2069,14 @@ function fecharModal() {
     "open"
   );
 
-
   modal.setAttribute(
     "hidden",
     ""
   );
 
 
-  editingId = null;
+  editingId =
+    null;
 
 }
 
@@ -1176,18 +2125,15 @@ function atualizarStats() {
     total
   );
 
-
   setText(
     "#activeCount",
     ativas
   );
 
-
   setText(
     "#radioCount",
     radiosComMusicas
   );
-
 
   setText(
     "#categoryCount",
@@ -1207,7 +2153,10 @@ function mostrarVazio() {
     $("#emptyState");
 
   if (empty) {
-    empty.hidden = false;
+
+    empty.hidden =
+      false;
+
   }
 
 }
@@ -1219,38 +2168,45 @@ function esconderVazio() {
     $("#emptyState");
 
   if (empty) {
-    empty.hidden = true;
+
+    empty.hidden =
+      true;
+
   }
 
 }
 
 
 /* =========================================================
-   PREVIEW DA RÁDIO
+   PREVIEW RÁDIO
    ========================================================= */
 
 function atualizarPreviewRadio() {
 
   const stationId =
-    $("#stationId")?.value;
+    $("#stationId")
+      ?.value;
 
 
   if (!stationId) {
+
     return;
+
   }
 
 
   const radio =
     radios.find(
       (item) =>
-        item.id === stationId
+        item.id ===
+        stationId
     );
 
 
   if (radio) {
 
     console.log(
-      "Rádio selecionada:",
+      "[MÚSICAS] Rádio selecionada:",
       radio.name
     );
 
@@ -1263,7 +2219,8 @@ function atualizarPreviewRadio() {
    TOAST
    ========================================================= */
 
-let toastTimer = null;
+let toastTimer =
+  null;
 
 
 function mostrarToast(
@@ -1301,13 +2258,16 @@ function mostrarToast(
 
 
   toastTimer =
-    setTimeout(() => {
+    setTimeout(
+      () => {
 
-      toast.classList.remove(
-        "show"
-      );
+        toast.classList.remove(
+          "show"
+        );
 
-    }, 3000);
+      },
+      3000
+    );
 
 }
 
@@ -1316,7 +2276,9 @@ function mostrarToast(
    UTILITÁRIOS
    ========================================================= */
 
-function criarId(prefix = "id") {
+function criarId(
+  prefix = "id"
+) {
 
   return `${prefix}-${Date.now()}-${Math.random()
     .toString(36)
@@ -1361,15 +2323,32 @@ function setText(
 }
 
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   return String(
     value ?? ""
   )
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
 
 }
