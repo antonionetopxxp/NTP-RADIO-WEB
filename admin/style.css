@@ -1659,3 +1659,29 @@ img{
   }
 
 }
+.playlist-field {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.playlist-field select {
+  flex: 1;
+}
+
+.field-help {
+  display: block;
+  margin-top: 8px;
+  color: #9d94b8;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .playlist-field {
+    flex-direction: column;
+  }
+
+  .playlist-field .button {
+    width: 100%;
+  }
+}
