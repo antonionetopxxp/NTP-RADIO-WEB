@@ -268,27 +268,9 @@ function findCurrentProgram() {
     getCurrentMinutes();
 
 
-  console.log(
-    "[AUTO-DJ] Dia atual:",
-    today
-  );
-
-
-  console.log(
-    "[AUTO-DJ] Minutos atuais:",
-    currentMinutes
-  );
-
-
-  console.log(
-    "[AUTO-DJ] Programas cadastrados:",
-    programs
-  );
-
-console.log(
-  "[AUTO-DJ] Programas cadastrados:",
-  programs
-);
+  console.log("[AUTO-DJ] Dia atual:", today);
+console.log("[AUTO-DJ] Minutos atuais:", currentMinutes);
+console.log("[AUTO-DJ] Programas cadastrados:", programs);
 
 console.table(
   programs.map(program => ({
@@ -305,15 +287,16 @@ console.table(
   }))
 );
 
-const activePrograms =
-  programs.filter(
-    isProgramActive
-  );
- 
-  const activePrograms =
-    programs.filter(
-      isProgramActive
-    );
+const activePrograms = programs.filter(isProgramActive);
+
+console.log("[AUTO-DJ] Programas ativos agora:", activePrograms);
+
+if (!activePrograms.length) {
+  console.log("[AUTO-DJ] Nenhum programa ativo neste momento.");
+  return null;
+}
+
+return activePrograms[0];
 
 
   console.log(
