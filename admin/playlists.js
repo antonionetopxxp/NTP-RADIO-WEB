@@ -1,7 +1,9 @@
 /* =========================================================
    NTP RADIO OS
-   Gerenciamento de Playlists
+   GERENCIAMENTO PROFISSIONAL DE PLAYLISTS
    ========================================================= */
+
+"use strict";
 
 const PLAYLISTS_KEY = "ntp_radio_playlists";
 const MUSIC_KEY = "ntp_radio_music";
@@ -12,7 +14,6 @@ const $ = (selector) => document.querySelector(selector);
 let playlists = [];
 let musicas = [];
 let radios = [];
-
 let editingId = null;
 
 
@@ -22,19 +23,27 @@ let editingId = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  await carregarRadios();
+  console.log("[PLAYLISTS] Inicializando...");
 
   carregarDados();
+
+  await carregarRadios();
 
   configurarEventos();
 
   renderizar();
 
+  console.log("[PLAYLISTS] Sistema carregado.", {
+    playlists: playlists.length,
+    musicas: musicas.length,
+    radios: radios.length
+  });
+
 });
 
 
 /* =========================================================
-   RÁDIOS
+   CARREGAR RÁDIOS
    ========================================================= */
 
 async function carregarRadios() {
@@ -46,20 +55,47 @@ async function carregarRadios() {
     );
 
     if (!response.ok) {
-      throw new Error("Erro ao carregar rádios.");
+      throw new Error(
+        `HTTP ${response.status}`
+      );
     }
 
     const data = await response.json();
 
-    radios = Array.isArray(data.stations)
-      ? data.stations
-      : [];
+    /*
+      Aceita os dois formatos:
+
+      [
+        {...},
+        {...}
+      ]
+
+      ou
+
+      {
+        stations: [...]
+      }
+    */
+
+    radios = Array.isArray(data)
+      ? data
+      : Array.isArray(data.stations)
+        ? data.stations
+        : [];
+
+    console.log(
+      "[PLAYLISTS] Rádios carregadas:",
+      radios
+    );
 
     preencherRadios();
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "[PLAYLISTS] Erro ao carregar rádios:",
+      error
+    );
 
     radios = [];
 
@@ -74,7 +110,7 @@ async function carregarRadios() {
 
 
 /* =========================================================
-   DADOS LOCAIS
+   DADOS
    ========================================================= */
 
 function carregarDados() {
@@ -110,9 +146,17 @@ function carregarDados() {
       musicas = [];
     }
 
+    console.log(
+      "[PLAYLISTS] Músicas carregadas:",
+      musicas
+    );
+
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "[PLAYLISTS] Erro ao carregar dados:",
+      error
+    );
 
     playlists = [];
     musicas = [];
@@ -123,7 +167,7 @@ function carregarDados() {
 
 
 /* =========================================================
-   SALVAR
+   SALVAR PLAYLISTS
    ========================================================= */
 
 function salvarPlaylists() {
@@ -131,6 +175,12 @@ function salvarPlaylists() {
   localStorage.setItem(
     PLAYLISTS_KEY,
     JSON.stringify(playlists)
+  );
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "ntp-playlists-updated"
+    )
   );
 
 }
@@ -173,7 +223,11 @@ function configurarEventos() {
   $("#stationId")
     ?.addEventListener(
       "change",
-      atualizarMusicas
+      () => {
+
+        atualizarMusicas([]);
+
+      }
     );
 
 
@@ -187,6 +241,38 @@ function configurarEventos() {
   document.addEventListener(
     "click",
     tratarClique
+  );
+
+
+  /*
+    Atualiza músicas se outra página
+    alterar o localStorage.
+  */
+
+  window.addEventListener(
+    "storage",
+    (event) => {
+
+      if (
+        event.key === MUSIC_KEY
+      ) {
+
+        carregarDados();
+
+        if (
+          $("#playlistModal") &&
+          !$("#playlistModal").hidden
+        ) {
+
+          atualizarMusicas();
+
+        }
+
+        renderizar();
+
+      }
+
+    }
   );
 
 }
@@ -271,14 +357,13 @@ function tratarClique(event) {
 
 
 /* =========================================================
-   PREENCHER RÁDIOS
+   RÁDIOS
    ========================================================= */
 
 function preencherRadios() {
 
   const filter =
     $("#radioFilter");
-
 
   if (filter) {
 
@@ -288,29 +373,35 @@ function preencherRadios() {
       </option>
     `;
 
-    radios.forEach((radio) => {
+    radios.forEach(
+      (radio) => {
 
-      filter.insertAdjacentHTML(
-        "beforeend",
-        `
-        <option value="${escapeHtml(
-          radio.id
-        )}">
-          ${escapeHtml(
-            radio.name
-          )}
-        </option>
-        `
-      );
+        if (!radio?.id) return;
 
-    });
+        filter.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHtml(
+            radio.id
+          )}">
+            ${escapeHtml(
+              radio.name ||
+              radio.shortName ||
+              radio.title ||
+              radio.id
+            )}
+          </option>
+          `
+        );
+
+      }
+    );
 
   }
 
 
   const station =
     $("#stationId");
-
 
   if (station) {
 
@@ -320,22 +411,29 @@ function preencherRadios() {
       </option>
     `;
 
-    radios.forEach((radio) => {
+    radios.forEach(
+      (radio) => {
 
-      station.insertAdjacentHTML(
-        "beforeend",
-        `
-        <option value="${escapeHtml(
-          radio.id
-        )}">
-          ${escapeHtml(
-            radio.name
-          )}
-        </option>
-        `
-      );
+        if (!radio?.id) return;
 
-    });
+        station.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHtml(
+            radio.id
+          )}">
+            ${escapeHtml(
+              radio.name ||
+              radio.shortName ||
+              radio.title ||
+              radio.id
+            )}
+          </option>
+          `
+        );
+
+      }
+    );
 
   }
 
@@ -343,7 +441,7 @@ function preencherRadios() {
 
 
 /* =========================================================
-   RENDERIZAR
+   RENDERIZAR PLAYLISTS
    ========================================================= */
 
 function renderizar() {
@@ -351,10 +449,7 @@ function renderizar() {
   const grid =
     $("#playlistGrid");
 
-
-  if (!grid) {
-    return;
-  }
+  if (!grid) return;
 
 
   const search =
@@ -375,8 +470,6 @@ function renderizar() {
     [...playlists];
 
 
-  /* BUSCA */
-
   if (search) {
 
     lista =
@@ -386,14 +479,12 @@ function renderizar() {
           const texto = [
 
             playlist.name,
-
             playlist.description
 
           ]
             .filter(Boolean)
             .join(" ")
             .toLowerCase();
-
 
           return texto.includes(
             search
@@ -405,14 +496,14 @@ function renderizar() {
   }
 
 
-  /* RÁDIO */
-
   if (radio !== "all") {
 
     lista =
       lista.filter(
         (playlist) =>
-          playlist.stationId === radio
+          String(
+            playlist.stationId
+          ) === String(radio)
       );
 
   }
@@ -461,12 +552,15 @@ function criarCard(playlist) {
   const radio =
     radios.find(
       (item) =>
-        item.id === playlist.stationId
+        String(item.id) ===
+        String(playlist.stationId)
     );
 
 
   const radioName =
     radio?.name ||
+    radio?.shortName ||
+    radio?.title ||
     "Rádio não encontrada";
 
 
@@ -478,16 +572,8 @@ function criarCard(playlist) {
       : [];
 
 
-  const statusClass =
-    playlist.active
-      ? "active"
-      : "inactive";
-
-
-  const statusText =
-    playlist.active
-      ? "Ativa"
-      : "Inativa";
+  const active =
+    playlist.active !== false;
 
 
   const typeNames = {
@@ -517,92 +603,85 @@ function criarCard(playlist) {
   return `
 
     <article
-      class="playlist-card ${statusClass}">
+      class="playlist-card ${
+        active
+          ? "active"
+          : "inactive"
+      }">
 
       <div class="playlist-icon">
-
         🎶
-
       </div>
-
 
       <div class="playlist-info">
 
         <div class="playlist-top">
 
           <span class="playlist-type">
-
             ${escapeHtml(type)}
-
           </span>
 
           <span
-            class="status ${statusClass}">
+            class="status ${
+              active
+                ? "active"
+                : "inactive"
+            }">
 
-            ${statusText}
+            ${
+              active
+                ? "Ativa"
+                : "Inativa"
+            }
 
           </span>
 
         </div>
 
-
         <h3>
-
           ${escapeHtml(
             playlist.name
           )}
-
         </h3>
 
-
         <p>
-
           ${escapeHtml(
             playlist.description ||
             "Sem descrição."
           )}
-
         </p>
-
 
         <div class="playlist-meta">
 
           <span>
-
             📻 ${escapeHtml(
               radioName
             )}
-
           </span>
 
-
           <span>
-
-            🎵 ${tracks.length} faixa${
+            🎵 ${tracks.length}
+            ${
               tracks.length === 1
-                ? ""
-                : "s"
+                ? "faixa"
+                : "faixas"
             }
-
           </span>
 
-
           <span>
-
             ${
               playlist.mode === "random"
                 ? "🔀 Aleatório"
                 : "▶ Sequencial"
             }
-
           </span>
 
         </div>
 
-
         <div class="playlist-actions">
 
           <button
+            type="button"
             class="btn ghost"
             data-edit="${escapeHtml(
               playlist.id
@@ -612,23 +691,23 @@ function criarCard(playlist) {
 
           </button>
 
-
           <button
+            type="button"
             class="btn ghost"
             data-toggle="${escapeHtml(
               playlist.id
             )}">
 
             ${
-              playlist.active
+              active
                 ? "Desativar"
                 : "Ativar"
             }
 
           </button>
 
-
           <button
+            type="button"
             class="btn danger"
             data-delete="${escapeHtml(
               playlist.id
@@ -650,22 +729,20 @@ function criarCard(playlist) {
 
 
 /* =========================================================
-   MODAL
+   ABRIR MODAL
    ========================================================= */
 
-function abrirModal(playlist = null) {
+function abrirModal(
+  playlist = null
+) {
 
   const modal =
     $("#playlistModal");
 
-
   const form =
     $("#playlistForm");
 
-
-  if (!modal || !form) {
-    return;
-  }
+  if (!modal || !form) return;
 
 
   editingId =
@@ -677,7 +754,6 @@ function abrirModal(playlist = null) {
     $("#modalTitle").textContent =
       "Editar playlist";
 
-
     preencherFormulario(
       playlist
     );
@@ -687,30 +763,25 @@ function abrirModal(playlist = null) {
     $("#modalTitle").textContent =
       "Nova playlist";
 
-
     form.reset();
 
-
     if ($("#active")) {
-
-      $("#active").checked =
-        true;
-
+      $("#active").checked = true;
     }
 
-
-    atualizarMusicas();
+    atualizarMusicas([]);
 
   }
 
 
-  modal.classList.add(
-    "open"
-  );
+  modal.hidden = false;
 
-
-  modal.removeAttribute(
-    "hidden"
+  requestAnimationFrame(
+    () => {
+      modal.classList.add(
+        "open"
+      );
+    }
   );
 
 }
@@ -725,7 +796,8 @@ function abrirEdicao(id) {
   const playlist =
     playlists.find(
       (item) =>
-        item.id === id
+        String(item.id) ===
+        String(id)
     );
 
 
@@ -749,7 +821,7 @@ function abrirEdicao(id) {
 
 
 /* =========================================================
-   FORMULÁRIO
+   PREENCHER FORMULÁRIO
    ========================================================= */
 
 function preencherFormulario(
@@ -797,14 +869,18 @@ function preencherFormulario(
 
 
   atualizarMusicas(
-    playlist.trackIds || []
+    Array.isArray(
+      playlist.trackIds
+    )
+      ? playlist.trackIds
+      : []
   );
 
 }
 
 
 /* =========================================================
-   MÚSICAS DA RÁDIO
+   MÚSICAS
    ========================================================= */
 
 function atualizarMusicas(
@@ -814,15 +890,20 @@ function atualizarMusicas(
   const container =
     $("#musicSelector");
 
-
   if (!container) {
+
+    console.error(
+      "[PLAYLISTS] #musicSelector não encontrado."
+    );
+
     return;
+
   }
 
 
   const stationId =
     $("#stationId")
-      ?.value;
+      ?.value || "";
 
 
   if (!stationId) {
@@ -831,46 +912,93 @@ function atualizarMusicas(
 
       <div class="music-empty">
 
-        Selecione uma rádio
-        para visualizar
-        as músicas disponíveis.
+        <strong>
+          📻 Selecione uma rádio
+        </strong>
+
+        <span>
+          As músicas cadastradas
+          para essa rádio aparecerão aqui.
+        </span>
 
       </div>
 
     `;
 
+    atualizarContadorMusicas();
+
     return;
 
   }
+
+
+  /*
+    Carrega novamente para garantir
+    que estamos usando os dados atuais.
+  */
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        MUSIC_KEY
+      );
+
+    musicas =
+      saved
+        ? JSON.parse(saved)
+        : [];
+
+    if (!Array.isArray(musicas)) {
+      musicas = [];
+    }
+
+  } catch {
+
+    musicas = [];
+
+  }
+
+
+  console.log(
+    "[PLAYLISTS] Rádio selecionada:",
+    stationId
+  );
+
+  console.log(
+    "[PLAYLISTS] Todas as músicas:",
+    musicas
+  );
 
 
   const musicasDaRadio =
     musicas.filter(
-      (music) =>
+      (music) => {
 
-        music.stationId === stationId &&
+        const mesmaRadio =
+          String(
+            music.stationId || ""
+          ) ===
+          String(stationId);
 
-        music.active !== false
 
+        const ativa =
+          music.active !== false;
+
+
+        return (
+          mesmaRadio &&
+          ativa
+        );
+
+      }
     );
 
 
-  if (!musicasDaRadio.length) {
-
-    container.innerHTML = `
-
-      <div class="music-empty">
-
-        Nenhuma música ativa
-        cadastrada para esta rádio.
-
-      </div>
-
-    `;
-
-    return;
-
-  }
+  console.log(
+    "[PLAYLISTS] Músicas disponíveis para a rádio:",
+    musicasDaRadio
+  );
 
 
   let selecionadas =
@@ -882,31 +1010,234 @@ function atualizarMusicas(
     const playlistAtual =
       playlists.find(
         (playlist) =>
-          playlist.id === editingId
+          String(playlist.id) ===
+          String(editingId)
       );
 
 
     selecionadas =
-      playlistAtual?.trackIds ||
-      [];
+      Array.isArray(
+        playlistAtual?.trackIds
+      )
+        ? playlistAtual.trackIds
+        : [];
+
+  }
+
+
+  if (!Array.isArray(selecionadas)) {
+    selecionadas = [];
+  }
+
+
+  if (!musicasDaRadio.length) {
+
+    container.innerHTML = `
+
+      <div class="music-empty">
+
+        <strong>
+          🎵 Nenhuma música disponível
+        </strong>
+
+        <span>
+          Não existem músicas ativas
+          cadastradas para esta rádio.
+        </span>
+
+        <small>
+          Vá em
+          <strong>Admin → Músicas</strong>
+          e cadastre/upload uma música
+          para esta rádio.
+        </small>
+
+      </div>
+
+    `;
+
+    atualizarContadorMusicas();
+
+    return;
+
+  }
+
+
+  /*
+    CABEÇALHO
+  */
+
+  container.innerHTML = `
+
+    <div class="music-selector-header">
+
+      <div>
+
+        <strong>
+          🎵 Músicas disponíveis
+        </strong>
+
+        <small>
+          ${musicasDaRadio.length}
+          ${
+            musicasDaRadio.length === 1
+              ? "música"
+              : "músicas"
+          }
+        </small>
+
+      </div>
+
+      <div
+        id="selectedMusicCount"
+        class="selected-music-count">
+
+        0 selecionadas
+
+      </div>
+
+    </div>
+
+
+    <div class="music-search">
+
+      <span>
+        🔎
+      </span>
+
+      <input
+        type="search"
+        id="musicSearchInput"
+        placeholder="Pesquisar música ou artista..."
+      >
+
+    </div>
+
+
+    <div
+      id="musicOptions"
+      class="music-options">
+    </div>
+
+  `;
+
+
+  renderizarOpcoesMusicas(
+    musicasDaRadio,
+    selecionadas
+  );
+
+
+  $("#musicSearchInput")
+    ?.addEventListener(
+      "input",
+      () => {
+
+        renderizarOpcoesMusicas(
+          musicasDaRadio,
+          selecionadas
+        );
+
+      }
+    );
+
+
+  atualizarContadorMusicas();
+
+}
+
+
+/* =========================================================
+   RENDERIZAR OPÇÕES DE MÚSICA
+   ========================================================= */
+
+function renderizarOpcoesMusicas(
+  lista,
+  selecionadas
+) {
+
+  const container =
+    $("#musicOptions");
+
+  if (!container) return;
+
+
+  const search =
+    (
+      $("#musicSearchInput")
+        ?.value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const filtradas =
+    lista.filter(
+      (music) => {
+
+        if (!search) {
+          return true;
+        }
+
+
+        const texto = [
+
+          music.title,
+          music.artist,
+          music.album
+
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+
+        return texto.includes(
+          search
+        );
+
+      }
+    );
+
+
+  if (!filtradas.length) {
+
+    container.innerHTML = `
+
+      <div class="music-empty">
+
+        🔎 Nenhuma música encontrada.
+
+      </div>
+
+    `;
+
+    return;
 
   }
 
 
   container.innerHTML =
-    musicasDaRadio
+    filtradas
       .map(
         (music) => {
 
           const checked =
-            selecionadas.includes(
-              music.id
+            selecionadas.some(
+              (id) =>
+                String(id) ===
+                String(music.id)
             );
 
 
           return `
 
-            <label class="music-option">
+            <label
+              class="music-option ${
+                checked
+                  ? "selected"
+                  : ""
+              }">
 
               <input
                 type="checkbox"
@@ -914,15 +1245,20 @@ function atualizarMusicas(
                 value="${escapeHtml(
                   music.id
                 )}"
-                ${checked
-                  ? "checked"
-                  : ""}>
+                ${
+                  checked
+                    ? "checked"
+                    : ""
+                }
+              >
 
               <span class="music-check">
 
-                ${checked
-                  ? "✓"
-                  : ""}
+                ${
+                  checked
+                    ? "✓"
+                    : ""
+                }
 
               </span>
 
@@ -946,9 +1282,30 @@ function atualizarMusicas(
                     "Artista desconhecido"
                   )}
 
+                  ${
+                    music.album
+                      ? ` · ${escapeHtml(
+                          music.album
+                        )}`
+                      : ""
+                  }
+
                 </small>
 
               </span>
+
+
+              ${
+                music.category
+                  ? `
+                    <span class="music-category">
+                      ${escapeHtml(
+                        music.category
+                      )}
+                    </span>
+                  `
+                  : ""
+              }
 
             </label>
 
@@ -958,11 +1315,80 @@ function atualizarMusicas(
       )
       .join("");
 
+
+  /*
+    Atualiza visualmente ao marcar/desmarcar.
+  */
+
+  container
+    .querySelectorAll(
+      'input[name="trackIds"]'
+    )
+    .forEach(
+      (checkbox) => {
+
+        checkbox.addEventListener(
+          "change",
+          () => {
+
+            const label =
+              checkbox.closest(
+                ".music-option"
+              );
+
+            if (label) {
+
+              label.classList.toggle(
+                "selected",
+                checkbox.checked
+              );
+
+            }
+
+
+            atualizarContadorMusicas();
+
+          }
+        );
+
+      }
+    );
+
 }
 
 
 /* =========================================================
-   SALVAR PLAYLIST
+   CONTADOR
+   ========================================================= */
+
+function atualizarContadorMusicas() {
+
+  const count =
+    document.querySelectorAll(
+      'input[name="trackIds"]:checked'
+    ).length;
+
+
+  const element =
+    $("#selectedMusicCount");
+
+
+  if (element) {
+
+    element.textContent =
+      `${count} ${
+        count === 1
+          ? "selecionada"
+          : "selecionadas"
+      }`;
+
+  }
+
+}
+
+
+/* =========================================================
+   SALVAR
    ========================================================= */
 
 function salvarFormulario(
@@ -1019,8 +1445,6 @@ function salvarFormulario(
       );
 
 
-  /* VALIDAÇÃO */
-
   if (!name) {
 
     mostrarToast(
@@ -1057,11 +1481,18 @@ function salvarFormulario(
   }
 
 
-  const playlist = {
+  const now =
+    new Date().toISOString();
 
-    id:
-      editingId ||
-      criarId("playlist"),
+
+  const newId =
+    editingId ||
+    criarId("playlist");
+
+
+  const playlistData = {
+
+    id: newId,
 
     name,
 
@@ -1077,20 +1508,18 @@ function salvarFormulario(
 
     active,
 
-    updatedAt:
-      new Date().toISOString()
+    updatedAt: now
 
   };
 
-
-  /* EDITAR */
 
   if (editingId) {
 
     const index =
       playlists.findIndex(
         (item) =>
-          item.id === editingId
+          String(item.id) ===
+          String(editingId)
       );
 
 
@@ -1100,29 +1529,31 @@ function salvarFormulario(
 
         ...playlists[index],
 
-        ...playlist
+        ...playlistData
 
       };
 
     }
 
-  }
+  } else {
 
-  /* NOVA */
-
-  else {
-
-    playlist.createdAt =
-      new Date().toISOString();
+    playlistData.createdAt =
+      now;
 
     playlists.unshift(
-      playlist
+      playlistData
     );
 
   }
 
 
   salvarPlaylists();
+
+  console.log(
+    "[PLAYLISTS] Playlist salva:",
+    playlistData
+  );
+
 
   fecharModal();
 
@@ -1131,8 +1562,8 @@ function salvarFormulario(
 
   mostrarToast(
     editingId
-      ? "Playlist atualizada."
-      : "Playlist criada.",
+      ? "Playlist atualizada com sucesso."
+      : "Playlist criada com sucesso.",
     "success"
   );
 
@@ -1151,30 +1582,28 @@ function excluirPlaylist(id) {
   const playlist =
     playlists.find(
       (item) =>
-        item.id === id
+        String(item.id) ===
+        String(id)
     );
 
 
-  if (!playlist) {
-    return;
-  }
+  if (!playlist) return;
 
 
   const confirmar =
-    confirm(
+    window.confirm(
       `Excluir a playlist "${playlist.name}"?`
     );
 
 
-  if (!confirmar) {
-    return;
-  }
+  if (!confirmar) return;
 
 
   playlists =
     playlists.filter(
       (item) =>
-        item.id !== id
+        String(item.id) !==
+        String(id)
     );
 
 
@@ -1200,13 +1629,12 @@ function alternarPlaylist(id) {
   const playlist =
     playlists.find(
       (item) =>
-        item.id === id
+        String(item.id) ===
+        String(id)
     );
 
 
-  if (!playlist) {
-    return;
-  }
+  if (!playlist) return;
 
 
   playlist.active =
@@ -1223,13 +1651,10 @@ function alternarPlaylist(id) {
 
 
   mostrarToast(
-
     playlist.active
       ? "Playlist ativada."
       : "Playlist desativada.",
-
     "success"
-
   );
 
 }
@@ -1322,12 +1747,8 @@ function mostrarVazio() {
   const empty =
     $("#emptyState");
 
-
   if (empty) {
-
-    empty.hidden =
-      false;
-
+    empty.hidden = false;
   }
 
 }
@@ -1338,12 +1759,8 @@ function esconderVazio() {
   const empty =
     $("#emptyState");
 
-
   if (empty) {
-
-    empty.hidden =
-      true;
-
+    empty.hidden = true;
   }
 
 }
@@ -1358,10 +1775,7 @@ function fecharModal() {
   const modal =
     $("#playlistModal");
 
-
-  if (!modal) {
-    return;
-  }
+  if (!modal) return;
 
 
   modal.classList.remove(
@@ -1369,9 +1783,11 @@ function fecharModal() {
   );
 
 
-  modal.setAttribute(
-    "hidden",
-    ""
+  setTimeout(
+    () => {
+      modal.hidden = true;
+    },
+    150
   );
 
 
@@ -1399,7 +1815,7 @@ function mostrarToast(
   if (!toast) {
 
     console.log(
-      `[${type}]`,
+      `[PLAYLISTS ${type}]`,
       message
     );
 
@@ -1430,7 +1846,7 @@ function mostrarToast(
         );
 
       },
-      3000
+      3500
     );
 
 }
@@ -1459,7 +1875,6 @@ function setValue(
   const element =
     $(selector);
 
-
   if (element) {
 
     element.value =
@@ -1477,7 +1892,6 @@ function setText(
 
   const element =
     $(selector);
-
 
   if (element) {
 
