@@ -2352,3 +2352,715 @@ function escapeHtml(
     );
 
 }
+/* =========================================================
+   PESQUISA EXTERNA DE MÚSICAS
+   ========================================================= */
+
+let resultadosExternos = [];
+
+
+/* =========================================================
+   CONFIGURAR PESQUISA EXTERNA
+   ========================================================= */
+
+function configurarPesquisaExterna() {
+
+  const input =
+    $("#externalMusicSearch");
+
+  const button =
+    $("#externalSearchBtn");
+
+  if (!input || !button) {
+
+    console.warn(
+      "[MÚSICAS] Campo de pesquisa externa não encontrado."
+    );
+
+    return;
+
+  }
+
+
+  button.addEventListener(
+    "click",
+    pesquisarMusicasExternas
+  );
+
+
+  input.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        pesquisarMusicasExternas();
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PESQUISAR
+   ========================================================= */
+
+async function pesquisarMusicasExternas() {
+
+  const input =
+    $("#externalMusicSearch");
+
+  const results =
+    $("#externalMusicResults");
+
+  const status =
+    $("#externalSearchStatus");
+
+
+  if (!input || !results) {
+
+    return;
+
+  }
+
+
+  const termo =
+    input.value
+      .trim();
+
+
+  if (!termo) {
+
+    mostrarStatusPesquisa(
+      "Digite o nome de uma música, artista ou álbum.",
+      "error"
+    );
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  mostrarStatusPesquisa(
+    "🔎 Pesquisando músicas...",
+    "loading"
+  );
+
+
+  results.innerHTML =
+    "";
+
+
+  try {
+
+    /*
+     * Catálogo público da Apple/iTunes.
+     *
+     * O endpoint retorna metadados de músicas
+     * e, quando disponível, previewUrl.
+     */
+
+    const url =
+      "https://itunes.apple.com/search?" +
+      new URLSearchParams({
+        term: termo,
+        media: "music",
+        entity: "song",
+        country: "BR",
+        lang: "pt_br",
+        limit: "20"
+      });
+
+
+    const response =
+      await fetch(url);
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `HTTP ${response.status}`
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    resultadosExternos =
+      Array.isArray(
+        data.results
+      )
+        ? data.results
+        : [];
+
+
+    if (!resultadosExternos.length) {
+
+      mostrarStatusPesquisa(
+        "Nenhuma música encontrada.",
+        "empty"
+      );
+
+      return;
+
+    }
+
+
+    mostrarStatusPesquisa(
+      `${resultadosExternos.length} resultado(s) encontrado(s).`,
+      "success"
+    );
+
+
+    renderizarResultadosExternos();
+
+
+  } catch (error) {
+
+    console.error(
+      "[MÚSICAS] Erro na pesquisa externa:",
+      error
+    );
+
+
+    mostrarStatusPesquisa(
+      "Não foi possível pesquisar músicas agora.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDERIZAR RESULTADOS
+   ========================================================= */
+
+function renderizarResultadosExternos() {
+
+  const container =
+    $("#externalMusicResults");
+
+
+  if (!container) {
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    resultadosExternos
+      .map(
+        (music, index) =>
+          criarResultadoExterno(
+            music,
+            index
+          )
+      )
+      .join("");
+
+}
+
+
+/* =========================================================
+   CARD DO RESULTADO
+   ========================================================= */
+
+function criarResultadoExterno(
+  music,
+  index
+) {
+
+  const artwork =
+    music.artworkUrl100 ||
+    "";
+
+
+  const title =
+    music.trackName ||
+    "Sem título";
+
+
+  const artist =
+    music.artistName ||
+    "Artista desconhecido";
+
+
+  const album =
+    music.collectionName ||
+    "";
+
+
+  const preview =
+    music.previewUrl ||
+    "";
+
+
+  return `
+
+    <article class="external-music-card">
+
+      <div class="external-music-cover">
+
+        ${
+          artwork
+            ? `
+              <img
+                src="${escapeHtml(
+                  artwork
+                )}"
+                alt="${escapeHtml(
+                  title
+                )}"
+                loading="lazy">
+            `
+            : `
+              <span>🎵</span>
+            `
+        }
+
+      </div>
+
+
+      <div class="external-music-info">
+
+        <h3>
+          ${escapeHtml(
+            title
+          )}
+        </h3>
+
+
+        <p>
+          ${escapeHtml(
+            artist
+          )}
+        </p>
+
+
+        ${
+          album
+            ? `
+              <small>
+                💿 ${escapeHtml(
+                  album
+                )}
+              </small>
+            `
+            : ""
+        }
+
+
+        <div class="external-music-actions">
+
+          ${
+            preview
+              ? `
+                <button
+                  type="button"
+                  class="btn ghost"
+                  data-preview-external="${index}">
+                  ▶ Prévia
+                </button>
+              `
+              : ""
+          }
+
+
+          <button
+            type="button"
+            class="btn primary"
+            data-add-external="${index}">
+            ＋ Adicionar
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `;
+
+}
+
+
+/* =========================================================
+   CLIQUES DOS RESULTADOS
+   ========================================================= */
+
+document.addEventListener(
+  "click",
+  (event) => {
+
+    const previewButton =
+      event.target.closest(
+        "[data-preview-external]"
+      );
+
+
+    if (previewButton) {
+
+      const index =
+        Number(
+          previewButton.dataset
+            .previewExternal
+        );
+
+
+      reproduzirPreviewExterno(
+        index
+      );
+
+      return;
+
+    }
+
+
+    const addButton =
+      event.target.closest(
+        "[data-add-external]"
+      );
+
+
+    if (addButton) {
+
+      const index =
+        Number(
+          addButton.dataset
+            .addExternal
+        );
+
+
+      adicionarResultadoExterno(
+        index
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PRÉVIA
+   ========================================================= */
+
+function reproduzirPreviewExterno(
+  index
+) {
+
+  const music =
+    resultadosExternos[
+      index
+    ];
+
+
+  if (
+    !music ||
+    !music.previewUrl
+  ) {
+
+    mostrarToast(
+      "Esta música não possui prévia disponível.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  let player =
+    $("#externalPreviewPlayer");
+
+
+  if (!player) {
+
+    player =
+      document.createElement(
+        "audio"
+      );
+
+    player.id =
+      "externalPreviewPlayer";
+
+    player.controls =
+      true;
+
+    player.style.width =
+      "100%";
+
+    player.style.marginTop =
+      "15px";
+
+
+    const results =
+      $("#externalMusicResults");
+
+
+    results?.prepend(
+      player
+    );
+
+  }
+
+
+  player.src =
+    music.previewUrl;
+
+
+  player.play()
+    .catch(
+      () => {}
+    );
+
+
+  mostrarToast(
+    `Prévia: ${music.trackName}`,
+    "success"
+  );
+
+}
+
+
+/* =========================================================
+   ADICIONAR RESULTADO À BIBLIOTECA
+   ========================================================= */
+
+function adicionarResultadoExterno(
+  index
+) {
+
+  const result =
+    resultadosExternos[
+      index
+    ];
+
+
+  if (!result) {
+
+    return;
+
+  }
+
+
+  const titulo =
+    result.trackName ||
+    "";
+
+
+  const artista =
+    result.artistName ||
+    "";
+
+
+  /*
+   * Evita cadastrar a mesma música
+   * e artista várias vezes.
+   */
+
+  const existente =
+    musicas.find(
+      (music) =>
+
+        music.title
+          ?.toLowerCase() ===
+        titulo.toLowerCase()
+
+        &&
+
+        music.artist
+          ?.toLowerCase() ===
+        artista.toLowerCase()
+    );
+
+
+  if (existente) {
+
+    mostrarToast(
+      "Essa música já está na biblioteca.",
+      "info"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Ainda não existe arquivo local.
+   *
+   * O usuário deverá abrir "Editar"
+   * e fazer o upload do arquivo de áudio
+   * autorizado para uso na rádio.
+   */
+
+  const music = {
+
+    id:
+      criarId("music"),
+
+    title:
+      titulo,
+
+    artist:
+      artista,
+
+    album:
+      result.collectionName ||
+      "",
+
+    category:
+      "music",
+
+    stationId:
+      "",
+
+    duration:
+      result.trackTimeMillis
+        ? formatarDuracao(
+            result.trackTimeMillis /
+            1000
+          )
+        : "",
+
+    audioUrl:
+      "",
+
+    hasAudio:
+      false,
+
+    audioFileName:
+      "",
+
+    audioMimeType:
+      "",
+
+    audioSize:
+      0,
+
+    artworkUrl:
+      result.artworkUrl100 ||
+      "",
+
+    externalId:
+      result.trackId ||
+      "",
+
+    externalUrl:
+      result.trackViewUrl ||
+      "",
+
+    previewUrl:
+      result.previewUrl ||
+      "",
+
+    active:
+      true,
+
+    createdAt:
+      new Date().toISOString(),
+
+    updatedAt:
+      new Date().toISOString()
+
+  };
+
+
+  musicas.unshift(
+    music
+  );
+
+
+  salvarMusicas();
+
+
+  renderizar();
+
+
+  mostrarToast(
+    `"${titulo}" adicionada à biblioteca. Agora associe uma rádio e faça o upload do áudio.`,
+    "success"
+  );
+
+
+  /*
+   * Abre imediatamente a edição
+   * para o usuário completar os dados.
+   */
+
+  setTimeout(
+    () => {
+
+      abrirEdicao(
+        music.id
+      );
+
+    },
+    200
+  );
+
+}
+
+
+/* =========================================================
+   STATUS DA PESQUISA
+   ========================================================= */
+
+function mostrarStatusPesquisa(
+  message,
+  type
+) {
+
+  const status =
+    $("#externalSearchStatus");
+
+
+  if (!status) {
+
+    return;
+
+  }
+
+
+  status.hidden =
+    false;
+
+
+  status.className =
+    `search-status ${type}`;
+
+
+  status.textContent =
+    message;
+
+}
+
+
+/* =========================================================
+   INICIALIZAR PESQUISA
+   ========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    configurarPesquisaExterna();
+
+  }
+);
