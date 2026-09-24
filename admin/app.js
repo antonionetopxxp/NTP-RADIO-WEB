@@ -1,348 +1,314 @@
-const STORAGE = {
-  news: "ntp_radio_noticias",
-  promotions: "ntp_radio_promocoes",
-  programs: "ntp_radio_programacao"
-};
+(() => {
+
+  "use strict";
+
+  const NEWS_KEY = "ntp_radio_noticias";
+  const PROMOTIONS_KEY = "ntp_radio_promocoes";
+  const EVENTS_KEY = "ntp_radio_eventos";
+  const PROGRAMS_KEY = "ntp_radio_programacao";
 
 
-function getData(key) {
-  try {
-    const data = JSON.parse(
-      localStorage.getItem(key) || "[]"
+  function load(key) {
+
+    try {
+
+      const data =
+        JSON.parse(
+          localStorage.getItem(key) || "[]"
+        );
+
+      return Array.isArray(data)
+        ? data
+        : [];
+
+    } catch {
+
+      return [];
+
+    }
+
+  }
+
+
+  function count(key) {
+
+    return load(key).length;
+
+  }
+
+
+  function activeCount(key) {
+
+    return load(key)
+      .filter(
+        item => item && item.published !== false
+      ).length;
+
+  }
+
+
+  function programActiveCount() {
+
+    return load(PROGRAMS_KEY)
+      .filter(
+        item => item && item.active !== false
+      ).length;
+
+  }
+
+
+  function setText(id, value) {
+
+    const element =
+      document.getElementById(id);
+
+    if (element) {
+      element.textContent = value;
+    }
+
+  }
+
+
+  function renderMetrics() {
+
+    setText(
+      "newsCount",
+      count(NEWS_KEY)
     );
 
-    return Array.isArray(data) ? data : [];
-
-  } catch (error) {
-
-    console.error(
-      "Erro ao carregar:",
-      key,
-      error
+    setText(
+      "promoCount",
+      count(PROMOTIONS_KEY)
     );
 
-    return [];
-  }
-}
+    setText(
+      "eventCount",
+      count(EVENTS_KEY)
+    );
 
+    setText(
+      "programCount",
+      programActiveCount()
+    );
 
-function updateDashboard() {
-
-  const noticias = getData(STORAGE.news);
-
-  const promocoes = getData(
-    STORAGE.promotions
-  );
-
-  const programas = getData(
-    STORAGE.programs
-  );
-
-
-  const newsCount =
-    document.getElementById("newsCount");
-
-  const promoCount =
-    document.getElementById("promoCount");
-
-  const programCount =
-    document.getElementById("programCount");
-
-
-  if (newsCount) {
-    newsCount.textContent =
-      noticias.length;
   }
 
 
-  if (promoCount) {
-    promoCount.textContent =
-      promocoes.length;
-  }
+  function renderRecentContent() {
 
-
-  if (programCount) {
-
-    const ativos =
-      programas.filter(
-        item => item.active !== false
+    const container =
+      document.getElementById(
+        "recentNews"
       );
 
-    programCount.textContent =
-      ativos.length;
-  }
+    if (!container) return;
 
 
-  renderRecentNews(noticias);
-}
+    const news =
+      load(NEWS_KEY)
+        .filter(
+          item =>
+            item &&
+            item.published !== false
+        )
+        .sort(
+          (a, b) =>
+            new Date(
+              b.updatedAt ||
+              b.createdAt ||
+              b.date ||
+              0
+            ) -
+            new Date(
+              a.updatedAt ||
+              a.createdAt ||
+              a.date ||
+              0
+            )
+        )
+        .slice(0, 5);
 
 
-function renderRecentNews(noticias) {
+    if (!news.length) {
 
-  const container =
-    document.getElementById(
-      "recentNews"
-    );
-
-  if (!container) return;
-
-
-  if (!noticias.length) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-
-        <div class="empty-icon">
-          ▤
+      container.innerHTML = `
+        <div class="empty-state">
+          <strong>Nenhuma notícia publicada</strong>
+          <span>
+            As notícias criadas aparecerão aqui.
+          </span>
         </div>
+      `;
 
-        <strong>
-          Nenhuma notícia cadastrada
-        </strong>
+      return;
 
-        <span>
-          As notícias criadas no painel aparecerão aqui.
-        </span>
-
-        <a
-          href="noticias.html"
-          class="button button-secondary"
-        >
-          Criar primeira notícia
-        </a>
-
-      </div>
-    `;
-
-    return;
-  }
+    }
 
 
-  const recentes =
-    [...noticias]
-      .reverse()
-      .slice(0, 5);
+    container.innerHTML =
+      news.map(item => `
 
+        <article class="recent-item">
 
-  container.innerHTML =
-    recentes.map((noticia) => {
-
-      const titulo =
-        escapeHTML(
-          noticia.title ||
-          noticia.name ||
-          "Sem título"
-        );
-
-
-      const resumo =
-        escapeHTML(
-          noticia.summary ||
-          noticia.description ||
-          "Sem descrição"
-        );
-
-
-      return `
-        <div class="recent-item">
-
-          <div class="recent-thumb">
-            ${noticia.image
-              ? `<img
-                   src="${escapeAttribute(
-                     noticia.image
-                   )}"
-                   alt=""
-                 >`
-              : "N"
-            }
+          <div class="recent-item-icon">
+            📰
           </div>
 
-          <div class="recent-content">
+          <div class="recent-item-content">
 
             <strong>
-              ${titulo}
+              ${escapeHTML(item.title || "Sem título")}
             </strong>
 
             <span>
-              ${resumo}
+              ${
+                item.category
+                  ? escapeHTML(item.category)
+                  : "Notícia"
+              }
             </span>
 
           </div>
 
-          <span class="recent-status">
-            Publicado
-          </span>
+        </article>
 
-        </div>
-      `;
+      `).join("");
 
-    }).join("");
-}
-
-
-function escapeHTML(value) {
-
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-function escapeAttribute(value) {
-
-  return escapeHTML(value);
-}
-
-
-/* MENU MOBILE */
-
-const menuBtn =
-  document.getElementById(
-    "menuBtn"
-  );
-
-const sidebar =
-  document.getElementById(
-    "sidebar"
-  );
-
-const overlay =
-  document.getElementById(
-    "overlay"
-  );
-
-
-function openMenu() {
-
-  if (sidebar) {
-    sidebar.classList.add(
-      "open"
-    );
   }
 
-  if (overlay) {
-    overlay.classList.add(
-      "show"
+
+  function escapeHTML(value = "") {
+
+    return String(value).replace(
+      /[&<>"']/g,
+      character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]
     );
+
   }
 
-  document.body.classList.add(
-    "menu-open"
-  );
-}
 
+  function refresh() {
 
-function closeMenu() {
+    renderMetrics();
+    renderRecentContent();
 
-  if (sidebar) {
-    sidebar.classList.remove(
-      "open"
-    );
   }
 
-  if (overlay) {
-    overlay.classList.remove(
-      "show"
+
+  /* =======================================================
+     ATUALIZAÇÃO AUTOMÁTICA
+     ======================================================= */
+
+  window.addEventListener(
+    "storage",
+    event => {
+
+      if (
+        [
+          NEWS_KEY,
+          PROMOTIONS_KEY,
+          EVENTS_KEY,
+          PROGRAMS_KEY
+        ].includes(event.key)
+      ) {
+
+        refresh();
+
+      }
+
+    }
+  );
+
+
+  window.addEventListener(
+    "ntp-content-updated",
+    refresh
+  );
+
+
+  window.addEventListener(
+    "ntp-programacao-updated",
+    refresh
+  );
+
+
+  /* =======================================================
+     MENU MOBILE
+     ======================================================= */
+
+  const menuButton =
+    document.getElementById(
+      "menuBtn"
     );
-  }
 
-  document.body.classList.remove(
-    "menu-open"
-  );
-}
+  const sidebar =
+    document.getElementById(
+      "sidebar"
+    );
 
-
-if (menuBtn) {
-
-  menuBtn.addEventListener(
-    "click",
-    openMenu
-  );
-}
+  const overlay =
+    document.getElementById(
+      "overlay"
+    );
 
 
-if (overlay) {
+  if (
+    menuButton &&
+    sidebar
+  ) {
 
-  overlay.addEventListener(
-    "click",
-    closeMenu
-  );
-}
-
-
-document
-  .querySelectorAll(".nav-link")
-  .forEach(link => {
-
-    link.addEventListener(
+    menuButton.addEventListener(
       "click",
       () => {
 
-        if (
-          window.innerWidth <= 900
-        ) {
-          closeMenu();
+        sidebar.classList.toggle(
+          "open"
+        );
+
+        if (overlay) {
+
+          overlay.classList.toggle(
+            "active"
+          );
+
         }
 
       }
     );
 
-  });
+  }
 
 
-/* SAIR */
+  if (overlay) {
 
-const logoutBtn =
-  document.getElementById(
-    "logoutBtn"
-  );
+    overlay.addEventListener(
+      "click",
+      () => {
 
+        sidebar.classList.remove(
+          "open"
+        );
 
-if (logoutBtn) {
+        overlay.classList.remove(
+          "active"
+        );
 
-  logoutBtn.addEventListener(
-    "click",
-    event => {
+      }
+    );
 
-      event.preventDefault();
-
-      localStorage.removeItem(
-        "ntp_admin_session"
-      );
-
-      window.location.href =
-        "login.html";
-
-    }
-  );
-
-}
+  }
 
 
-/* ATUALIZAÇÃO */
+  /* =======================================================
+     INICIALIZAÇÃO
+     ======================================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  updateDashboard
-);
+  refresh();
 
-
-window.addEventListener(
-  "pageshow",
-  updateDashboard
-);
-
-
-window.addEventListener(
-  "storage",
-  updateDashboard
-);
-
-
-console.log(
-  "NTP RADIO OS — Dashboard carregado"
-);
+})();
