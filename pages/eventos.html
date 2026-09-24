@@ -3,54 +3,148 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Eventos | NTP RÁDIO WEB</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <meta
     name="description"
-    content="Eventos e novidades da NTP RÁDIO WEB."
+    content="Eventos da NTP RÁDIO WEB"
   >
 
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="../galaxy-theme.css">
+  <title>Eventos — NTP RÁDIO WEB</title>
+
+  <link
+    rel="stylesheet"
+    href="../style.css"
+  >
 
   <style>
+
+    .page-container {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
     .page-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 30px;
     }
 
     .page-actions a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 42px;
-      padding: 10px 16px;
+      gap: 8px;
+      padding: 11px 16px;
+      border: 1px solid rgba(166,107,255,.35);
       border-radius: 12px;
-      text-decoration: none;
-      font-weight: 700;
-      border: 1px solid rgba(139, 92, 246, .45);
       color: #fff;
+      text-decoration: none;
+      background: rgba(20,12,42,.75);
       transition: .2s ease;
     }
 
     .page-actions a:hover {
-      transform: translateY(-1px);
-      border-color: rgba(166, 107, 255, .9);
+      border-color: #a66bff;
+      transform: translateY(-2px);
     }
 
-    .page-actions .radio-button {
-      background: rgba(109, 40, 255, .18);
+    .page-title {
+      margin-bottom: 30px;
     }
 
-    .page-actions .admin-button {
-      background: rgba(166, 107, 255, .10);
+    .page-title h1 {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .page-title p {
+      margin: 0;
+      color: #a79bc4;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .event-card-public {
+      overflow: hidden;
+      border: 1px solid rgba(123,44,255,.28);
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(18,10,38,.96),
+          rgba(5,5,15,.96)
+        );
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.25);
+    }
+
+    .event-image {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+      background: #090711;
+    }
+
+    .event-content {
+      padding: 20px;
+    }
+
+    .event-date {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #a66bff;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .event-content h2 {
+      margin: 0 0 12px;
+      color: #fff;
+      font-size: 1.3rem;
+    }
+
+    .event-info {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 15px;
+      color: #c4b9dd;
+      font-size: .94rem;
+    }
+
+    .event-description {
+      color: #a79bc4;
+      line-height: 1.6;
+    }
+
+    .empty-events {
+      padding: 45px 20px;
+      text-align: center;
+      border: 1px dashed rgba(166,107,255,.3);
+      border-radius: 18px;
+      color: #a79bc4;
+      background: rgba(10,7,24,.65);
     }
 
     @media (max-width: 600px) {
+
+      .page-container {
+        padding-top: 25px;
+      }
+
       .page-actions {
         flex-direction: column;
       }
@@ -58,135 +152,281 @@
       .page-actions a {
         width: 100%;
       }
+
+      .event-image {
+        height: 190px;
+      }
+
     }
+
   </style>
 </head>
 
 <body>
 
-<header class="topbar">
+  <main class="page-container">
 
-  <div class="brand">
-    <strong>NTP RÁDIO WEB</strong>
-    <span>Eventos</span>
-  </div>
+    <nav class="page-actions">
 
-  <nav>
-    <a href="../index.html">Início</a>
-    <a href="programacao.html">Programação</a>
-    <a href="noticias.html">Notícias</a>
-    <a href="eventos.html">Eventos</a>
-    <a href="contato.html">Contato</a>
-  </nav>
-
-</header>
-
-<main class="page-container">
-
-  <div class="page-actions">
-
-    <a href="../index.html" class="radio-button">
-      ← Voltar para a Rádio
-    </a>
-
-    <a href="../admin/index.html" class="admin-button">
-      ⚙ Painel Admin
-    </a>
-
-  </div>
-
-  <section class="page-hero">
-
-    <span class="badge">🎉 NTP EVENTOS</span>
-
-    <h1>Eventos</h1>
-
-    <p>
-      Acompanhe eventos, transmissões e novidades relacionadas
-      à NTP RÁDIO WEB.
-    </p>
-
-    <a class="btn-primary" href="../index.html">
-      🎧 Ouvir agora
-    </a>
-
-  </section>
-
-  <section class="cards-grid">
-
-    <article class="glass-card">
-
-      <span class="card-icon">🎤</span>
-
-      <h2>Eventos ao vivo</h2>
-
-      <p>
-        Em breve você poderá acompanhar informações sobre
-        eventos com cobertura da NTP RÁDIO WEB.
-      </p>
-
-      <span class="event-status">
-        EM BREVE
-      </span>
-
-    </article>
-
-    <article class="glass-card">
-
-      <span class="card-icon">🎧</span>
-
-      <h2>Transmissões especiais</h2>
-
-      <p>
-        Programações especiais poderão ser transmitidas
-        diretamente pela nossa rádio online.
-      </p>
-
-      <span class="event-status">
-        EM BREVE
-      </span>
-
-    </article>
-
-    <article class="glass-card">
-
-      <span class="card-icon">📢</span>
-
-      <h2>Divulgue seu evento</h2>
-
-      <p>
-        Entre em contato com a NTP RÁDIO WEB para conhecer
-        possibilidades de divulgação.
-      </p>
-
-      <a href="contato.html">
-        Entrar em contato →
+      <a href="../index.html">
+        ← Voltar para a Rádio
       </a>
 
-    </article>
+      <a href="../admin/index.html">
+        ⚙ Painel Admin
+      </a>
 
-  </section>
+    </nav>
 
-  <section class="notice-box">
 
-    <h2>🚀 Novos eventos serão adicionados</h2>
+    <header class="page-title">
 
-    <p>
-      Esta área será atualizada conforme novos eventos e
-      transmissões forem cadastrados na plataforma.
-    </p>
+      <h1>📅 Eventos</h1>
 
-  </section>
+      <p>
+        Confira os próximos eventos da
+        NTP RÁDIO WEB.
+      </p>
 
-</main>
+    </header>
 
-<footer class="footer">
 
-  <p>
-    © 2026 NTP RÁDIO WEB. Todos os direitos reservados.
-  </p>
+    <section
+      class="events-grid"
+      id="publicEventsList"
+    ></section>
 
-</footer>
+  </main>
+
+
+  <script>
+
+    const EVENTS_KEY =
+      "ntp_radio_eventos";
+
+
+    function escapeHTML(value = "") {
+
+      return String(value).replace(
+        /[&<>"']/g,
+        character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        })[character]
+      );
+
+    }
+
+
+    function formatDate(value) {
+
+      if (!value) return "";
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return date.toLocaleDateString(
+        "pt-BR"
+      );
+
+    }
+
+
+    function loadEvents() {
+
+      try {
+
+        const data =
+          JSON.parse(
+            localStorage.getItem(
+              EVENTS_KEY
+            ) || "[]"
+          );
+
+        return Array.isArray(data)
+          ? data
+          : [];
+
+      } catch {
+
+        return [];
+
+      }
+
+    }
+
+
+    function renderEvents() {
+
+      const container =
+        document.getElementById(
+          "publicEventsList"
+        );
+
+      if (!container) return;
+
+
+      const events =
+        loadEvents()
+          .filter(
+            event =>
+              event &&
+              event.published === true
+          )
+          .sort(
+            (a, b) =>
+              String(a.date || "")
+                .localeCompare(
+                  String(b.date || "")
+                )
+          );
+
+
+      if (!events.length) {
+
+        container.innerHTML = `
+
+          <div class="empty-events">
+
+            <strong>
+              Nenhum evento disponível.
+            </strong>
+
+            <p>
+              Novos eventos serão publicados
+              em breve.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        events.map(event => `
+
+          <article
+            class="event-card-public"
+          >
+
+            ${
+              event.image
+                ? `
+                  <img
+                    class="event-image"
+                    src="${escapeHTML(event.image)}"
+                    alt="${escapeHTML(event.title || "Evento")}"
+                    loading="lazy"
+                  >
+                `
+                : ""
+            }
+
+            <div class="event-content">
+
+              ${
+                event.date
+                  ? `
+                    <span class="event-date">
+                      📅 ${escapeHTML(
+                        formatDate(event.date)
+                      )}
+                    </span>
+                  `
+                  : ""
+              }
+
+              <h2>
+                ${escapeHTML(
+                  event.title || ""
+                )}
+              </h2>
+
+              <div class="event-info">
+
+                ${
+                  event.time
+                    ? `
+                      <span>
+                        🕐 ${escapeHTML(event.time)}
+                      </span>
+                    `
+                    : ""
+                }
+
+                ${
+                  event.location
+                    ? `
+                      <span>
+                        📍 ${escapeHTML(
+                          event.location
+                        )}
+                      </span>
+                    `
+                    : ""
+                }
+
+              </div>
+
+              ${
+                event.description
+                  ? `
+                    <div class="event-description">
+                      ${escapeHTML(
+                        event.description
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </article>
+
+        `).join("");
+
+    }
+
+
+    renderEvents();
+
+
+    window.addEventListener(
+      "storage",
+      event => {
+
+        if (
+          event.key === EVENTS_KEY
+        ) {
+
+          renderEvents();
+
+        }
+
+      }
+    );
+
+
+    window.addEventListener(
+      "pageshow",
+      renderEvents
+    );
+
+  </script>
 
 </body>
 </html>
