@@ -530,6 +530,7 @@ function initMetadata() {
 
 }
 
+
 function startMetadata() {
 
   const metadataURL =
@@ -553,7 +554,127 @@ function startMetadata() {
     new EventSource(
       metadataURL
     );
+function applyActiveStation(station) {
 
+  if (!station) {
+    return;
+  }
+
+  const streamUrl =
+    station.stream?.url || '';
+
+  const metadataUrl =
+    station.stream?.metadata || '';
+
+
+  if (streamUrl) {
+
+    ACTIVE_STREAM_URL =
+      streamUrl;
+
+    /*
+      Troca o stream do player.
+    */
+
+    if (
+      radio.src !== streamUrl
+    ) {
+
+      const wasPlaying =
+        !radio.paused;
+
+      radio.pause();
+
+      radio.src =
+        streamUrl;
+
+      radio.load();
+
+      if (wasPlaying) {
+
+        radio.play()
+          .then(() => {
+            setPlaying(true);
+          })
+          .catch(() => {
+            setPlaying(false);
+          });
+
+      }
+
+    }
+
+  }
+
+
+  if (metadataUrl) {
+
+    ACTIVE_META_URL =
+      metadataUrl;
+
+    initMetadata();
+
+  }
+
+
+  /*
+    Atualiza os textos da rádio.
+  */
+
+  document
+    .querySelectorAll(
+      '[data-radio-name]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        station.name ||
+        'Rádio Online';
+
+    });
+
+
+  document
+    .querySelectorAll(
+      '[data-radio-short-name]'
+    )
+    .forEach(element => {
+
+      element.textContent =
+        station.shortName ||
+        '';
+
+    });
+
+
+  console.log(
+    'NTP RADIO OS — Player conectado à:',
+    station.name
+  );
+
+  console.log(
+    'NTP RADIO OS — Stream:',
+    streamUrl
+  );
+
+}
+
+
+/*
+  O station-loader.js dispara este evento
+  quando encontra a rádio ativa.
+*/
+
+window.addEventListener(
+  'ntp-station-loaded',
+  event => {
+
+    applyActiveStation(
+      event.detail
+    );
+
+  }
+);
 
   source.addEventListener(
     "message",
