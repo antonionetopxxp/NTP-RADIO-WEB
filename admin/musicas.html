@@ -399,14 +399,22 @@
 
             <label class="full">
 
-              URL do áudio
+  Arquivo de áudio
 
-              <input
-                id="audioUrl"
-                type="url"
-                placeholder="https://.../musica.mp3">
+  <input
+    id="audioFile"
+    type="file"
+    accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg,audio/aac,audio/mp4">
 
-            </label>
+  <small class="field-help">
+    Envie MP3, WAV, OGG, AAC ou M4A.
+  </small>
+
+</label>
+
+<input
+  type="hidden"
+  id="audioUrl">
 
           </div>
 
