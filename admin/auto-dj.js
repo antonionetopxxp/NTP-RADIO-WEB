@@ -50,6 +50,7 @@ function loadData() {
     programs = [];
     playlists = [];
     music = [];
+
   }
 
   if (!Array.isArray(programs)) {
@@ -63,6 +64,7 @@ function loadData() {
   if (!Array.isArray(music)) {
     music = [];
   }
+
 }
 
 
@@ -83,17 +85,6 @@ function normalizeDay(day) {
 
 /* ======================================================
    DIAS DA SEMANA
-
-   IMPORTANTE:
-   Os valores usados pelo formulário são:
-
-   segunda
-   terca
-   quarta
-   quinta
-   sexta
-   sabado
-   domingo
 ====================================================== */
 
 const DAYS = [
@@ -203,7 +194,7 @@ function isProgramActive(program) {
 
   /*
   ==============================================
-  PROGRAMA NORMAL
+  HORÁRIO NORMAL
 
   08:00 → 10:00
   ==============================================
@@ -221,7 +212,7 @@ function isProgramActive(program) {
 
   /*
   ==============================================
-  PROGRAMA ATRAVESSANDO MEIA-NOITE
+  ATRAVESSA MEIA-NOITE
 
   23:00 → 02:00
   ==============================================
@@ -241,10 +232,7 @@ function isProgramActive(program) {
   ==============================================
   MESMO HORÁRIO
 
-  Exemplo:
-  10:00 → 10:00
-
-  Consideramos inválido.
+  Considerado inválido.
   ==============================================
   */
 
@@ -267,36 +255,49 @@ function findCurrentProgram() {
   const currentMinutes =
     getCurrentMinutes();
 
+  console.log(
+    "[AUTO-DJ] Dia atual:",
+    today
+  );
 
-  console.log("[AUTO-DJ] Dia atual:", today);
-console.log("[AUTO-DJ] Minutos atuais:", currentMinutes);
-console.log("[AUTO-DJ] Programas cadastrados:", programs);
+  console.log(
+    "[AUTO-DJ] Minutos atuais:",
+    currentMinutes
+  );
 
-console.table(
-  programs.map(program => ({
-    nome: program.name,
-    diaSalvo: program.day,
-    diaNormalizado: normalizeDay(program.day),
-    diaAtual: today,
-    inicio: program.startTime,
-    fim: program.endTime,
-    ativo: program.active,
-    minutosInicio: timeToMinutes(program.startTime),
-    minutosFim: timeToMinutes(program.endTime),
-    minutosAgora: currentMinutes
-  }))
-);
+  console.log(
+    "[AUTO-DJ] Programas cadastrados:",
+    programs
+  );
 
-const activePrograms = programs.filter(isProgramActive);
 
-console.log("[AUTO-DJ] Programas ativos agora:", activePrograms);
+  /*
+  ==============================================
+  DEBUG DA PROGRAMAÇÃO
+  ==============================================
+  */
 
-if (!activePrograms.length) {
-  console.log("[AUTO-DJ] Nenhum programa ativo neste momento.");
-  return null;
-}
+  console.table(
+    programs.map(program => ({
+      nome: program.name,
+      diaSalvo: program.day,
+      diaNormalizado: normalizeDay(program.day),
+      diaAtual: today,
+      inicio: program.startTime,
+      fim: program.endTime,
+      ativo: program.active,
+      minutosInicio:
+        timeToMinutes(program.startTime),
+      minutosFim:
+        timeToMinutes(program.endTime),
+      minutosAgora:
+        currentMinutes
+    }))
+  );
 
-return activePrograms[0];
+
+  const activePrograms =
+    programs.filter(isProgramActive);
 
 
   console.log(
@@ -315,6 +316,11 @@ return activePrograms[0];
 
   }
 
+
+  /*
+  Se houver mais de um programa ativo,
+  pega o primeiro cadastrado.
+  */
 
   return activePrograms[0];
 
@@ -379,7 +385,13 @@ function getPlaylistTracks(playlist) {
   }
 
   if (!Array.isArray(playlist.trackIds)) {
+
+    console.warn(
+      "[AUTO-DJ] Playlist sem trackIds."
+    );
+
     return [];
+
   }
 
 
@@ -451,11 +463,6 @@ function chooseMusic(playlist) {
   /*
   ==============================================
   MODO SEQUENCIAL
-
-  Nesta primeira versão pegamos a primeira faixa.
-
-  O histórico e a próxima faixa serão adicionados
-  na próxima etapa.
   ==============================================
   */
 
@@ -502,9 +509,17 @@ function showAutoDJState() {
   };
 
 
+  /*
+  Estado global
+  */
+
   window.NTP_AUTO_DJ_STATE =
     state;
 
+
+  /*
+  Evento para o painel
+  */
 
   document.dispatchEvent(
     new CustomEvent(
@@ -513,6 +528,12 @@ function showAutoDJState() {
         detail: state
       }
     )
+  );
+
+
+  console.log(
+    "[AUTO-DJ] Estado atualizado:",
+    state
   );
 
 }
@@ -550,7 +571,7 @@ function runAutoDJ() {
 
     showAutoDJState();
 
-    return;
+    return null;
 
   }
 
@@ -577,9 +598,17 @@ function runAutoDJ() {
 
     currentMusic = null;
 
+    console.warn(
+      "[AUTO-DJ] Programa ativo sem playlist."
+    );
+
     showAutoDJState();
 
-    return;
+    return {
+      program: currentProgram,
+      playlist: null,
+      music: null
+    };
 
   }
 
@@ -599,12 +628,10 @@ function runAutoDJ() {
     currentProgram.name
   );
 
-
   console.log(
     "[AUTO-DJ] Playlist:",
     currentPlaylist.name
   );
-
 
   console.log(
     "[AUTO-DJ] Música:",
@@ -616,6 +643,18 @@ function runAutoDJ() {
 
   showAutoDJState();
 
+
+  /*
+  Retorna o estado para quem
+  chamar NTP_AUTO_DJ.executar()
+  */
+
+  return {
+    program: currentProgram,
+    playlist: currentPlaylist,
+    music: currentMusic
+  };
+
 }
 
 
@@ -625,9 +664,29 @@ function runAutoDJ() {
 
 window.NTP_AUTO_DJ = {
 
+  /*
+  API original
+  */
+
   run: runAutoDJ,
 
   refresh: runAutoDJ,
+
+
+  /*
+  NOVO MÉTODO
+
+  O auto-dj-ui.js chama:
+
+  window.NTP_AUTO_DJ.executar()
+  */
+
+  executar: runAutoDJ,
+
+
+  /*
+  Estado completo
+  */
 
   getState() {
 
@@ -646,17 +705,32 @@ window.NTP_AUTO_DJ = {
 
   },
 
+
+  /*
+  Programa atual
+  */
+
   getCurrentProgram() {
 
     return currentProgram;
 
   },
 
+
+  /*
+  Playlist atual
+  */
+
   getCurrentPlaylist() {
 
     return currentPlaylist;
 
   },
+
+
+  /*
+  Música atual
+  */
 
   getCurrentMusic() {
 
@@ -674,6 +748,11 @@ window.NTP_AUTO_DJ = {
 document.addEventListener(
   "DOMContentLoaded",
   () => {
+
+    console.log(
+      "[AUTO-DJ] Sistema iniciado."
+    );
+
 
     runAutoDJ();
 
@@ -705,6 +784,10 @@ window.addEventListener(
       event.key === PLAYLISTS_KEY ||
       event.key === MUSIC_KEY
     ) {
+
+      console.log(
+        "[AUTO-DJ] Dados alterados. Atualizando..."
+      );
 
       runAutoDJ();
 
