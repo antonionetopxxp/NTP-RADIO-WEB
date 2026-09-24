@@ -1,149 +1,843 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#02030a">
-<meta name="description" content="NTP RÁDIO WEB — música, programação, notícias e eventos ao vivo.">
-<title>NTP RÁDIO WEB — Ao Vivo</title>
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="galaxy-theme.css">
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="theme-color"
+    content="#02030a"
+  >
+
+  <meta
+    name="description"
+    content="NTP RÁDIO WEB — música, programação, notícias e eventos ao vivo."
+  >
+
+  <title>NTP RÁDIO WEB — Ao Vivo</title>
+
+  <link
+    rel="manifest"
+    href="manifest.webmanifest"
+  >
+
+  <link
+    rel="icon"
+    href="favicon.svg"
+    type="image/svg+xml"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="galaxy-theme.css"
+  >
 </head>
+
 <body>
-<header class="site-header"><nav class="nav shell">
-<a class="logo" href="#inicio">NTP <b>RÁDIO WEB</b></a>
-<button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
-<div class="nav-links" id="navLinks"><a href="#inicio">Início</a><a href="#ao-vivo">Ao vivo</a><a href="#programacao">Programação</a><a href="#recursos">Rádio</a><a href="#contato">Contato</a></div>
-</nav></header>
 
-<main>
-<section class="hero" id="inicio"><div class="hero-glow"></div><div class="shell hero-inner">
-<div>
-<div class="live-pill"><i class="dot"></i> TRANSMISSÃO AO VIVO</div>
-<p class="eyebrow">NTP RADIO OS • ESTAÇÃO OFICIAL</p>
-<h1>O SOM QUE<br><em>NUNCA MORRE.</em></h1>
-<p class="hero-text">Sua rádio online em uma experiência moderna. Música, programação, notícias e eventos em um só lugar.</p>
-<div class="hero-actions"><a class="btn btn-primary btn-lg" href="#ao-vivo">▶ OUVIR AGORA</a><a class="btn btn-ghost btn-lg" href="#programacao">Ver programação</a></div>
-<div class="hero-now"><span>TOCANDO AGORA</span><strong data-now>🎵 Carregando música...</strong></div>
-</div>
-<div class="hero-player-card"><div class="disc"><div class="disc-core">NTP</div></div>
-<div class="hero-player-info"><span>NTP RÁDIO WEB</span><strong data-now>🎵 Carregando música...</strong><small>Ao vivo • Neto Pan FM</small></div>
-<button class="play-btn" data-play aria-label="Tocar" aria-pressed="false"><span class="pb-play"></span><span class="pb-pause"></span></button>
-</div></div></section>
+  <!-- ==================================================
+       CABEÇALHO
+       ================================================== -->
 
-<section class="section" id="ao-vivo"><div class="shell"><div class="section-head"><span class="section-label">01 / AO VIVO</span><h2>A rádio está no ar.</h2><p>Controle a transmissão diretamente pelo seu celular ou computador.</p></div>
-<div class="live-card"><div class="eq" data-eq><span></span><span></span><span></span><span></span><span></span></div>
-<div class="live-meta"><span class="live-badge"><i class="dot"></i> AO VIVO</span><h3>NTP RÁDIO WEB</h3><p data-now>🎵 Carregando música...</p></div>
-<button class="play-btn" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play"></span><span class="pb-pause"></span></button>
-<div class="volume">🔊 <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume"></div></div></div></section>
+  <header class="site-header">
 
-<section class="section section-dark" id="programacao"><div class="shell"><div class="section-head"><span class="section-label">02 / PROGRAMAÇÃO</span><h2>O que vem por aí.</h2><p>Estrutura pronta para você alimentar os horários da NTP.</p></div>
-<div
-  class="schedule-grid"
-  id="scheduleGrid"
->
-</div>
-<section class="section" id="recursos"><div class="shell"><div class="section-head"><span class="section-label">03 / NTP RADIO OS</span><h2>Mais que um player.</h2><p>A base da plataforma está preparada para crescer.</p></div>
-<div class="feature-grid">
-<article class="feature">🎧<h3>Player ao vivo</h3><p>Transmissão online e controle de reprodução.</p></article>
-<article class="feature">🎵<h3>Metadata</h3><p>Exibição da música que está tocando.</p></article>
-<article class="feature">📅<h3>Programação</h3><p>Organize programas e horários.</p></article>
-<!-- ================================
-     PUBLICIDADE - AMOR EM GRÃOS CAFÉ
-     ================================ -->
+    <nav class="nav shell">
 
-<section class="section publicidade-section" id="publicidade">
-
-  <div class="shell">
-
-    <div class="section-head">
-
-      <span class="section-label">
-        02 / PUBLICIDADE
-      </span>
-
-      <h2>
-        Publicidade no ar.
-      </h2>
-
-      <p>
-        Conheça nossos anunciantes e parceiros.
-      </p>
-
-    </div>
-
-
-    <div class="ad-stage">
-
-      <!-- efeitos decorativos -->
-      <div class="ad-orbit ad-orbit-a"></div>
-      <div class="ad-orbit ad-orbit-b"></div>
-
-      <div class="ad-shadow"></div>
-
-
-      <!-- BANNER -->
       <a
-        class="ad-banner-3d"
-        href="https://wa.me/556130526114"
-        target="_blank"
-        rel="noopener"
-        aria-label="Falar com Amor em Grãos Café pelo WhatsApp"
+        class="logo"
+        href="#inicio"
+      >
+        NTP <b>RÁDIO WEB</b>
+      </a>
+
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+
+      <div
+        class="nav-links"
+        id="navLinks"
       >
 
-       <div class="ad-image-wrap">
+        <a href="#inicio">
+          Início
+        </a>
 
-          <!--
-          IMPORTANTE:
-          Este é o nome do banner que está no seu repositório.
-          -->
-          <img
-            src="a_wide_horizontal_marketing_banner_digital_adver.png"
-            alt="Amor em Grãos Café - manutenção, venda e locação de máquinas de café"
-          >
- <a
-   <!-- Overlay -->
-          <div class="ad-overlay"></div>
+        <a href="#ao-vivo">
+          Ao vivo
+        </a>
 
-          <!-- brilho passando -->
-          <div class="ad-shine"></div>
+        <a href="#programacao">
+          Programação
+        </a>
 
-          <!-- linha animada -->
-          <div class="ad-scanline"></div>
+        <a href="#recursos">
+          Rádio
+        </a>
 
-          <!-- etiqueta -->
-          <span class="ad-live-label">
-            ● PUBLICIDADE NO AR
-          </span>
+        <a href="#contato">
+          Contato
+        </a>
 
-          <!-- moldura -->
-          <span class="ad-frame"></span>
+      </div>
+
+    </nav>
+
+  </header>
+
+
+  <!-- ==================================================
+       CONTEÚDO PRINCIPAL
+       ================================================== -->
+
+  <main>
+
+    <!-- ==================================================
+         HERO
+         ================================================== -->
+
+    <section
+      class="hero"
+      id="inicio"
+    >
+
+      <div class="hero-glow"></div>
+
+      <div class="shell hero-inner">
+
+        <div>
+
+          <div class="live-pill">
+            <i class="dot"></i>
+            TRANSMISSÃO AO VIVO
+          </div>
+
+          <p class="eyebrow">
+            NTP RADIO OS • ESTAÇÃO OFICIAL
+          </p>
+
+          <h1>
+            O SOM QUE<br>
+            <em>NUNCA MORRE.</em>
+          </h1>
+
+          <p class="hero-text">
+            Sua rádio online em uma experiência moderna.
+            Música, programação, notícias e eventos em um só lugar.
+          </p>
+
+          <div class="hero-actions">
+
+            <a
+              class="btn btn-primary btn-lg"
+              href="#ao-vivo"
+            >
+              ▶ OUVIR AGORA
+            </a>
+
+            <a
+              class="btn btn-ghost btn-lg"
+              href="#programacao"
+            >
+              Ver programação
+            </a>
+
+          </div>
+
+          <div class="hero-now">
+
+            <span>
+              TOCANDO AGORA
+            </span>
+
+            <strong data-now>
+              🎵 Carregando música...
+            </strong>
+
+          </div>
 
         </div>
 
-      </a>
+
+        <!-- PLAYER DO HERO -->
+
+        <div class="hero-player-card">
+
+          <div class="disc">
+            <div class="disc-core">
+              NTP
+            </div>
+          </div>
+
+          <div class="hero-player-info">
+
+            <span>
+              NTP RÁDIO WEB
+            </span>
+
+            <strong data-now>
+              🎵 Carregando música...
+            </strong>
+
+            <small>
+              Ao vivo • Neto Pan FM
+            </small>
+
+          </div>
+
+          <button
+            class="play-btn"
+            type="button"
+            data-play
+            aria-label="Tocar"
+            aria-pressed="false"
+          >
+            <span class="pb-play"></span>
+            <span class="pb-pause"></span>
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         AO VIVO
+         ================================================== -->
+
+    <section
+      class="section"
+      id="ao-vivo"
+    >
+
+      <div class="shell">
+
+        <div class="section-head">
+
+          <span class="section-label">
+            01 / AO VIVO
+          </span>
+
+          <h2>
+            A rádio está no ar.
+          </h2>
+
+          <p>
+            Controle a transmissão diretamente pelo seu celular
+            ou computador.
+          </p>
+
+        </div>
+
+
+        <div class="live-card">
+
+          <div
+            class="eq"
+            data-eq
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+
+          <div class="live-meta">
+
+            <span class="live-badge">
+              <i class="dot"></i>
+              AO VIVO
+            </span>
+
+            <h3>
+              NTP RÁDIO WEB
+            </h3>
+
+            <p data-now>
+              🎵 Carregando música...
+            </p>
+
+          </div>
+
+
+          <button
+            class="play-btn"
+            type="button"
+            data-play
+            aria-label="Tocar ou pausar"
+            aria-pressed="false"
+          >
+
+            <span class="pb-play"></span>
+            <span class="pb-pause"></span>
+
+          </button>
+
+
+          <div class="volume">
+
+            🔊
+
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.8"
+              aria-label="Volume"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         PROGRAMAÇÃO
+         ================================================== -->
+
+    <section
+      class="section section-dark"
+      id="programacao"
+    >
+
+      <div class="shell">
+
+        <div class="section-head">
+
+          <span class="section-label">
+            02 / PROGRAMAÇÃO
+          </span>
+
+          <h2>
+            O que vem por aí.
+          </h2>
+
+          <p>
+            Estrutura pronta para você alimentar os horários da NTP.
+          </p>
+
+        </div>
+
+
+        <div
+          class="schedule-grid"
+          id="scheduleGrid"
+        >
+
+          <article class="schedule-card reveal">
+
+            <span class="time">
+              —
+            </span>
+
+            <h3>
+              Carregando programação...
+            </h3>
+
+            <p>
+              Aguarde enquanto carregamos a grade da rádio.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         RECURSOS
+         ================================================== -->
+
+    <section
+      class="section"
+      id="recursos"
+    >
+
+      <div class="shell">
+
+        <div class="section-head">
+
+          <span class="section-label">
+            03 / NTP RADIO OS
+          </span>
+
+          <h2>
+            Mais que um player.
+          </h2>
+
+          <p>
+            A base da plataforma está preparada para crescer.
+          </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+          <article class="feature">
+
+            🎧
+
+            <h3>
+              Player ao vivo
+            </h3>
+
+            <p>
+              Transmissão online e controle de reprodução.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            🎵
+
+            <h3>
+              Metadata
+            </h3>
+
+            <p>
+              Exibição da música que está tocando.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            📅
+
+            <h3>
+              Programação
+            </h3>
+
+            <p>
+              Organize programas e horários.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            📰
+
+            <h3>
+              Notícias
+            </h3>
+
+            <p>
+              Publique conteúdos da rádio.
+            </p>
+
+          </article>
+
+
+          <article class="feature">
+
+            📱
+
+            <h3>
+              Aplicativo PWA
+            </h3>
+
+            <p>
+              Instalação no celular como aplicativo.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         PUBLICIDADE
+         ================================================== -->
+
+    <section
+      class="section publicidade-section"
+      id="publicidade"
+    >
+
+      <div class="shell">
+
+        <div class="section-head">
+
+          <span class="section-label">
+            04 / PUBLICIDADE
+          </span>
+
+          <h2>
+            Publicidade no ar.
+          </h2>
+
+          <p>
+            Conheça nossos anunciantes e parceiros.
+          </p>
+
+        </div>
+
+
+        <div class="ad-stage">
+
+          <!-- efeitos decorativos -->
+
+          <div class="ad-orbit ad-orbit-a"></div>
+
+          <div class="ad-orbit ad-orbit-b"></div>
+
+          <div class="ad-shadow"></div>
+
+
+          <!-- BANNER -->
+
+          <a
+            class="ad-banner-3d"
+            href="https://wa.me/556130526114"
+            target="_blank"
+            rel="noopener"
+            aria-label="Falar com Amor em Grãos Café pelo WhatsApp"
+          >
+
+            <div class="ad-image-wrap">
+
+              <img
+                src="a_wide_horizontal_marketing_banner_digital_adver.png"
+                alt="Amor em Grãos Café - manutenção, venda e locação de máquinas de café"
+              >
+
+              <!-- Overlay -->
+
+              <div class="ad-overlay"></div>
+
+              <!-- brilho passando -->
+
+              <div class="ad-shine"></div>
+
+              <!-- linha animada -->
+
+              <div class="ad-scanline"></div>
+
+              <!-- etiqueta -->
+
+              <span class="ad-live-label">
+                ● PUBLICIDADE NO AR
+              </span>
+
+              <!-- moldura -->
+
+              <span class="ad-frame"></span>
+
+            </div>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         CONTATO
+         ================================================== -->
+
+    <section
+      class="section"
+      id="contato"
+    >
+
+      <div class="shell contact-card">
+
+        <div>
+
+          <span class="section-label">
+            05 / CONTATO
+          </span>
+
+          <h2>
+            Fale com a NTP.
+          </h2>
+
+          <p>
+            Publicidade, parcerias e contato com a rádio.
+          </p>
+
+        </div>
+
+
+        <div class="contact-actions">
+
+          <a
+            class="btn btn-primary"
+            href="https://wa.me/61991057795"
+            target="_blank"
+            rel="noopener"
+          >
+            WhatsApp
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==================================================
+       RODAPÉ
+       ================================================== -->
+
+  <footer class="site-footer">
+
+    <div class="shell footer-inner">
+
+      <div>
+
+        <strong>
+          NTP RÁDIO WEB
+        </strong>
+
+        <span>
+          © 2026 • Todos os direitos reservados.
+        </span>
+
+      </div>
+
+
+      <div class="footer-links">
+
+        <a href="#inicio">
+          Início
+        </a>
+
+        <a href="#ao-vivo">
+          Ao vivo
+        </a>
+
+        <a href="#programacao">
+          Programação
+        </a>
+
+      </div>
 
     </div>
 
+  </footer>
+
+
+  <!-- ==================================================
+       WHATSAPP FLUTUANTE
+       ================================================== -->
+
+  <a
+    class="whatsapp-float"
+    href="https://wa.me/61994568770"
+    target="_blank"
+    rel="noopener"
+    aria-label="WhatsApp"
+  >
+    WA
+  </a>
+
+
+  <!-- ==================================================
+       PLAYER FIXO
+       ================================================== -->
+
+  <div
+    class="player"
+    id="player"
+  >
+
+    <div
+      class="eq eq-mini"
+      data-eq
+    >
+
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+
+    </div>
+
+
+    <div class="player-meta">
+
+      <span class="live-badge">
+
+        <i class="dot"></i>
+
+        AO VIVO
+
+      </span>
+
+      <strong data-now>
+        🎵 Carregando música...
+      </strong>
+
+    </div>
+
+
+    <div class="volume volume-mini">
+
+      🔊
+
+      <input
+        id="volumeMini"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.8"
+        aria-label="Volume"
+      >
+
+    </div>
+
+
+    <button
+      class="play-btn play-btn-mini"
+      type="button"
+      data-play
+      aria-label="Tocar ou pausar"
+      aria-pressed="false"
+    >
+
+      <span class="pb-play"></span>
+      <span class="pb-pause"></span>
+
+    </button>
+
   </div>
 
-</section>
-<article class="feature">📰<h3>Notícias</h3><p>Publique conteúdos da rádio.</p></article>
-<article class="feature">📱<h3>Aplicativo PWA</h3><p>Instalação no celular como aplicativo.</p></article>
-</div></div></section>
 
-<section class="section" id="contato"><div class="shell contact-card"><div><span class="section-label">04 / CONTATO</span><h2>Fale com a NTP.</h2><p>Publicidade, parcerias e contato com a rádio.</p></div><div class="contact-actions"><a class="btn btn-primary" href="https://wa.me/61991057795">WhatsApp</a></div></div></section>
-</main>
+  <!-- ==================================================
+       ÁUDIO
+       ================================================== -->
 
-<footer class="site-footer"><div class="shell footer-inner"><div><strong>NTP RÁDIO WEB</strong><span>© 2026 • Todos os direitos reservados.</span></div><div class="footer-links"><a href="#inicio">Início</a><a href="#ao-vivo">Ao vivo</a><a href="#programacao">Programação</a></div></div></footer>
-<a class="whatsapp-float" href="https://wa.me/61994568770" target="_blank" rel="noopener" aria-label="WhatsApp">WA</a> -->
-<div class="player" id="player"><div class="eq eq-mini" data-eq><span></span><span></span><span></span><span></span><span></span></div><div class="player-meta"><span class="live-badge"><i class="dot"></i> AO VIVO</span><strong data-now>🎵 Carregando música...</strong></div><div class="volume volume-mini">🔊 <input id="volumeMini" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume"></div><button class="play-btn play-btn-mini" data-play aria-label="Tocar ou pausar" aria-pressed="false"><span class="pb-play"></span><span class="pb-pause"></span></button></div>
-<audio id="radio" preload="none" src="https://stream.zeno.fm/elhz4znig9wuv"></audio><div id="toast"></div>
-<script>
-const t=document.getElementById('navToggle'),n=document.getElementById('navLinks');
-if(t&&n){t.onclick=()=>{n.classList.toggle('open');t.setAttribute('aria-expanded',n.classList.contains('open'))};n.querySelectorAll('a').forEach(a=>a.onclick=()=>n.classList.remove('open'))}
-</script>
-<script src="station-loader.js"></script>
-<script src="config-loader.js"></script>
-<script src="pages/programacao.js"></script>
-<script src="script.js"></script>
-</body></html>
+  <audio
+    id="radio"
+    preload="none"
+    playsinline
+    src="https://stream.zeno.fm/elhz4znig9wuv"
+  ></audio>
+
+
+  <!-- TOAST -->
+
+  <div id="toast"></div>
+
+
+  <!-- ==================================================
+       MENU MOBILE
+       ================================================== -->
+
+  <script>
+
+    const navToggle =
+      document.getElementById("navToggle");
+
+    const navLinks =
+      document.getElementById("navLinks");
+
+
+    if (navToggle && navLinks) {
+
+      navToggle.addEventListener(
+        "click",
+        function () {
+
+          navLinks.classList.toggle("open");
+
+          const isOpen =
+            navLinks.classList.contains("open");
+
+          navToggle.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+          );
+
+        }
+      );
+
+
+      navLinks
+        .querySelectorAll("a")
+        .forEach(function (link) {
+
+          link.addEventListener(
+            "click",
+            function () {
+
+              navLinks.classList.remove("open");
+
+              navToggle.setAttribute(
+                "aria-expanded",
+                "false"
+              );
+
+            }
+          );
+
+        });
+
+    }
+
+  </script>
+
+
+  <!-- ==================================================
+       SCRIPTS DO SISTEMA
+       ================================================== -->
+
+  <script src="station-loader.js"></script>
+
+  <script src="config-loader.js"></script>
+
+  <script src="pages/programacao.js"></script>
+
+  <script src="script.js"></script>
+
+
+</body>
+</html>
