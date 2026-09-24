@@ -464,70 +464,29 @@ function setVolume(value) {
 ========================= */
 
 function initMetadata() {
-
   if (!('EventSource' in window)) {
     setNowPlaying('');
     return;
   }
 
-  if (!ACTIVE_META_URL) {
-    setNowPlaying('');
-    return;
-  }
+  const source = new EventSource(META_URL);
 
-  if (metadataSource) {
+  source.addEventListener('message', event => {
     try {
-      metadataSource.close();
-    } catch (error) {
-      // EventSource já encerrado
-    }
+      const data = JSON.parse(event.data);
 
-    metadataSource = null;
-  }
-
-  metadataSource =
-    new EventSource(
-      ACTIVE_META_URL
-    );
-
-  metadataSource.addEventListener(
-    'message',
-    event => {
-
-      try {
-
-        const data =
-          JSON.parse(
-            event.data
-          );
-
-        if (
-          data &&
-          data.streamTitle
-        ) {
-
-          setNowPlaying(
-            data.streamTitle
-          );
-
-        }
-
-      } catch (error) {
-        // evento sem título
+      if (data && data.streamTitle) {
+        setNowPlaying(data.streamTitle);
       }
-
+    } catch (error) {
+      // evento sem título, apenas ping
     }
-  );
+  });
 
-  metadataSource.addEventListener(
-    'error',
-    () => {
-      // EventSource reconecta automaticamente
-    }
-  );
-
+  source.addEventListener('error', () => {
+    // O EventSource reconecta automaticamente.
+  });
 }
-
 
 function startMetadata() {
 
