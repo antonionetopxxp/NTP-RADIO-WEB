@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Promoções da NTP RÁDIO WEB"
+  >
+
+  <title>Promoções — NTP RÁDIO WEB</title>
+
+  <link
+    rel="stylesheet"
+    href="../style.css"
+  >
+
+  <style>
+
+    .page-container {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .page-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border: 1px solid rgba(166,107,255,.35);
+      border-radius: 12px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(20,12,42,.75);
+      transition: .2s ease;
+    }
+
+    .page-actions a:hover {
+      border-color: #a66bff;
+      transform: translateY(-2px);
+    }
+
+    .page-title {
+      margin-bottom: 30px;
+    }
+
+    .page-title h1 {
+      margin: 0 0 8px;
+      color: #fff;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .page-title p {
+      margin: 0;
+      color: #a79bc4;
+    }
+
+    .promotions-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .promotion-card-public {
+      overflow: hidden;
+      border: 1px solid rgba(123,44,255,.28);
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(18,10,38,.96),
+          rgba(5,5,15,.96)
+        );
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.25);
+    }
+
+    .promotion-image {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      display: block;
+      background: #090711;
+    }
+
+    .promotion-content {
+      padding: 20px;
+    }
+
+    .promotion-date {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: #a66bff;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    .promotion-content h2 {
+      margin: 0 0 12px;
+      color: #fff;
+      font-size: 1.3rem;
+    }
+
+    .promotion-prize {
+      display: inline-block;
+      margin-bottom: 15px;
+      padding: 8px 12px;
+      border: 1px solid rgba(166,107,255,.25);
+      border-radius: 10px;
+      color: #fff;
+      background: rgba(109,40,255,.12);
+    }
+
+    .promotion-description {
+      color: #a79bc4;
+      line-height: 1.6;
+    }
+
+    .empty-promotions {
+      padding: 45px 20px;
+      text-align: center;
+      border: 1px dashed rgba(166,107,255,.3);
+      border-radius: 18px;
+      color: #a79bc4;
+      background: rgba(10,7,24,.65);
+    }
+
+    @media (max-width: 600px) {
+
+      .page-container {
+        padding-top: 25px;
+      }
+
+      .page-actions {
+        flex-direction: column;
+      }
+
+      .page-actions a {
+        width: 100%;
+      }
+
+      .promotion-image {
+        height: 190px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <main class="page-container">
+
+    <nav class="page-actions">
+
+      <a href="../index.html">
+        ← Voltar para a Rádio
+      </a>
+
+      <a href="../admin/index.html">
+        ⚙ Painel Admin
+      </a>
+
+    </nav>
+
+
+    <header class="page-title">
+
+      <h1>🎁 Promoções</h1>
+
+      <p>
+        Participe das promoções da
+        NTP RÁDIO WEB.
+      </p>
+
+    </header>
+
+
+    <section
+      class="promotions-grid"
+      id="publicPromotionsList"
+    ></section>
+
+  </main>
+
+
+  <script>
+
+    const PROMOTIONS_KEY =
+      "ntp_radio_promocoes";
+
+
+    function escapeHTML(value = "") {
+
+      return String(value).replace(
+        /[&<>"']/g,
+        character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        })[character]
+      );
+
+    }
+
+
+    function formatDate(value) {
+
+      if (!value) return "";
+
+      const date =
+        new Date(
+          value + "T00:00:00"
+        );
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return date.toLocaleDateString(
+        "pt-BR"
+      );
+
+    }
+
+
+    function loadPromotions() {
+
+      try {
+
+        const data =
+          JSON.parse(
+            localStorage.getItem(
+              PROMOTIONS_KEY
+            ) || "[]"
+          );
+
+        return Array.isArray(data)
+          ? data
+          : [];
+
+      } catch {
+
+        return [];
+
+      }
+
+    }
+
+
+    function renderPromotions() {
+
+      const container =
+        document.getElementById(
+          "publicPromotionsList"
+        );
+
+      if (!container) return;
+
+
+      const promotions =
+        loadPromotions()
+          .filter(
+            promotion =>
+              promotion &&
+              promotion.published === true
+          )
+          .sort(
+            (a, b) =>
+              String(a.date || "")
+                .localeCompare(
+                  String(b.date || "")
+                )
+          );
+
+
+      if (!promotions.length) {
+
+        container.innerHTML = `
+
+          <div class="empty-promotions">
+
+            <strong>
+              Nenhuma promoção disponível.
+            </strong>
+
+            <p>
+              Fique ligado.
+              Novas promoções serão publicadas
+              em breve.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      container.innerHTML =
+        promotions.map(promotion => `
+
+          <article
+            class="promotion-card-public"
+          >
+
+            ${
+              promotion.image
+                ? `
+                  <img
+                    class="promotion-image"
+                    src="${escapeHTML(
+                      promotion.image
+                    )}"
+                    alt="${escapeHTML(
+                      promotion.title ||
+                      "Promoção"
+                    )}"
+                    loading="lazy"
+                  >
+                `
+                : ""
+            }
+
+            <div class="promotion-content">
+
+              ${
+                promotion.date
+                  ? `
+                    <span class="promotion-date">
+                      📅 ${escapeHTML(
+                        formatDate(
+                          promotion.date
+                        )
+                      )}
+                    </span>
+                  `
+                  : ""
+              }
+
+              <h2>
+                ${escapeHTML(
+                  promotion.title || ""
+                )}
+              </h2>
+
+              ${
+                promotion.prize
+                  ? `
+                    <div class="promotion-prize">
+                      🏆 Prêmio:
+                      ${escapeHTML(
+                        promotion.prize
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                promotion.description
+                  ? `
+                    <div class="promotion-description">
+                      ${escapeHTML(
+                        promotion.description
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+          </article>
+
+        `).join("");
+
+    }
+
+
+    renderPromotions();
+
+
+    window.addEventListener(
+      "storage",
+      event => {
+
+        if (
+          event.key === PROMOTIONS_KEY
+        ) {
+
+          renderPromotions();
+
+        }
+
+      }
+    );
+
+
+    window.addEventListener(
+      "pageshow",
+      renderPromotions
+    );
+
+  </script>
+
+</body>
+</html>
