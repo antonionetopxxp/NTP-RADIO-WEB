@@ -58,13 +58,13 @@ const DAYS = [
   "sabado"
 ];
 function normalizeDay(day) {
+
   return String(day || "")
     .trim()
-    .toLowerCase();
-}
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
-function getToday() {
-  return DAYS[new Date().getDay()];
 }
 
 /* ======================================================
