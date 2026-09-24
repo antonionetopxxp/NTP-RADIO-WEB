@@ -465,6 +465,71 @@ function setVolume(value) {
    METADATA
 ========================= */
 
+function initMetadata() {
+
+  if (!('EventSource' in window)) {
+    setNowPlaying('');
+    return;
+  }
+
+  if (!ACTIVE_META_URL) {
+    setNowPlaying('');
+    return;
+  }
+
+  if (metadataSource) {
+    try {
+      metadataSource.close();
+    } catch (error) {
+      // EventSource já encerrado
+    }
+
+    metadataSource = null;
+  }
+
+  metadataSource =
+    new EventSource(
+      ACTIVE_META_URL
+    );
+
+  metadataSource.addEventListener(
+    'message',
+    event => {
+
+      try {
+
+        const data =
+          JSON.parse(
+            event.data
+          );
+
+        if (
+          data &&
+          data.streamTitle
+        ) {
+
+          setNowPlaying(
+            data.streamTitle
+          );
+
+        }
+
+      } catch (error) {
+        // evento sem título
+      }
+
+    }
+  );
+
+  metadataSource.addEventListener(
+    'error',
+    () => {
+      // EventSource reconecta automaticamente
+    }
+  );
+
+}
+
 function startMetadata() {
 
   const metadataURL =
