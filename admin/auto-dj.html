@@ -36,6 +36,8 @@
 
   <main>
 
+    <!-- STATUS DO SISTEMA -->
+
     <div class="status">
 
       Status:
@@ -47,8 +49,12 @@
     </div>
 
 
+    <!-- PAINEL PRINCIPAL -->
+
     <div class="grid">
 
+
+      <!-- PROGRAMA -->
 
       <div class="card">
 
@@ -80,6 +86,8 @@
       </div>
 
 
+      <!-- PLAYLIST -->
+
       <div class="card">
 
         <h2>
@@ -102,6 +110,8 @@
 
       </div>
 
+
+      <!-- MÚSICA -->
 
       <div class="card">
 
@@ -129,23 +139,153 @@
     </div>
 
 
-    <button
-      id="refreshBtn"
-      class="button"
-      type="button"
-    >
-      🔄 Atualizar Auto DJ
-    </button>
+    <!-- CONTROLES -->
+
+    <div class="controls">
+
+      <button
+        id="refreshBtn"
+        class="button"
+        type="button"
+      >
+        🔄 Atualizar Auto DJ
+      </button>
+
+    </div>
 
 
   </main>
 
 
-  <!-- MOTOR AUTO-DJ -->
+  <!-- =====================================================
+       MOTOR AUTO DJ
+       ===================================================== -->
+
   <script src="auto-dj.js"></script>
 
-  <!-- INTERFACE AUTO-DJ -->
+
+  <!-- =====================================================
+       INTERFACE AUTO DJ
+       ===================================================== -->
+
   <script src="auto-dj-ui.js"></script>
+
+
+  <!-- =====================================================
+       CONEXÃO EXTRA DA INTERFACE
+       ===================================================== -->
+
+  <script>
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        console.log(
+          "[AUTO-DJ HTML] Interface carregada."
+        );
+
+        const refreshBtn =
+          document.querySelector("#refreshBtn");
+
+        const systemStatus =
+          document.querySelector("#systemStatus");
+
+
+        /*
+         * Atualiza o status visual
+         */
+
+        function atualizarStatus() {
+
+          if (!systemStatus) {
+            return;
+          }
+
+          if (
+            window.NTP_AUTO_DJ &&
+            typeof window.NTP_AUTO_DJ.executar === "function"
+          ) {
+
+            systemStatus.textContent =
+              "AUTO DJ ONLINE";
+
+            systemStatus.classList.add("active");
+            systemStatus.classList.remove("inactive");
+
+          } else {
+
+            systemStatus.textContent =
+              "AUTO DJ OFFLINE";
+
+            systemStatus.classList.remove("active");
+            systemStatus.classList.add("inactive");
+
+          }
+
+        }
+
+
+        /*
+         * Botão atualizar
+         */
+
+        if (refreshBtn) {
+
+          refreshBtn.addEventListener(
+            "click",
+            function () {
+
+              console.log(
+                "[AUTO-DJ HTML] Atualização solicitada."
+              );
+
+              atualizarStatus();
+
+              if (
+                window.NTP_AUTO_DJ &&
+                typeof window.NTP_AUTO_DJ.executar === "function"
+              ) {
+
+                window.NTP_AUTO_DJ.executar();
+
+              } else {
+
+                console.error(
+                  "[AUTO-DJ HTML] Motor Auto DJ não encontrado."
+                );
+
+              }
+
+            }
+          );
+
+        }
+
+
+        /*
+         * Verificação inicial
+         */
+
+        setTimeout(
+          atualizarStatus,
+          300
+        );
+
+
+        /*
+         * Verificação periódica
+         */
+
+        setInterval(
+          atualizarStatus,
+          5000
+        );
+
+      }
+    );
+
+  </script>
 
 
 </body>
