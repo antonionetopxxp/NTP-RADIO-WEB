@@ -1,6 +1,8 @@
 const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
 const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
-
+let ACTIVE_STREAM_URL = STREAM_URL;
+let ACTIVE_META_URL = META_URL;
+let metadataSource = null;
 const radio = document.getElementById('radio');
 const volumeInput = document.getElementById('volume');
 const volumeMini = document.getElementById('volumeMini');
