@@ -1,105 +1,34 @@
-```javascript
-(() => {
+(function () {
   "use strict";
+
+  const $ = (selector) => document.querySelector(selector);
+
+  const systemStatus = $("#systemStatus");
+  const programName = $("#programName");
+  const programPresenter = $("#programPresenter");
+  const programTime = $("#programTime");
+
+  const playlistName = $("#playlistName");
+  const playlistMode = $("#playlistMode");
+
+  const musicTitle = $("#musicTitle");
+  const musicArtist = $("#musicArtist");
+
+  const refreshBtn = $("#refreshBtn");
 
   console.log("[AUTO-DJ UI] Interface carregada.");
 
-  /* =========================================================
-     ELEMENTOS
-  ========================================================= */
-
-  const systemStatus = document.querySelector("#systemStatus");
-
-  const programName =
-    document.querySelector("#programName");
-
-  const programPresenter =
-    document.querySelector("#programPresenter");
-
-  const programTime =
-    document.querySelector("#programTime");
-
-  const playlistName =
-    document.querySelector("#playlistName");
-
-  const playlistMode =
-    document.querySelector("#playlistMode");
-
-  const musicTitle =
-    document.querySelector("#musicTitle");
-
-  const musicArtist =
-    document.querySelector("#musicArtist");
-
-  const refreshBtn =
-    document.querySelector("#refreshBtn");
-
-
-  /* =========================================================
-     ESTADO
-  ========================================================= */
-
-  let motorEncontrado = false;
-  let atualizando = false;
-
-
-  /* =========================================================
-     TEXTO SEGURO
-  ========================================================= */
-
-  function texto(valor, fallback = "—") {
-    if (
-      valor === undefined ||
-      valor === null ||
-      String(valor).trim() === ""
-    ) {
-      return fallback;
+  function texto(valor, padrao = "—") {
+    if (valor === undefined || valor === null || valor === "") {
+      return padrao;
     }
 
     return String(valor);
   }
 
-
-  /* =========================================================
-     STATUS
-  ========================================================= */
-
-  function atualizarStatusOnline() {
-
-    motorEncontrado = true;
-
-    if (systemStatus) {
-      systemStatus.textContent = "AUTO DJ ONLINE";
-      systemStatus.style.color = "#35d07f";
-    }
-
-    console.log(
-      "[AUTO-DJ UI] Motor Auto DJ encontrado."
-    );
-  }
-
-
-  function atualizarStatusOffline() {
-
-    motorEncontrado = false;
-
-    if (systemStatus) {
-      systemStatus.textContent =
-        "Aguardando motor Auto DJ...";
-
-      systemStatus.style.color = "#f5b942";
-    }
-  }
-
-
-  /* =========================================================
-     LIMPAR INTERFACE
-  ========================================================= */
-
   function limparInterface() {
-
     if (programName) {
-      programName.textContent = "—";
+      programName.textContent = "Nenhum programa ativo";
     }
 
     if (programPresenter) {
@@ -119,38 +48,29 @@
     }
 
     if (musicTitle) {
-      musicTitle.textContent = "—";
+      musicTitle.textContent = "Nenhuma música";
     }
 
     if (musicArtist) {
       musicArtist.textContent = "—";
     }
+
+    if (systemStatus) {
+      systemStatus.textContent = "Aguardando programação";
+    }
   }
 
-
-  /* =========================================================
-     ATUALIZAR INTERFACE
-  ========================================================= */
-
   function atualizarInterface(resultado) {
+    console.log("[AUTO-DJ UI] Resultado recebido:", resultado);
 
     if (!resultado) {
-      console.warn(
-        "[AUTO-DJ UI] Nenhum resultado recebido."
-      );
-
+      limparInterface();
       return;
     }
 
-    console.log(
-      "[AUTO-DJ UI] Resultado recebido:",
-      resultado
-    );
-
-
     const programa =
-      resultado.program ||
       resultado.programa ||
+      resultado.program ||
       resultado.currentProgram ||
       null;
 
@@ -160,382 +80,189 @@
       null;
 
     const musica =
-      resultado.music ||
       resultado.musica ||
+      resultado.music ||
       resultado.currentMusic ||
       null;
 
+    if (!programa) {
+      limparInterface();
 
-    /* PROGRAMA */
+      if (systemStatus) {
+        systemStatus.textContent = "Nenhum programa ativo";
+      }
+
+      return;
+    }
+
+    if (systemStatus) {
+      systemStatus.textContent = "AUTO DJ ONLINE";
+    }
 
     if (programName) {
-
-      programName.textContent =
-        texto(
-          programa?.name ||
-          resultado.programName
-        );
+      programName.textContent = texto(
+        programa.nome || programa.name,
+        "Programa atual"
+      );
     }
-
 
     if (programPresenter) {
-
-      programPresenter.textContent =
-        texto(
-          programa?.presenter ||
-          resultado.programPresenter
-        );
+      programPresenter.textContent = texto(
+        programa.apresentador ||
+        programa.presenter ||
+        programa.locutor ||
+        programa.host,
+        "—"
+      );
     }
 
-
     if (programTime) {
-
-      const inicio =
-        programa?.startTime ||
-        resultado.startTime ||
-        "";
-
-      const fim =
-        programa?.endTime ||
-        resultado.endTime ||
-        "";
+      const inicio = programa.inicio || programa.start || "";
+      const fim = programa.fim || programa.end || "";
 
       if (inicio || fim) {
-
         programTime.textContent =
-          `${inicio || "--:--"} — ${fim || "--:--"}`;
-
+          texto(inicio, "--:--") +
+          " — " +
+          texto(fim, "--:--");
       } else {
-
         programTime.textContent = "—";
       }
     }
 
-
-    /* PLAYLIST */
-
     if (playlistName) {
-
-      playlistName.textContent =
-        texto(
-          playlist?.name ||
-          resultado.playlistName
-        );
+      playlistName.textContent = texto(
+        playlist &&
+          (playlist.nome ||
+            playlist.name ||
+            playlist.title),
+        "Nenhuma playlist"
+      );
     }
-
 
     if (playlistMode) {
-
-      playlistMode.textContent =
-        texto(
-          playlist?.mode ||
-          resultado.playlistMode
-        );
+      playlistMode.textContent = texto(
+        playlist &&
+          (playlist.mode ||
+            playlist.modo ||
+            playlist.type),
+        "—"
+      );
     }
-
-
-    /* MÚSICA */
 
     if (musicTitle) {
-
-      musicTitle.textContent =
-        texto(
-          musica?.title ||
-          resultado.musicTitle
-        );
+      musicTitle.textContent = texto(
+        musica &&
+          (musica.title ||
+            musica.nome ||
+            musica.name),
+        "Nenhuma música"
+      );
     }
 
-
     if (musicArtist) {
-
-      musicArtist.textContent =
-        texto(
-          musica?.artist ||
-          resultado.musicArtist
-        );
+      musicArtist.textContent = texto(
+        musica &&
+          (musica.artist ||
+            musica.artista),
+        "—"
+      );
     }
   }
 
+  function executarAtualizacao() {
+    console.log("[AUTO-DJ UI] Executando atualização...");
 
-  /* =========================================================
-     EXECUTAR MOTOR
-  ========================================================= */
+    if (!window.NTP_AUTO_DJ) {
+      console.warn("[AUTO-DJ UI] Motor Auto DJ não encontrado.");
 
-  async function executar() {
-
-    console.log(
-      "[AUTO-DJ UI] Executando atualização..."
-    );
-
-
-    /*
-     * O motor pode demorar alguns instantes
-     * para aparecer no window.
-     */
-
-    if (
-      !window.NTP_AUTO_DJ ||
-      typeof window.NTP_AUTO_DJ.executar !== "function"
-    ) {
-
-      atualizarStatusOffline();
-
-      console.warn(
-        "[AUTO-DJ UI] Motor ainda não disponível."
-      );
-
-      procurarMotor();
+      if (systemStatus) {
+        systemStatus.textContent = "Motor não carregado";
+      }
 
       return;
     }
 
-
-    atualizarStatusOnline();
-
-
-    if (atualizando) {
-      return;
-    }
-
-    atualizando = true;
-
+    console.log("[AUTO-DJ UI] Motor Auto DJ encontrado.");
 
     try {
-
-      const resultado =
-        await window.NTP_AUTO_DJ.executar();
-
-
-      /*
-       * Algumas versões do motor retornam o resultado.
-       * Outras apenas disparam o evento
-       * ntp-auto-dj-update.
-       */
+      const resultado = window.NTP_AUTO_DJ.executar();
 
       if (resultado) {
         atualizarInterface(resultado);
       }
-
-    } catch (error) {
-
+    } catch (erro) {
       console.error(
-        "[AUTO-DJ UI] Erro ao executar motor:",
-        error
+        "[AUTO-DJ UI] Erro ao executar Auto DJ:",
+        erro
       );
 
-    } finally {
-
-      atualizando = false;
+      if (systemStatus) {
+        systemStatus.textContent = "Erro no Auto DJ";
+      }
     }
   }
 
+  function configurarBotao() {
+    if (!refreshBtn) {
+      console.warn(
+        "[AUTO-DJ UI] Botão #refreshBtn não encontrado."
+      );
+      return;
+    }
 
-  /* =========================================================
-     PROCURAR MOTOR
-  ========================================================= */
-
-  function procurarMotor() {
-
-    if (
-      window.NTP_AUTO_DJ &&
-      typeof window.NTP_AUTO_DJ.executar === "function"
-    ) {
-
-      atualizarStatusOnline();
-
+    refreshBtn.addEventListener("click", function () {
       console.log(
-        "[AUTO-DJ UI] Motor encontrado."
+        "[AUTO-DJ UI] Botão Atualizar pressionado."
       );
 
-      return true;
-    }
+      refreshBtn.disabled = true;
 
+      executarAtualizacao();
 
-    atualizarStatusOffline();
-
-    return false;
+      setTimeout(function () {
+        refreshBtn.disabled = false;
+      }, 1000);
+    });
   }
-
-
-  /* =========================================================
-     ESPERAR O MOTOR
-  ========================================================= */
-
-  let tentativasMotor = 0;
-
-  const intervaloMotor =
-    setInterval(() => {
-
-      tentativasMotor++;
-
-      if (procurarMotor()) {
-
-        clearInterval(intervaloMotor);
-
-        console.log(
-          "[AUTO-DJ UI] Motor conectado após",
-          tentativasMotor,
-          "tentativa(s)."
-        );
-
-        executar();
-
-        return;
-      }
-
-
-      /*
-       * Continua tentando por até 30 segundos.
-       */
-
-      if (tentativasMotor >= 30) {
-
-        clearInterval(intervaloMotor);
-
-        console.warn(
-          "[AUTO-DJ UI] Motor não encontrado após 30 segundos."
-        );
-      }
-
-    }, 1000);
-
-
-  /* =========================================================
-     EVENTO DO MOTOR
-  ========================================================= */
 
   window.addEventListener(
     "ntp-auto-dj-update",
-    (event) => {
-
+    function (event) {
       console.log(
-        "[AUTO-DJ UI] Atualização recebida do motor:",
+        "[AUTO-DJ UI] Evento ntp-auto-dj-update recebido:",
         event.detail
       );
 
-
-      procurarMotor();
-
-
-      if (event.detail) {
-        atualizarInterface(event.detail);
-      }
+      atualizarInterface(event.detail);
     }
   );
 
-
-  /* =========================================================
-     STORAGE
-  ========================================================= */
-
   window.addEventListener(
     "storage",
-    (event) => {
-
+    function (event) {
       if (
         event.key === "ntp_radio_programacao" ||
         event.key === "ntp_radio_playlists" ||
         event.key === "ntp_radio_music"
       ) {
-
         console.log(
           "[AUTO-DJ UI] Dados alterados. Atualizando..."
         );
 
-        executar();
+        executarAtualizacao();
       }
     }
   );
 
-
-  /* =========================================================
-     BOTÃO ATUALIZAR
-  ========================================================= */
-
-  if (refreshBtn) {
-
-    refreshBtn.addEventListener(
-      "click",
-      async () => {
-
-        console.log(
-          "[AUTO-DJ UI] Botão Atualizar pressionado."
-        );
-
-
-        const textoOriginal =
-          refreshBtn.textContent;
-
-
-        refreshBtn.disabled = true;
-
-        refreshBtn.textContent =
-          "⏳ Atualizando...";
-
-
-        try {
-
-          await executar();
-
-        } finally {
-
-          setTimeout(() => {
-
-            refreshBtn.disabled = false;
-
-            refreshBtn.textContent =
-              textoOriginal;
-
-          }, 700);
-        }
-      }
-    );
-  }
-
-
-  /* =========================================================
-     INICIALIZAÇÃO
-  ========================================================= */
-
-  function inicializar() {
-
-    console.log(
-      "[AUTO-DJ UI] Inicializando interface..."
-    );
-
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("[AUTO-DJ UI] DOM carregado.");
 
     limparInterface();
+    configurarBotao();
 
-
-    if (procurarMotor()) {
-
-      executar();
-
-    } else {
-
-      atualizarStatusOffline();
-
-      console.log(
-        "[AUTO-DJ UI] Aguardando carregamento do motor..."
-      );
-    }
-  }
-
-
-  if (
-    document.readyState === "loading"
-  ) {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      inicializar,
-      { once: true }
-    );
-
-  } else {
-
-    inicializar();
-  }
-
+    setTimeout(function () {
+      executarAtualizacao();
+    }, 300);
+  });
 })();
-```
