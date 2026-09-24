@@ -609,3 +609,154 @@
   font-size:
     13px;
 }
+/* ==================================================
+   SELETOR DE RÁDIOS — NTP RADIO OS
+   ================================================== */
+
+.station-selector {
+  width: min(1100px, calc(100% - 32px));
+  margin: 30px auto;
+  padding: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(109, 40, 255, 0.14),
+      rgba(2, 3, 10, 0.95)
+    );
+
+  border: 1px solid rgba(166, 107, 255, 0.35);
+  border-radius: 20px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(109, 40, 255, 0.08);
+}
+
+.station-selector-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 16px;
+
+  color: var(--text, #fff);
+  font-size: 18px;
+}
+
+.station-selector-list {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(250px, 1fr));
+
+  gap: 12px;
+}
+
+.station-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  padding: 15px;
+
+  border: 1px solid rgba(166, 107, 255, 0.25);
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.035);
+
+  color: #fff;
+
+  cursor: pointer;
+
+  text-align: left;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.station-option:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(166, 107, 255, 0.75);
+
+  background:
+    rgba(109, 40, 255, 0.12);
+}
+
+.station-option-icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6d28ff,
+      #a66bff
+    );
+
+  font-size: 20px;
+}
+
+.station-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.station-option-info strong {
+  color: #fff;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.station-option-info small {
+  color: #a79bc4;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.station-option-arrow {
+  margin-left: auto;
+
+  color: #a66bff;
+
+  font-size: 18px;
+}
+
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+  .station-selector {
+    width: calc(100% - 20px);
+    margin: 20px auto;
+    padding: 16px;
+  }
+
+  .station-selector-list {
+    grid-template-columns: 1fr;
+  }
+
+  .station-option {
+    padding: 13px;
+  }
+
+}
