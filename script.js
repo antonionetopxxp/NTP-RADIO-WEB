@@ -185,7 +185,155 @@ function initMetadata() {
     // O EventSource reconecta automaticamente. Mantemos a última música exibida.
   });
 }
+function applyActiveStation(station) {
 
+  if (!station) {
+    return;
+  }
+
+  const stream =
+    station.stream &&
+    station.stream.url
+      ? station.stream.url
+      : STREAM_URL;
+
+  const metadata =
+    station.stream &&
+    station.stream.metadata
+      ? station.stream.metadata
+      : META_URL;
+
+
+  ACTIVE_STREAM_URL =
+    stream;
+
+  ACTIVE_META_URL =
+    metadata;
+
+
+  if (radio) {
+
+    const wasPlaying =
+      !radio.paused;
+
+    const currentSrc =
+      radio.currentSrc ||
+      radio.src ||
+      '';
+
+
+    if (currentSrc !== stream) {
+
+      if (wasPlaying) {
+        radio.pause();
+      }
+
+      radio.src = stream;
+
+      radio.load();
+
+      if (wasPlaying) {
+
+        radio.play()
+          .then(() => {
+            setPlaying(true);
+          })
+          .catch(() => {
+            setPlaying(false);
+          });
+
+      }
+
+    }
+
+  }
+
+
+  const stationName =
+    station.name ||
+    'NTP RÁDIO WEB';
+
+
+  document
+    .querySelectorAll('[data-radio-name]')
+    .forEach(element => {
+      element.textContent =
+        stationName;
+    });
+
+
+  const shortName =
+    station.shortName ||
+    'NTP';
+
+
+  document
+    .querySelectorAll('[data-radio-short-name]')
+    .forEach(element => {
+      element.textContent =
+        shortName;
+    });
+
+
+  if (station.description) {
+
+    document
+      .querySelectorAll('[data-radio-description]')
+      .forEach(element => {
+        element.textContent =
+          station.description;
+      });
+
+  }
+
+
+  document.title =
+    stationName +
+    ' — Ao Vivo';
+
+
+  updateMediaSession(
+    lastTrackText.replace(/^🎵\s*/, '')
+  );
+
+
+  initMetadata();
+}
+
+
+/*
+ * station-loader.js pode terminar
+ * antes ou depois deste script.
+ */
+
+if (
+  window.NTP_ACTIVE_STATION
+) {
+
+  applyActiveStation(
+    window.NTP_ACTIVE_STATION
+  );
+
+}
+
+
+window.addEventListener(
+  'ntp-station-loaded',
+  event => {
+
+    if (
+      event &&
+      event.detail
+    ) {
+
+      applyActiveStation(
+        event.detail
+      );
+
+    }
+
+  }
+);
 function toast(message) {
   const element = document.getElementById('toast');
 
