@@ -1,54 +1,48 @@
 /* ============================================================
    NTP RADIO OS
-   SISTEMA DE MÚSICAS DE TESTE
-   Gera pequenos áudios sintéticos para testar o Auto-DJ
+   MÚSICAS DE TESTE
    ============================================================ */
 
 (() => {
   "use strict";
 
   const MUSIC_KEY = "ntp_radio_music";
-  const STATIONS_URL = "../config/stations.json";
 
   const DB_NAME = "ntp_radio_os_audio";
   const DB_VERSION = 1;
   const AUDIO_STORE = "audioFiles";
 
+  const STATIONS_URL = "../config/stations.json";
+
   const TEST_TRACKS = [
     {
       title: "NTP Teste 01 - Abertura",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 440
     },
     {
       title: "NTP Teste 02 - Energia",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 523.25
     },
     {
       title: "NTP Teste 03 - Rádio",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 659.25
     },
     {
       title: "NTP Teste 04 - Programação",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 392
     },
     {
       title: "NTP Teste 05 - Auto DJ",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 587.33
     },
     {
       title: "NTP Teste 06 - Encerramento",
       artist: "NTP RADIO OS",
-      category: "music",
       frequency: 698.46
     }
   ];
@@ -60,94 +54,160 @@
      ============================================================ */
 
   function abrirBanco() {
+
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      const request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION
+        );
 
       request.onupgradeneeded = () => {
-        const database = request.result;
 
-        if (!database.objectStoreNames.contains(AUDIO_STORE)) {
-          database.createObjectStore(AUDIO_STORE);
+        const database =
+          request.result;
+
+        if (
+          !database.objectStoreNames.contains(
+            AUDIO_STORE
+          )
+        ) {
+
+          database.createObjectStore(
+            AUDIO_STORE
+          );
+
         }
+
       };
 
       request.onsuccess = () => {
+
         db = request.result;
+
         resolve(db);
+
       };
 
       request.onerror = () => {
+
         reject(request.error);
+
       };
+
     });
+
   }
+
 
   function salvarAudio(id, blob) {
+
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(AUDIO_STORE, "readwrite");
-      const store = transaction.objectStore(AUDIO_STORE);
 
-      store.put(blob, id);
+      const transaction =
+        db.transaction(
+          AUDIO_STORE,
+          "readwrite"
+        );
 
-      transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(transaction.error);
+      const store =
+        transaction.objectStore(
+          AUDIO_STORE
+        );
+
+      store.put(
+        blob,
+        id
+      );
+
+      transaction.oncomplete =
+        () => resolve();
+
+      transaction.onerror =
+        () => reject(
+          transaction.error
+        );
+
     });
+
   }
 
+
   /* ============================================================
-     ESTAÇÃO
+     CARREGAR RÁDIO
      ============================================================ */
 
-  async function carregarEstacao() {
+  async function carregarRadio() {
+
     try {
-      const response = await fetch(STATIONS_URL, {
-        cache: "no-store"
-      });
+
+      const response =
+        await fetch(
+          STATIONS_URL,
+          {
+            cache: "no-store"
+          }
+        );
 
       if (!response.ok) {
-        throw new Error("Não foi possível carregar stations.json");
+
+        throw new Error(
+          "Erro ao carregar estações."
+        );
+
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
-      const stations = Array.isArray(data)
-        ? data
-        : Array.isArray(data.stations)
-          ? data.stations
-          : [];
+      const stations =
+        Array.isArray(data)
+          ? data
+          : Array.isArray(data.stations)
+            ? data.stations
+            : [];
 
       if (!stations.length) {
-        throw new Error("Nenhuma rádio encontrada.");
+
+        throw new Error(
+          "Nenhuma rádio cadastrada."
+        );
+
       }
 
-      // Primeiro tenta estação salva
-      const savedStation =
-        localStorage.getItem("ntp_active_station") ||
-        "";
+      const saved =
+        localStorage.getItem(
+          "ntp_active_station"
+        );
 
       let station =
         stations.find(
-          s => s.id === savedStation
+          radio =>
+            radio.id === saved
         );
 
-      // Depois tenta NTP RADIO WEB
       if (!station) {
+
         station =
           stations.find(
-            s =>
-              s.id === "ntp-radio-web" ||
-              /NTP RADIO WEB/i.test(s.name || s.nome || "")
+            radio =>
+              radio.id === "ntp-radio-web"
           );
+
       }
 
-      // Finalmente usa a primeira
       if (!station) {
-        station = stations[0];
+
+        station =
+          stations[0];
+
       }
 
       return station;
 
     } catch (error) {
+
       console.error(
         "[MÚSICAS TESTE]",
         error
@@ -157,43 +217,72 @@
         id: "ntp-radio-web",
         name: "NTP RÁDIO WEB"
       };
+
     }
+
   }
 
+
   /* ============================================================
-     GERAÇÃO DO WAV
+     GERAR WAV
      ============================================================ */
 
-  function gerarWav(frequency, duration = 8) {
+  function gerarWav(
+    frequency,
+    duration = 8
+  ) {
+
     const sampleRate = 44100;
     const channels = 1;
-    const bitsPerSample = 16;
+    const bits = 16;
 
-    const totalSamples =
-      Math.floor(sampleRate * duration);
+    const samples =
+      Math.floor(
+        sampleRate *
+        duration
+      );
 
     const dataSize =
-      totalSamples *
+      samples *
       channels *
-      (bitsPerSample / 8);
+      2;
 
     const buffer =
-      new ArrayBuffer(44 + dataSize);
+      new ArrayBuffer(
+        44 + dataSize
+      );
 
     const view =
-      new DataView(buffer);
+      new DataView(
+        buffer
+      );
 
-    function writeString(offset, text) {
-      for (let i = 0; i < text.length; i++) {
+
+    function texto(
+      offset,
+      value
+    ) {
+
+      for (
+        let i = 0;
+        i < value.length;
+        i++
+      ) {
+
         view.setUint8(
           offset + i,
-          text.charCodeAt(i)
+          value.charCodeAt(i)
         );
+
       }
+
     }
 
-    // RIFF
-    writeString(0, "RIFF");
+
+    texto(
+      0,
+      "RIFF"
+    );
 
     view.setUint32(
       4,
@@ -201,10 +290,15 @@
       true
     );
 
-    writeString(8, "WAVE");
+    texto(
+      8,
+      "WAVE"
+    );
 
-    // fmt
-    writeString(12, "fmt ");
+    texto(
+      12,
+      "fmt "
+    );
 
     view.setUint32(
       16,
@@ -212,7 +306,6 @@
       true
     );
 
-    // PCM
     view.setUint16(
       20,
       1,
@@ -231,35 +324,28 @@
       true
     );
 
-    const byteRate =
-      sampleRate *
-      channels *
-      (bitsPerSample / 8);
-
     view.setUint32(
       28,
-      byteRate,
+      sampleRate * 2,
       true
     );
 
-    const blockAlign =
-      channels *
-      (bitsPerSample / 8);
-
     view.setUint16(
       32,
-      blockAlign,
+      2,
       true
     );
 
     view.setUint16(
       34,
-      bitsPerSample,
+      bits,
       true
     );
 
-    // data
-    writeString(36, "data");
+    texto(
+      36,
+      "data"
+    );
 
     view.setUint32(
       40,
@@ -267,59 +353,62 @@
       true
     );
 
-    const fadeSamples =
-      Math.floor(sampleRate * 0.5);
 
-    for (let i = 0; i < totalSamples; i++) {
+    const fade =
+      Math.floor(
+        sampleRate * 0.5
+      );
 
-      let amplitude = 0.25;
 
-      if (i < fadeSamples) {
-        amplitude *= i / fadeSamples;
+    for (
+      let i = 0;
+      i < samples;
+      i++
+    ) {
+
+      let volume = 0.25;
+
+
+      if (i < fade) {
+
+        volume *=
+          i / fade;
+
       }
 
-      const remaining =
-        totalSamples - i;
 
-      if (remaining < fadeSamples) {
-        amplitude *= remaining / fadeSamples;
+      if (
+        samples - i <
+        fade
+      ) {
+
+        volume *=
+          (samples - i) /
+          fade;
+
       }
 
-      // pequena modulação para parecer um sinal real
-      const modulation =
-        1 +
-        Math.sin(
-          2 *
-          Math.PI *
-          2 *
-          i /
-          sampleRate
-        ) *
-        0.08;
 
-      const sample =
+      const wave =
         Math.sin(
           2 *
           Math.PI *
           frequency *
           i /
           sampleRate
-        ) *
-        amplitude *
-        modulation;
-
-      const value =
-        Math.max(
-          -1,
-          Math.min(1, sample)
         );
+
 
       view.setInt16(
         44 + i * 2,
-        value * 32767,
+        wave *
+        volume *
+        32767,
         true
       );
+
     }
+
 
     return new Blob(
       [buffer],
@@ -327,104 +416,143 @@
         type: "audio/wav"
       }
     );
+
   }
+
 
   /* ============================================================
      ID
      ============================================================ */
 
   function gerarId() {
+
     return (
       "teste-" +
       Date.now() +
       "-" +
       Math.random()
         .toString(36)
-        .slice(2, 8)
+        .substring(2, 8)
     );
+
   }
 
+
   /* ============================================================
-     CRIA MÚSICAS
+     CRIAR MÚSICAS
      ============================================================ */
 
   async function criarMusicasTeste() {
 
     if (!db) {
+
       await abrirBanco();
+
     }
 
-    const station =
-      await carregarEstacao();
 
-    console.log(
-      "[MÚSICAS TESTE] Rádio:",
-      station
-    );
+    const radio =
+      await carregarRadio();
+
 
     let musicas =
       JSON.parse(
-        localStorage.getItem(MUSIC_KEY) || "[]"
+        localStorage.getItem(
+          MUSIC_KEY
+        ) || "[]"
       );
 
+
     if (!Array.isArray(musicas)) {
+
       musicas = [];
+
     }
+
 
     const criadas = [];
 
-    for (const track of TEST_TRACKS) {
 
-      const id = gerarId();
+    for (
+      const track of TEST_TRACKS
+    ) {
 
-      console.log(
-        "[MÚSICAS TESTE] Gerando:",
-        track.title
-      );
+      const id =
+        gerarId();
 
-      const audioBlob =
+
+      const audio =
         gerarWav(
           track.frequency,
           8
         );
 
+
       await salvarAudio(
         id,
-        audioBlob
+        audio
       );
 
+
       const musica = {
+
         id,
-        title: track.title,
-        artist: track.artist,
-        album: "NTP RADIO OS - TESTE",
-        category: track.category,
+
+        title:
+          track.title,
+
+        artist:
+          track.artist,
+
+        album:
+          "NTP RADIO OS - TESTE",
+
+        category:
+          "music",
 
         stationId:
-          station.id || "ntp-radio-web",
+          radio.id ||
+          "ntp-radio-web",
 
-        duration: 8,
+        duration:
+          8,
 
-        audioUrl: "",
+        audioUrl:
+          "",
 
-        active: true,
+        active:
+          true,
 
-        hasAudio: true,
+        hasAudio:
+          true,
 
-        isTestTrack: true,
+        isTestTrack:
+          true,
 
         createdAt:
           new Date().toISOString()
+
       };
 
-      musicas.push(musica);
-      criadas.push(musica);
+
+      musicas.push(
+        musica
+      );
+
+      criadas.push(
+        musica
+      );
+
     }
+
 
     localStorage.setItem(
       MUSIC_KEY,
-      JSON.stringify(musicas)
+      JSON.stringify(
+        musicas
+      )
     );
+
 
     window.dispatchEvent(
       new CustomEvent(
@@ -437,74 +565,98 @@
       )
     );
 
-    console.log(
-      "[MÚSICAS TESTE] Criadas:",
-      criadas
-    );
 
     return criadas;
+
   }
 
+
   /* ============================================================
-     REMOVE SOMENTE AS MÚSICAS DE TESTE
+     REMOVER TESTES
      ============================================================ */
 
   async function removerMusicasTeste() {
 
     let musicas =
       JSON.parse(
-        localStorage.getItem(MUSIC_KEY) || "[]"
+        localStorage.getItem(
+          MUSIC_KEY
+        ) || "[]"
       );
 
-    const teste =
+
+    const testes =
       musicas.filter(
-        m => m.isTestTrack
+        musica =>
+          musica.isTestTrack
       );
 
-    if (!teste.length) {
+
+    if (!testes.length) {
+
       alert(
-        "Nenhuma música de teste encontrada."
+        "Não existem músicas de teste."
       );
+
       return;
+
     }
+
 
     if (!db) {
+
       await abrirBanco();
+
     }
 
-    await Promise.all(
-      teste.map(
-        musica =>
-          new Promise(resolve => {
 
-            const tx =
-              db.transaction(
-                AUDIO_STORE,
-                "readwrite"
-              );
+    for (
+      const musica of testes
+    ) {
 
-            tx.objectStore(
+      await new Promise(
+        resolve => {
+
+          const transaction =
+            db.transaction(
+              AUDIO_STORE,
+              "readwrite"
+            );
+
+          transaction
+            .objectStore(
               AUDIO_STORE
-            ).delete(musica.id);
+            )
+            .delete(
+              musica.id
+            );
 
-            tx.oncomplete =
-              resolve;
+          transaction.oncomplete =
+            resolve;
 
-            tx.onerror =
-              resolve;
-          })
-      )
-    );
+          transaction.onerror =
+            resolve;
+
+        }
+      );
+
+    }
+
 
     musicas =
       musicas.filter(
-        m => !m.isTestTrack
+        musica =>
+          !musica.isTestTrack
       );
+
 
     localStorage.setItem(
       MUSIC_KEY,
-      JSON.stringify(musicas)
+      JSON.stringify(
+        musicas
+      )
     );
+
 
     window.dispatchEvent(
       new Event(
@@ -512,103 +664,86 @@
       )
     );
 
-    alert(
-      `${teste.length} música(s) de teste removida(s).`
-    );
 
     location.reload();
+
   }
 
+
   /* ============================================================
-     INTERFACE
+     CRIAR BOTÕES
      ============================================================ */
 
   function criarBotoes() {
 
-    const header =
-      document.querySelector(
-        ".page-header"
-      );
-
-    if (!header) {
-      console.warn(
-        "[MÚSICAS TESTE] .page-header não encontrado."
-      );
-
-      return;
-    }
-
     if (
-      document.querySelector(
-        "#createTestMusicBtn"
+      document.getElementById(
+        "ntpTestMusicButtons"
       )
     ) {
+
       return;
+
     }
 
-    const container =
-      document.createElement("div");
 
-    container.style.display = "flex";
-    container.style.gap = "10px";
-    container.style.flexWrap = "wrap";
-    container.style.marginTop = "10px";
+    const topbar =
+      document.querySelector(
+        ".topbar"
+      );
+
+
+    if (!topbar) {
+
+      console.error(
+        "[MÚSICAS TESTE] .topbar não encontrada."
+      );
+
+      return;
+
+    }
+
+
+    const botoes =
+      document.createElement(
+        "div"
+      );
+
+
+    botoes.id =
+      "ntpTestMusicButtons";
+
+
+    botoes.style.display =
+      "flex";
+
+    botoes.style.gap =
+      "10px";
+
+    botoes.style.flexWrap =
+      "wrap";
+
+    botoes.style.marginTop =
+      "16px";
+
+
+    /* CRIAR */
 
     const criar =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
-    criar.id =
-      "createTestMusicBtn";
 
-    criar.type = "button";
+    criar.type =
+      "button";
+
+    criar.className =
+      "btn primary";
 
     criar.innerHTML =
       "🎵 Criar músicas de teste";
 
-    criar.style.padding =
-      "10px 16px";
-
-    criar.style.borderRadius =
-      "10px";
-
-    criar.style.border =
-      "1px solid rgba(139,92,246,.45)";
-
-    criar.style.background =
-      "linear-gradient(135deg,#6d28ff,#8b5cf6)";
-
-    criar.style.color =
-      "#fff";
-
-    criar.style.cursor =
-      "pointer";
-
-    const remover =
-      document.createElement("button");
-
-    remover.type =
-      "button";
-
-    remover.innerHTML =
-      "🗑️ Remover músicas de teste";
-
-    remover.style.padding =
-      "10px 16px";
-
-    remover.style.borderRadius =
-      "10px";
-
-    remover.style.border =
-      "1px solid rgba(255,255,255,.15)";
-
-    remover.style.background =
-      "#161225";
-
-    remover.style.color =
-      "#fff";
-
-    remover.style.cursor =
-      "pointer";
 
     criar.addEventListener(
       "click",
@@ -617,89 +752,154 @@
         criar.disabled =
           true;
 
-        criar.innerHTML =
-          "⏳ Criando...";
+        criar.textContent =
+          "⏳ Criando músicas...";
+
 
         try {
 
           const musicas =
             await criarMusicasTeste();
 
+
           alert(
-            `${musicas.length} músicas de teste foram criadas!`
+            `${musicas.length} músicas de teste criadas com sucesso.`
           );
+
 
           location.reload();
 
         } catch (error) {
 
-          console.error(error);
+          console.error(
+            error
+          );
 
           alert(
-            "Erro ao criar músicas de teste."
+            "Erro ao criar músicas de teste. Veja o console."
           );
+
 
           criar.disabled =
             false;
 
           criar.innerHTML =
             "🎵 Criar músicas de teste";
+
         }
+
       }
     );
+
+
+    /* REMOVER */
+
+    const remover =
+      document.createElement(
+        "button"
+      );
+
+
+    remover.type =
+      "button";
+
+    remover.className =
+      "btn ghost";
+
+    remover.innerHTML =
+      "🗑️ Remover músicas de teste";
+
 
     remover.addEventListener(
       "click",
       removerMusicasTeste
     );
 
-    container.appendChild(
+
+    botoes.appendChild(
       criar
     );
 
-    container.appendChild(
+    botoes.appendChild(
       remover
     );
 
-    header.appendChild(
-      container
+
+    /*
+      O seu HTML usa .topbar.
+      Colocamos os botões dentro do cabeçalho.
+    */
+
+    topbar.appendChild(
+      botoes
     );
+
+
+    console.log(
+      "[MÚSICAS TESTE] Botões adicionados."
+    );
+
   }
+
 
   /* ============================================================
      API
      ============================================================ */
 
   window.NTP_TEST_MUSIC = {
-    criar: criarMusicasTeste,
-    remover: removerMusicasTeste
+
+    criar:
+      criarMusicasTeste,
+
+    remover:
+      removerMusicasTeste
+
   };
 
+
   /* ============================================================
-     START
+     INICIALIZAÇÃO
      ============================================================ */
 
-  document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
+  async function iniciar() {
 
-      try {
-        await abrirBanco();
-        criarBotoes();
+    try {
 
-        console.log(
-          "%c[NTP RADIO OS] Sistema de músicas de teste carregado.",
-          "color:#a66bff;font-weight:bold;"
-        );
+      await abrirBanco();
 
-      } catch (error) {
+      criarBotoes();
 
-        console.error(
-          "[MÚSICAS TESTE]",
-          error
-        );
-      }
+      console.log(
+        "%cNTP RADIO OS — Sistema de músicas de teste carregado.",
+        "color:#a66bff;font-weight:bold;"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "[MÚSICAS TESTE]",
+        error
+      );
+
     }
-  );
+
+  }
+
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      iniciar
+    );
+
+  } else {
+
+    iniciar();
+
+  }
 
 })();
