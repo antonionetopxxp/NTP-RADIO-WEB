@@ -1,1068 +1,1334 @@
-(function () {
-  "use strict";
+const STORAGE_KEY = "ntp_radio_stations";
+const STATIONS_URL = "../config/stations.json";
 
-  const STORAGE_KEY = "ntp_radio_stations";
+let stations = [];
+let defaultStation = "ntp-radio-web";
 
-  const form = document.getElementById("radioForm");
-  const editor = document.getElementById("radioEditor");
-  const list = document.getElementById("radioList");
-  const total = document.getElementById("radioTotal");
-  const notice = document.getElementById("radioNotice");
+const $ = selector =>
+  document.querySelector(selector);
 
-  const newBtn = document.getElementById("newRadioBtn");
-  const cancelBtn = document.getElementById("cancelRadioBtn");
+const el = {
 
-  const formTitle = document.getElementById("formTitle");
+  grid: $("#radioGrid"),
 
-  const fields = {
-    id: document.getElementById("radioId"),
-    name: document.getElementById("radioName"),
-    shortName: document.getElementById("radioShortName"),
-    description: document.getElementById("radioDescription"),
-    country: document.getElementById("radioCountry"),
-    language: document.getElementById("radioLanguage"),
-    timezone: document.getElementById("radioTimezone"),
-    provider: document.getElementById("radioProvider"),
-    stream: document.getElementById("radioStream"),
-    metadata: document.getElementById("radioMetadata"),
-    primary: document.getElementById("radioPrimary"),
-    secondary: document.getElementById("radioSecondary"),
-    background: document.getElementById("radioBackground"),
-    active: document.getElementById("radioActive")
-  };
+  empty: $("#emptyState"),
 
-  let stations = [];
-  let defaultStation = "ntp-radio-web";
+  search: $("#searchInput"),
 
+  filter: $("#statusFilter"),
 
-  // =====================================================
-  // AVISO
-  // =====================================================
+  modal: $("#radioModal"),
 
-  function showNotice(message, type = "success") {
-    if (!notice) return;
+  form: $("#radioForm"),
 
-    notice.hidden = false;
-    notice.textContent = message;
+  title: $("#modalTitle"),
 
-    notice.className =
-      "notice " +
-      (type === "error"
-        ? "notice-error"
-        : "notice-success");
+  editing: $("#editingId"),
 
-    setTimeout(() => {
-      notice.hidden = true;
-    }, 3500);
-  }
+  total: $("#totalCount"),
+
+  active: $("#activeCount"),
+
+  inactive: $("#inactiveCount"),
+
+  defaultName: $("#defaultName"),
+
+  toast: $("#toast"),
+
+  streamDot: $("#streamStatus"),
+
+  streamText: $("#streamStatusText")
+
+};
 
 
-  // =====================================================
-  // ID
-  // =====================================================
+async function init(){
 
-  function createId(name) {
+  bindEvents();
 
-    return String(name || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 50) || "radio";
+  await loadStations();
 
-  }
+  render();
+
+}
 
 
-  function uniqueId(base, ignoreId = "") {
+/* =========================
+   CARREGAR RÁDIOS
+========================= */
 
-    let id = base;
-    let counter = 2;
+async function loadStations(){
 
-    while (
-      stations.some(
-        station =>
-          station.id === id &&
-          station.id !== ignoreId
-      )
-    ) {
-      id = `${base}-${counter}`;
-      counter++;
-    }
+  try{
 
-    return id;
-  }
-
-
-  // =====================================================
-  // LOCAL STORAGE
-  // =====================================================
-
-  function saveLocal() {
-
-    try {
-
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(stations)
-      );
-
-    } catch (error) {
-
-      console.error(
-        "Erro ao salvar rádios:",
-        error
-      );
-
-    }
-
-  }
-
-
-  function loadLocal() {
-
-    try {
-
-      const saved =
+    const saved =
+      JSON.parse(
         localStorage.getItem(
           STORAGE_KEY
-        );
-
-      if (!saved) {
-        return false;
-      }
-
-      const parsed =
-        JSON.parse(saved);
-
-      if (!Array.isArray(parsed)) {
-        return false;
-      }
-
-      stations = parsed;
-
-      return true;
-
-    } catch (error) {
-
-      console.error(
-        "Erro ao carregar rádios locais:",
-        error
+        ) || "null"
       );
 
-      return false;
+    if(Array.isArray(saved)){
+
+      stations = saved;
 
     }
 
-  }
-
-
-  // =====================================================
-  // CARREGAR STATIONS.JSON
-  // =====================================================
-
-  async function loadStations() {
-
-    const localLoaded =
-      loadLocal();
-
-    if (localLoaded) {
-
-      render();
-
-      return;
-
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          "../config/stations.json?v=" +
-          Date.now(),
-          {
-            cache: "no-store"
-          }
-        );
-
-      if (!response.ok) {
-
-        throw new Error(
-          "HTTP " + response.status
-        );
-
-      }
-
-
-      const data =
-        await response.json();
-
-
-      defaultStation =
-        data.defaultStation ||
-        "ntp-radio-web";
-
-
-      stations =
-        Array.isArray(data.stations)
-          ? data.stations
-          : [];
-
-
-      saveLocal();
-
-      render();
-
-
-    } catch (error) {
-
-      console.error(
-        "Erro ao carregar stations.json:",
-        error
-      );
-
-      stations = [];
-
-      render();
-
-      showNotice(
-        "Não foi possível carregar as rádios.",
-        "error"
-      );
-
-    }
-
-  }
-
-
-  // =====================================================
-  // FORMULÁRIO
-  // =====================================================
-
-  function resetForm() {
-
-    form.reset();
-
-    fields.id.value = "";
-
-    fields.country.value =
-      "Brasil";
-
-    fields.language.value =
-      "pt-BR";
-
-    fields.timezone.value =
-      "America/Sao_Paulo";
-
-    fields.primary.value =
-      "#6d28ff";
-
-    fields.secondary.value =
-      "#a66bff";
-
-    fields.background.value =
-      "#02030a";
-
-    fields.active.checked = true;
-
-    formTitle.textContent =
-      "Nova rádio";
-
-    editor.hidden = false;
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-  }
-
-
-  function fillForm(station) {
-
-    fields.id.value =
-      station.id || "";
-
-    fields.name.value =
-      station.name || "";
-
-    fields.shortName.value =
-      station.shortName || "";
-
-    fields.description.value =
-      station.description || "";
-
-    fields.country.value =
-      station.country || "Brasil";
-
-    fields.language.value =
-      station.language || "pt-BR";
-
-    fields.timezone.value =
-      station.timezone ||
-      "America/Sao_Paulo";
-
-    fields.provider.value =
-      station.stream?.provider || "";
-
-    fields.stream.value =
-      station.stream?.url || "";
-
-    fields.metadata.value =
-      station.stream?.metadata || "";
-
-    fields.primary.value =
-      station.branding?.primaryColor ||
-      "#6d28ff";
-
-    fields.secondary.value =
-      station.branding?.secondaryColor ||
-      "#a66bff";
-
-    fields.background.value =
-      station.branding?.background ||
-      "#02030a";
-
-    fields.active.checked =
-      station.status !== "inactive";
-
-    formTitle.textContent =
-      "Editar rádio";
-
-    editor.hidden = false;
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-
-  }
-
-
-  // =====================================================
-  // FORM DATA
-  // =====================================================
-
-  function getFormData() {
-
-    const currentId =
-      fields.id.value.trim();
-
-    const generatedId =
-      createId(fields.name.value);
-
-    const id =
-      currentId ||
-      uniqueId(generatedId);
-
-
-    return {
-
-      id,
-
-      name:
-        fields.name.value.trim(),
-
-      shortName:
-        fields.shortName.value.trim(),
-
-      description:
-        fields.description.value.trim(),
-
-      country:
-        fields.country.value.trim(),
-
-      language:
-        fields.language.value.trim(),
-
-      timezone:
-        fields.timezone.value.trim(),
-
-      stream: {
-
-        provider:
-          fields.provider.value.trim(),
-
-        url:
-          fields.stream.value.trim(),
-
-        metadata:
-          fields.metadata.value.trim()
-
-      },
-
-      branding: {
-
-        theme: "galaxy",
-
-        primaryColor:
-          fields.primary.value.trim(),
-
-        secondaryColor:
-          fields.secondary.value.trim(),
-
-        background:
-          fields.background.value.trim()
-
-      },
-
-      social: {
-
-        instagram: "",
-        facebook: "",
-        youtube: "",
-        tiktok: "",
-        whatsapp: ""
-
-      },
-
-      features: {
-
-        livePlayer: true,
-        metadata: true,
-        history: true,
-        schedule: true,
-        news: true,
-        events: true,
-        pwa: true,
-        mediaSession: true
-
-      },
-
-      status:
-        fields.active.checked
-          ? "active"
-          : "inactive"
-
-    };
-
-  }
-
-
-  // =====================================================
-  // VALIDAÇÃO
-  // =====================================================
-
-  function validate(station) {
-
-    if (!station.name) {
-
-      showNotice(
-        "Digite o nome da rádio.",
-        "error"
-      );
-
-      fields.name.focus();
-
-      return false;
-
-    }
-
-
-    if (!station.shortName) {
-
-      showNotice(
-        "Digite o nome curto da rádio.",
-        "error"
-      );
-
-      fields.shortName.focus();
-
-      return false;
-
-    }
-
-
-    if (!station.stream.url) {
-
-      showNotice(
-        "Digite a URL do streaming.",
-        "error"
-      );
-
-      fields.stream.focus();
-
-      return false;
-
-    }
-
-
-    return true;
-
-  }
-
-
-  // =====================================================
-  // SALVAR
-  // =====================================================
-
-  function saveStation(event) {
-
-    event.preventDefault();
-
-    const station =
-      getFormData();
-
-
-    if (!validate(station)) {
-      return;
-    }
-
-
-    const existingIndex =
-      stations.findIndex(
-        item =>
-          item.id === station.id
-      );
-
-
-    if (existingIndex >= 0) {
-
-      stations[existingIndex] =
-        station;
-
-      showNotice(
-        "Rádio atualizada com sucesso."
-      );
-
-    } else {
-
-      stations.push(station);
-
-      showNotice(
-        "Rádio cadastrada com sucesso."
-      );
-
-    }
-
-
-    saveLocal();
-
-    render();
-
-    form.reset();
-
-    fields.id.value = "";
-
-    editor.hidden = true;
-
-
-    window.dispatchEvent(
-      new CustomEvent(
-        "ntp-stations-updated",
-        {
-          detail: stations
-        }
-      )
+  }catch(error){
+
+    console.warn(
+      "Erro ao carregar rádios locais.",
+      error
     );
 
   }
 
 
-  // =====================================================
-  // EDITAR
-  // =====================================================
+  try{
 
-  function editStation(id) {
+    const response =
+      await fetch(
+        `${STATIONS_URL}?v=${Date.now()}`
+      );
+
+    if(response.ok){
+
+      const data =
+        await response.json();
+
+      defaultStation =
+        data.defaultStation ||
+        defaultStation;
+
+      if(
+        !stations.length &&
+        Array.isArray(data.stations)
+      ){
+
+        stations =
+          data.stations;
+
+      }
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "stations.json não disponível.",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================
+   EVENTOS
+========================= */
+
+function bindEvents(){
+
+  $("#newRadioBtn")
+    .onclick =
+    () => openModal();
+
+
+  $("#emptyNewBtn")
+    .onclick =
+    () => openModal();
+
+
+  el.search.oninput =
+    render;
+
+
+  el.filter.onchange =
+    render;
+
+
+  $("#exportBtn")
+    .onclick =
+    exportJSON;
+
+
+  el.form.onsubmit =
+    saveRadio;
+
+
+  $("#testStreamBtn")
+    .onclick =
+    testStream;
+
+
+  $("#status").onchange =
+    updateStatusLabel;
+
+
+  document
+    .querySelectorAll(
+      "[data-close]"
+    )
+    .forEach(button => {
+
+      button.onclick =
+        closeModal;
+
+    });
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function render(){
+
+  const query =
+    el.search.value
+      .trim()
+      .toLowerCase();
+
+  const filter =
+    el.filter.value;
+
+
+  const list =
+    stations.filter(station => {
+
+      const text =
+        `${station.id}
+         ${station.name}
+         ${station.shortName}
+         ${station.country}`
+        .toLowerCase();
+
+      const matchSearch =
+        !query ||
+        text.includes(query);
+
+      const active =
+        station.status !== "inactive";
+
+      const matchStatus =
+        filter === "all" ||
+        (filter === "active" && active) ||
+        (filter === "inactive" && !active);
+
+      return (
+        matchSearch &&
+        matchStatus
+      );
+
+    });
+
+
+  el.grid.innerHTML =
+    list
+      .map(createCard)
+      .join("");
+
+
+  el.empty.hidden =
+    list.length !== 0;
+
+
+  el.grid
+    .querySelectorAll(
+      "[data-edit]"
+    )
+    .forEach(button => {
+
+      button.onclick =
+        () =>
+          openModal(
+            button.dataset.edit
+          );
+
+    });
+
+
+  el.grid
+    .querySelectorAll(
+      "[data-delete]"
+    )
+    .forEach(button => {
+
+      button.onclick =
+        () =>
+          deleteRadio(
+            button.dataset.delete
+          );
+
+    });
+
+
+  el.grid
+    .querySelectorAll(
+      "[data-default]"
+    )
+    .forEach(button => {
+
+      button.onclick =
+        () =>
+          setDefault(
+            button.dataset.default
+          );
+
+    });
+
+
+  updateStats();
+
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+function createCard(station){
+
+  const active =
+    station.status !== "inactive";
+
+  const color =
+    station.branding?.primaryColor ||
+    "#6d28ff";
+
+  const isDefault =
+    station.id === defaultStation;
+
+
+  return `
+
+    <article class="radio-card">
+
+      <div class="card-top">
+
+        <div
+          class="station-icon"
+          style="
+            background:${color}22;
+            color:${color};
+            border:1px solid ${color}55;
+          "
+        >
+          📻
+        </div>
+
+        <span
+          class="pill ${
+            active
+              ? "active"
+              : "inactive"
+          }"
+        >
+          ${
+            active
+              ? "ATIVA"
+              : "INATIVA"
+          }
+        </span>
+
+      </div>
+
+
+      <h3>
+        ${escapeHTML(
+          station.name ||
+          "Rádio"
+        )}
+      </h3>
+
+
+      <span class="short">
+
+        ${escapeHTML(
+          station.shortName || ""
+        )}
+
+        ${
+          isDefault
+            ? " · PADRÃO"
+            : ""
+        }
+
+      </span>
+
+
+      <p class="desc">
+
+        ${escapeHTML(
+          station.description ||
+          "Sem descrição."
+        )}
+
+      </p>
+
+
+      <div class="stream">
+
+        ${escapeHTML(
+          station.stream?.provider ||
+          "Stream"
+        )}
+
+        ·
+
+        ${escapeHTML(
+          station.stream?.url ||
+          "Sem stream"
+        )}
+
+      </div>
+
+
+      <div class="card-footer">
+
+        <button
+          class="btn ghost"
+          data-edit="${escapeHTML(
+            station.id
+          )}"
+        >
+          Editar
+        </button>
+
+
+        <button
+          class="btn ghost"
+          data-default="${escapeHTML(
+            station.id
+          )}"
+        >
+
+          ${
+            isDefault
+              ? "Padrão ✓"
+              : "Tornar padrão"
+          }
+
+        </button>
+
+
+        <button
+          class="btn ghost"
+          data-delete="${escapeHTML(
+            station.id
+          )}"
+        >
+          Excluir
+        </button>
+
+      </div>
+
+    </article>
+
+  `;
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+function openModal(id = null){
+
+  el.form.reset();
+
+  el.editing.value = "";
+
+  el.title.textContent =
+    id
+      ? "Editar rádio"
+      : "Nova rádio";
+
+
+  setDefaults();
+
+
+  if(id){
 
     const station =
       stations.find(
-        item =>
-          item.id === id
+        radio =>
+          radio.id === id
       );
 
-    if (!station) return;
+    if(!station) return;
 
     fillForm(station);
 
   }
 
 
-  // =====================================================
-  // ATIVAR / DESATIVAR
-  // =====================================================
-
-  function toggleStation(id) {
-
-    const station =
-      stations.find(
-        item =>
-          item.id === id
-      );
-
-    if (!station) return;
+  updateStatusLabel();
 
 
-    if (
-      station.status === "active"
-    ) {
+  el.modal.classList.add(
+    "open"
+  );
 
-      station.status =
-        "inactive";
+  el.modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
 
-    } else {
-
-      station.status =
-        "active";
-
-    }
+}
 
 
-    saveLocal();
+function closeModal(){
 
-    render();
+  el.modal.classList.remove(
+    "open"
+  );
 
-    showNotice(
-      station.status === "active"
-        ? "Rádio ativada."
-        : "Rádio desativada."
+  el.modal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+}
+
+
+/* =========================
+   DEFAULTS
+========================= */
+
+function setDefaults(){
+
+  $("#country").value =
+    "Brasil";
+
+  $("#language").value =
+    "pt-BR";
+
+  $("#timezone").value =
+    "America/Sao_Paulo";
+
+  $("#provider").value =
+    "Zeno.FM";
+
+  $("#primaryColor").value =
+    "#6d28ff";
+
+  $("#secondaryColor").value =
+    "#a66bff";
+
+  $("#backgroundColor").value =
+    "#02030a";
+
+
+  [
+    "livePlayer",
+    "metadata",
+    "history",
+    "schedule",
+    "news",
+    "events",
+    "pwa",
+    "mediaSession"
+
+  ].forEach(id => {
+
+    $("#" + id).checked =
+      true;
+
+  });
+
+
+  $("#status").checked =
+    true;
+
+  $("#isDefault").checked =
+    false;
+
+
+  el.streamDot.className =
+    "status-dot";
+
+  el.streamText.textContent =
+    "Teste a transmissão antes de salvar.";
+
+}
+
+
+/* =========================
+   PREENCHER FORM
+========================= */
+
+function fillForm(station){
+
+  el.editing.value =
+    station.id || "";
+
+
+  $("#id").value =
+    station.id || "";
+
+  $("#name").value =
+    station.name || "";
+
+  $("#shortName").value =
+    station.shortName || "";
+
+  $("#description").value =
+    station.description || "";
+
+  $("#country").value =
+    station.country ||
+    "Brasil";
+
+  $("#language").value =
+    station.language ||
+    "pt-BR";
+
+  $("#timezone").value =
+    station.timezone ||
+    "America/Sao_Paulo";
+
+
+  $("#provider").value =
+    station.stream?.provider ||
+    "";
+
+  $("#streamUrl").value =
+    station.stream?.url ||
+    "";
+
+  $("#metadataUrl").value =
+    station.stream?.metadata ||
+    "";
+
+
+  $("#primaryColor").value =
+    station.branding?.primaryColor ||
+    "#6d28ff";
+
+  $("#secondaryColor").value =
+    station.branding?.secondaryColor ||
+    "#a66bff";
+
+  $("#backgroundColor").value =
+    station.branding?.background ||
+    "#02030a";
+
+
+  [
+    "instagram",
+    "facebook",
+    "youtube",
+    "tiktok",
+    "whatsapp"
+
+  ].forEach(id => {
+
+    $("#" + id).value =
+      station.social?.[id] ||
+      "";
+
+  });
+
+
+  const features =
+    station.features || {};
+
+
+  [
+    "livePlayer",
+    "metadata",
+    "history",
+    "schedule",
+    "news",
+    "events",
+    "pwa",
+    "mediaSession"
+
+  ].forEach(id => {
+
+    $("#" + id).checked =
+      features[id] !== false;
+
+  });
+
+
+  $("#status").checked =
+    station.status !==
+    "inactive";
+
+
+  $("#isDefault").checked =
+    station.id ===
+    defaultStation;
+
+}
+
+
+/* =========================
+   DADOS
+========================= */
+
+function getFormData(){
+
+  return {
+
+    id:
+      $("#id")
+        .value
+        .trim()
+        .toLowerCase(),
+
+    name:
+      $("#name")
+        .value
+        .trim(),
+
+    shortName:
+      $("#shortName")
+        .value
+        .trim(),
+
+    description:
+      $("#description")
+        .value
+        .trim(),
+
+    country:
+      $("#country")
+        .value
+        .trim(),
+
+    language:
+      $("#language")
+        .value
+        .trim(),
+
+    timezone:
+      $("#timezone")
+        .value
+        .trim(),
+
+
+    stream: {
+
+      provider:
+        $("#provider")
+          .value
+          .trim(),
+
+      url:
+        $("#streamUrl")
+          .value
+          .trim(),
+
+      metadata:
+        $("#metadataUrl")
+          .value
+          .trim()
+
+    },
+
+
+    branding: {
+
+      theme:
+        "galaxy",
+
+      primaryColor:
+        $("#primaryColor")
+          .value,
+
+      secondaryColor:
+        $("#secondaryColor")
+          .value,
+
+      background:
+        $("#backgroundColor")
+          .value
+
+    },
+
+
+    social: {
+
+      instagram:
+        $("#instagram")
+          .value
+          .trim(),
+
+      facebook:
+        $("#facebook")
+          .value
+          .trim(),
+
+      youtube:
+        $("#youtube")
+          .value
+          .trim(),
+
+      tiktok:
+        $("#tiktok")
+          .value
+          .trim(),
+
+      whatsapp:
+        $("#whatsapp")
+          .value
+          .trim()
+
+    },
+
+
+    features: {
+
+      livePlayer:
+        $("#livePlayer")
+          .checked,
+
+      metadata:
+        $("#metadata")
+          .checked,
+
+      history:
+        $("#history")
+          .checked,
+
+      schedule:
+        $("#schedule")
+          .checked,
+
+      news:
+        $("#news")
+          .checked,
+
+      events:
+        $("#events")
+          .checked,
+
+      pwa:
+        $("#pwa")
+          .checked,
+
+      mediaSession:
+        $("#mediaSession")
+          .checked
+
+    },
+
+
+    status:
+      $("#status").checked
+        ? "active"
+        : "inactive"
+
+  };
+
+}
+
+
+/* =========================
+   SALVAR
+========================= */
+
+function saveRadio(event){
+
+  event.preventDefault();
+
+
+  const data =
+    getFormData();
+
+
+  if(
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/
+      .test(data.id)
+  ){
+
+    toast(
+      "ID inválido. Use letras, números e hífen."
+    );
+
+    return;
+
+  }
+
+
+  const editing =
+    el.editing.value;
+
+
+  const duplicate =
+    stations.some(
+      station =>
+        station.id === data.id &&
+        station.id !== editing
     );
 
 
-    window.dispatchEvent(
-      new CustomEvent(
-        "ntp-stations-updated",
-        {
-          detail: stations
-        }
-      )
+  if(duplicate){
+
+    toast(
+      "Esse ID já está cadastrado."
+    );
+
+    return;
+
+  }
+
+
+  if(editing){
+
+    const index =
+      stations.findIndex(
+        station =>
+          station.id === editing
+      );
+
+
+    if(index >= 0){
+
+      stations[index] =
+        data;
+
+    }
+
+  }else{
+
+    stations.push(
+      data
     );
 
   }
 
 
-  // =====================================================
-  // EXCLUIR
-  // =====================================================
-
-  function deleteStation(id) {
-
-    const station =
-      stations.find(
-        item =>
-          item.id === id
-      );
-
-    if (!station) return;
-
-
-    if (
-      stations.length === 1
-    ) {
-
-      showNotice(
-        "Você precisa manter pelo menos uma rádio cadastrada.",
-        "error"
-      );
-
-      return;
-
-    }
-
-
-    const confirmed =
-      confirm(
-        `Excluir a rádio "${station.name}"?`
-      );
-
-
-    if (!confirmed) {
-      return;
-    }
-
-
-    stations =
-      stations.filter(
-        item =>
-          item.id !== id
-      );
-
-
-    if (
-      defaultStation === id
-    ) {
-
-      defaultStation =
-        stations[0]?.id ||
-        "ntp-radio-web";
-
-    }
-
-
-    saveLocal();
-
-    render();
-
-    showNotice(
-      "Rádio excluída."
-    );
-
-
-    window.dispatchEvent(
-      new CustomEvent(
-        "ntp-stations-updated",
-        {
-          detail: stations
-        }
-      )
-    );
-
-  }
-
-
-  // =====================================================
-  // DEFINIR COMO PADRÃO
-  // =====================================================
-
-  function setDefaultStation(id) {
-
-    const station =
-      stations.find(
-        item =>
-          item.id === id
-      );
-
-    if (!station) return;
-
+  if(
+    $("#isDefault").checked
+  ){
 
     defaultStation =
-      id;
+      data.id;
+
+  }
 
 
-    try {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(
+      stations
+    )
+  );
 
-      localStorage.setItem(
-        "ntp_default_station",
-        id
+
+  render();
+
+  closeModal();
+
+
+  toast(
+    editing
+      ? "Rádio atualizada com sucesso."
+      : "Rádio cadastrada com sucesso."
+  );
+
+}
+
+
+/* =========================
+   EXCLUIR
+========================= */
+
+function deleteRadio(id){
+
+  const station =
+    stations.find(
+      radio =>
+        radio.id === id
+    );
+
+
+  if(!station) return;
+
+
+  if(
+    !confirm(
+      `Excluir "${station.name}"?`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  stations =
+    stations.filter(
+      radio =>
+        radio.id !== id
+    );
+
+
+  if(
+    defaultStation === id
+  ){
+
+    defaultStation =
+      stations[0]?.id || "";
+
+  }
+
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(
+      stations
+    )
+  );
+
+
+  render();
+
+
+  toast(
+    "Rádio excluída."
+  );
+
+}
+
+
+/* =========================
+   PADRÃO
+========================= */
+
+function setDefault(id){
+
+  if(
+    !stations.some(
+      radio =>
+        radio.id === id
+    )
+  ){
+
+    return;
+
+  }
+
+
+  defaultStation =
+    id;
+
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(
+      stations
+    )
+  );
+
+
+  render();
+
+
+  toast(
+    "Rádio definida como padrão."
+  );
+
+}
+
+
+/* =========================
+   TESTAR STREAM
+========================= */
+
+async function testStream(){
+
+  const url =
+    $("#streamUrl")
+      .value
+      .trim();
+
+
+  if(!url){
+
+    toast(
+      "Informe a URL do stream."
+    );
+
+    return;
+
+  }
+
+
+  el.streamDot.className =
+    "status-dot";
+
+  el.streamText.textContent =
+    "Testando transmissão...";
+
+
+  const audio =
+    new Audio();
+
+
+  audio.preload =
+    "none";
+
+  audio.src =
+    url;
+
+
+  let finished =
+    false;
+
+
+  const finish =
+    (success,message) => {
+
+      if(finished) return;
+
+      finished = true;
+
+
+      el.streamDot.className =
+        `status-dot ${
+          success
+            ? "ok"
+            : "bad"
+        }`;
+
+
+      el.streamText.textContent =
+        message;
+
+
+      try{
+
+        audio.pause();
+
+      }catch{}
+
+    };
+
+
+  audio.addEventListener(
+    "canplay",
+    () => {
+
+      finish(
+        true,
+        "Stream respondeu ao teste."
       );
 
-    } catch (error) {
+    }
+  );
 
-      console.error(error);
+
+  audio.addEventListener(
+    "error",
+    () => {
+
+      finish(
+        false,
+        "Não foi possível validar o stream."
+      );
 
     }
+  );
 
 
-    render();
+  audio.load();
 
-    showNotice(
-      `"${station.name}" definida como rádio padrão.`
-    );
 
-  }
+  setTimeout(
+    () => {
 
+      finish(
+        false,
+        "Tempo esgotado no teste."
+      );
 
-  // =====================================================
-  // HTML SEGURO
-  // =====================================================
+    },
+    7000
+  );
 
-  function escapeHTML(value) {
+}
 
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
 
-  }
+/* =========================
+   EXPORTAR
+========================= */
 
+function exportJSON(){
 
-  // =====================================================
-  // RENDER
-  // =====================================================
+  const data = {
 
-  function render() {
+    defaultStation,
 
-    if (!list) return;
+    stations
 
+  };
 
-    total.textContent =
-      stations.length;
 
-
-    if (!stations.length) {
-
-      list.innerHTML = `
-        <div class="empty-state">
-          Nenhuma rádio cadastrada.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    list.innerHTML =
-      stations
-        .map(station => {
-
-          const active =
-            station.status !== "inactive";
-
-          const isDefault =
-            station.id === defaultStation;
-
-
-          return `
-
-            <article class="radio-card">
-
-              <div class="radio-card-main">
-
-                <div
-                  class="radio-logo"
-                  style="
-                    background:
-                      linear-gradient(
-                        135deg,
-                        ${escapeHTML(
-                          station.branding?.primaryColor ||
-                          "#6d28ff"
-                        )},
-                        ${escapeHTML(
-                          station.branding?.secondaryColor ||
-                          "#a66bff"
-                        )}
-                      );
-                  "
-                >
-                  ${escapeHTML(
-                    station.shortName ||
-                    "R"
-                  )}
-                </div>
-
-
-                <div class="radio-info">
-
-                  <h3>
-                    ${escapeHTML(
-                      station.name
-                    )}
-                  </h3>
-
-                  <p>
-                    ${escapeHTML(
-                      station.description ||
-                      "Rádio online"
-                    )}
-                  </p>
-
-                  <div class="radio-meta">
-
-                    <span>
-                      📡
-                      ${escapeHTML(
-                        station.stream?.provider ||
-                        "Streaming"
-                      )}
-                    </span>
-
-                    <span>
-                      ${active
-                        ? "🟢 Ativa"
-                        : "⚫ Inativa"}
-                    </span>
-
-                    ${
-                      isDefault
-                        ? `
-                          <span>
-                            ⭐ Padrão
-                          </span>
-                        `
-                        : ""
-                    }
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              <div class="radio-actions">
-
-                <button
-                  class="btn"
-                  type="button"
-                  data-action="edit"
-                  data-id="${escapeHTML(
-                    station.id
-                  )}"
-                >
-                  ✏️ Editar
-                </button>
-
-
-                <button
-                  class="btn"
-                  type="button"
-                  data-action="toggle"
-                  data-id="${escapeHTML(
-                    station.id
-                  )}"
-                >
-                  ${
-                    active
-                      ? "⏸️ Desativar"
-                      : "▶️ Ativar"
-                  }
-                </button>
-
-
-                ${
-                  !isDefault
-                    ? `
-                      <button
-                        class="btn"
-                        type="button"
-                        data-action="default"
-                        data-id="${escapeHTML(
-                          station.id
-                        )}"
-                      >
-                        ⭐ Tornar padrão
-                      </button>
-                    `
-                    : ""
-                }
-
-
-                <button
-                  class="btn btn-danger"
-                  type="button"
-                  data-action="delete"
-                  data-id="${escapeHTML(
-                    station.id
-                  )}"
-                >
-                  🗑️ Excluir
-                </button>
-
-              </div>
-
-            </article>
-
-          `;
-
-        })
-        .join("");
-
-  }
-
-
-  // =====================================================
-  // CLIQUES DA LISTA
-  // =====================================================
-
-  if (list) {
-
-    list.addEventListener(
-      "click",
-      function (event) {
-
-        const button =
-          event.target.closest(
-            "button[data-action]"
-          );
-
-        if (!button) {
-          return;
-        }
-
-
-        const action =
-          button.dataset.action;
-
-        const id =
-          button.dataset.id;
-
-
-        if (action === "edit") {
-
-          editStation(id);
-
-        }
-
-        else if (
-          action === "toggle"
-        ) {
-
-          toggleStation(id);
-
-        }
-
-        else if (
-          action === "delete"
-        ) {
-
-          deleteStation(id);
-
-        }
-
-        else if (
-          action === "default"
-        ) {
-
-          setDefaultStation(id);
-
-        }
-
+  const blob =
+    new Blob(
+      [
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ],
+      {
+        type:
+          "application/json"
       }
     );
 
-  }
 
-
-  // =====================================================
-  // BOTÕES
-  // =====================================================
-
-  if (newBtn) {
-
-    newBtn.addEventListener(
-      "click",
-      resetForm
+  const link =
+    document.createElement(
+      "a"
     );
 
-  }
 
-
-  if (cancelBtn) {
-
-    cancelBtn.addEventListener(
-      "click",
-      function () {
-
-        editor.hidden = true;
-
-        form.reset();
-
-      }
+  link.href =
+    URL.createObjectURL(
+      blob
     );
 
-  }
+  link.download =
+    "stations.json";
 
 
-  if (form) {
+  link.click();
 
-    form.addEventListener(
-      "submit",
-      saveStation
+
+  URL.revokeObjectURL(
+    link.href
+  );
+
+}
+
+
+/* =========================
+   ESTATÍSTICAS
+========================= */
+
+function updateStats(){
+
+  const active =
+    stations.filter(
+      station =>
+        station.status !==
+        "inactive"
+    ).length;
+
+
+  el.total.textContent =
+    stations.length;
+
+  el.active.textContent =
+    active;
+
+  el.inactive.textContent =
+    stations.length -
+    active;
+
+
+  const defaultRadio =
+    stations.find(
+      station =>
+        station.id ===
+        defaultStation
     );
 
-  }
+
+  el.defaultName.textContent =
+    defaultRadio
+      ? (
+          defaultRadio.shortName ||
+          defaultRadio.name
+        )
+      : "—";
+
+}
 
 
-  // =====================================================
-  // INICIALIZAÇÃO
-  // =====================================================
+/* =========================
+   STATUS
+========================= */
 
-  loadStations();
+function updateStatusLabel(){
 
-})();
+  $("#statusLabel")
+    .textContent =
+      $("#status").checked
+        ? "Rádio ativa"
+        : "Rádio inativa";
+
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+function toast(message){
+
+  el.toast.textContent =
+    message;
+
+
+  el.toast.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    window.__toast
+  );
+
+
+  window.__toast =
+    setTimeout(
+      () => {
+
+        el.toast.classList.remove(
+          "show"
+        );
+
+      },
+      2600
+    );
+
+}
+
+
+/* =========================
+   SEGURANÇA HTML
+========================= */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    char => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    }[char])
+  );
+
+}
+
+
+init();
