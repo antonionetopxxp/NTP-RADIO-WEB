@@ -278,35 +278,45 @@
               >
 <!-- RÁDIO -->
 
+<!-- RÁDIO -->
 <div class="form-field">
-
   <label for="stationId">
     Rádio
   </label>
 
-  <select id="stationId">
+  <select id="stationId" required>
     <option value="">
       Selecione a rádio
     </option>
   </select>
-
 </div>
 
 
 <!-- PLAYLIST -->
-
 <div class="form-field">
-
   <label for="playlistId">
     Playlist
   </label>
 
-  <select id="playlistId">
-    <option value="">
-      Nenhuma playlist
-    </option>
-  </select>
+  <div class="playlist-field">
+    <select id="playlistId">
+      <option value="">
+        Nenhuma playlist
+      </option>
+    </select>
 
+    <button
+      type="button"
+      class="button button-secondary"
+      id="createPlaylistBtn"
+    >
+      ➕ Criar playlist
+    </button>
+  </div>
+
+  <small class="field-help">
+    A playlist define as músicas que o Auto-DJ poderá tocar neste programa.
+  </small>
 </div>
             </div>
 
