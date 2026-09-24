@@ -1510,3 +1510,152 @@ img{
   }
 
 }
+/* =====================================================
+   NTP RADIO OS — GERENCIADOR DE RÁDIOS
+===================================================== */
+
+.radio-editor {
+  margin-bottom: 20px;
+}
+
+.radio-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px;
+  border-bottom: 1px solid var(--line-soft, #262936);
+}
+
+.radio-card:last-child {
+  border-bottom: 0;
+}
+
+.radio-card-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+.radio-logo {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+.radio-info {
+  min-width: 0;
+}
+
+.radio-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.radio-info p {
+  margin: 0 0 10px;
+  color: var(--muted, #9ca3af);
+}
+
+.radio-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.radio-meta span {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  color: var(--muted, #9ca3af);
+  font-size: 12px;
+}
+
+.radio-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-danger {
+  color: #ff8d8d !important;
+  border-color: rgba(255,80,80,.25) !important;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted, #9ca3af);
+}
+
+.notice-success {
+  border-color: rgba(41,227,154,.3);
+}
+
+.notice-error {
+  border-color: rgba(255,80,80,.35);
+}
+
+@media (max-width: 800px) {
+
+  .radio-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .radio-card-main {
+    width: 100%;
+  }
+
+  .radio-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+}
+
+@media (max-width: 520px) {
+
+  .radio-card-main {
+    align-items: flex-start;
+  }
+
+  .radio-logo {
+    width: 54px;
+    height: 54px;
+    flex-basis: 54px;
+    border-radius: 15px;
+    font-size: 16px;
+  }
+
+  .radio-info h3 {
+    font-size: 16px;
+  }
+
+  .radio-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .radio-actions .btn {
+    width: 100%;
+  }
+
+}
