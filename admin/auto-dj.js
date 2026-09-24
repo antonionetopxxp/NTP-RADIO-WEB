@@ -285,7 +285,31 @@ function findCurrentProgram() {
     programs
   );
 
+console.log(
+  "[AUTO-DJ] Programas cadastrados:",
+  programs
+);
 
+console.table(
+  programs.map(program => ({
+    nome: program.name,
+    diaSalvo: program.day,
+    diaNormalizado: normalizeDay(program.day),
+    diaAtual: today,
+    inicio: program.startTime,
+    fim: program.endTime,
+    ativo: program.active,
+    minutosInicio: timeToMinutes(program.startTime),
+    minutosFim: timeToMinutes(program.endTime),
+    minutosAgora: currentMinutes
+  }))
+);
+
+const activePrograms =
+  programs.filter(
+    isProgramActive
+  );
+ 
   const activePrograms =
     programs.filter(
       isProgramActive
