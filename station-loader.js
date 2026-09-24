@@ -19,6 +19,7 @@
       }
 
       return await response.json();
+
     } catch (error) {
       console.error(
         "NTP RADIO OS: erro ao carregar estações.",
@@ -32,7 +33,9 @@
     }
   }
 
+
   function getStationId() {
+
     const params =
       new URLSearchParams(
         window.location.search
@@ -45,9 +48,12 @@
       ) ||
       DEFAULT_STATION_ID
     );
+
   }
 
+
   function findStation(data, id) {
+
     if (
       !data ||
       !Array.isArray(data.stations)
@@ -60,36 +66,21 @@
         station &&
         station.id === id
     );
+
   }
 
-  async function init() {
-    const data =
-      await loadStations();
 
-    const requestedId =
-      getStationId();
-
-    let station =
-      findStation(
-        data,
-        requestedId
-      );
+  function applyStationToPage(station) {
 
     if (!station) {
-      station =
-        findStation(
-          data,
-          data.defaultStation
-        );
-    }
-
-    if (!station) {
-      console.error(
-        "NTP RADIO OS: nenhuma rádio encontrada."
-      );
-
       return;
     }
+
+
+    /*
+      Disponibiliza a rádio inteira
+      para os outros scripts.
+    */
 
     window.NTP_ACTIVE_STATION =
       station;
@@ -97,13 +88,71 @@
     window.NTP_ACTIVE_STATION_ID =
       station.id;
 
+
+    /*
+      Stream
+    */
+
+    window.NTP_ACTIVE_STREAM =
+      station.stream?.url || "";
+
+
+    /*
+      Metadata
+    */
+
+    window.NTP_ACTIVE_METADATA =
+      station.stream?.metadata || "";
+
+
+    /*
+      Identidade
+    */
+
+    window.NTP_ACTIVE_STATION_NAME =
+      station.name || "";
+
+    window.NTP_ACTIVE_STATION_SHORT_NAME =
+      station.shortName || "";
+
+
+    /*
+      Branding
+    */
+
+    window.NTP_ACTIVE_BRANDING =
+      station.branding || {};
+
+
+    /*
+      Recursos
+    */
+
+    window.NTP_ACTIVE_FEATURES =
+      station.features || {};
+
+
+    /*
+      Salva estação atual
+    */
+
     localStorage.setItem(
       "ntp_active_station",
       station.id
     );
 
+
+    /*
+      Identificação no HTML
+    */
+
     document.documentElement.dataset.station =
       station.id;
+
+
+    /*
+      Evento para outros scripts
+    */
 
     window.dispatchEvent(
       new CustomEvent(
@@ -114,21 +163,102 @@
       )
     );
 
+
     console.log(
       "NTP RADIO OS — Rádio ativa:",
       station.name
     );
+
+    console.log(
+      "NTP RADIO OS — Stream:",
+      station.stream?.url || "não informado"
+    );
+
   }
+
+
+  async function init() {
+
+    const data =
+      await loadStations();
+
+
+    const requestedId =
+      getStationId();
+
+
+    let station =
+      findStation(
+        data,
+        requestedId
+      );
+
+
+    /*
+      Se a rádio solicitada não existir,
+      usa a rádio padrão.
+    */
+
+    if (!station) {
+
+      station =
+        findStation(
+          data,
+          data.defaultStation
+        );
+
+    }
+
+
+    /*
+      Último fallback.
+    */
+
+    if (!station) {
+
+      station =
+        findStation(
+          data,
+          DEFAULT_STATION_ID
+        );
+
+    }
+
+
+    if (!station) {
+
+      console.error(
+        "NTP RADIO OS: nenhuma rádio encontrada."
+      );
+
+      return;
+
+    }
+
+
+    applyStationToPage(station);
+
+  }
+
+
+  /*
+    Aguarda o HTML.
+  */
 
   if (
     document.readyState ===
     "loading"
   ) {
+
     document.addEventListener(
       "DOMContentLoaded",
       init
     );
+
   } else {
+
     init();
+
   }
+
 })();
