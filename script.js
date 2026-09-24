@@ -242,8 +242,76 @@ document
   .querySelectorAll('.reveal')
   .forEach(element => revealObserver.observe(element));
 
-initMetadata();
-initMediaSession();
+function initMetadata() {
+
+  if (!('EventSource' in window)) {
+    setNowPlaying('');
+    return;
+  }
+
+  if (metadataSource) {
+    try {
+      metadataSource.close();
+    } catch (error) {
+      // ignorar
+    }
+
+    metadataSource = null;
+  }
+
+  if (!ACTIVE_META_URL) {
+    setNowPlaying('');
+    return;
+  }
+
+  try {
+
+    metadataSource =
+      new EventSource(ACTIVE_META_URL);
+
+    metadataSource.addEventListener(
+      'message',
+      event => {
+
+        try {
+
+          const data =
+            JSON.parse(event.data);
+
+          if (
+            data &&
+            data.streamTitle
+          ) {
+
+            setNowPlaying(
+              data.streamTitle
+            );
+
+          }
+
+        } catch (error) {
+          // evento sem título
+        }
+
+      }
+    );
+
+    metadataSource.addEventListener(
+      'error',
+      () => {
+        // EventSource reconecta automaticamente
+      }
+    );
+
+  } catch (error) {
+
+    console.warn(
+      'NTP RADIO OS: erro ao iniciar metadata.',
+      error
+    );
+
+  }
+}
 
 /* ---------- PICTURE-IN-PICTURE (MINI PLAYER) ---------- */
 
