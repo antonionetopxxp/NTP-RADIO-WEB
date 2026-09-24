@@ -44,6 +44,50 @@
       },
 
       "status": "active"
+    },
+
+    {
+      "id": "radio-teste",
+      "name": "RÁDIO TESTE",
+      "shortName": "TESTE",
+      "description": "Segunda estação do NTP RADIO OS",
+      "country": "Brasil",
+      "language": "pt-BR",
+      "timezone": "America/Sao_Paulo",
+
+      "stream": {
+        "provider": "Zeno.FM",
+        "url": "https://stream.zeno.fm/elhz4znig9wuv",
+        "metadata": "https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv"
+      },
+
+      "branding": {
+        "theme": "galaxy",
+        "primaryColor": "#8b5cf6",
+        "secondaryColor": "#c084fc",
+        "background": "#02030a"
+      },
+
+      "social": {
+        "instagram": "",
+        "facebook": "",
+        "youtube": "",
+        "tiktok": "",
+        "whatsapp": ""
+      },
+
+      "features": {
+        "livePlayer": true,
+        "metadata": true,
+        "history": true,
+        "schedule": true,
+        "news": true,
+        "events": true,
+        "pwa": true,
+        "mediaSession": true
+      },
+
+      "status": "active"
     }
   ]
 }
