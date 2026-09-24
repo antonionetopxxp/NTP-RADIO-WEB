@@ -142,7 +142,8 @@
 const t=document.getElementById('navToggle'),n=document.getElementById('navLinks');
 if(t&&n){t.onclick=()=>{n.classList.toggle('open');t.setAttribute('aria-expanded',n.classList.contains('open'))};n.querySelectorAll('a').forEach(a=>a.onclick=()=>n.classList.remove('open'))}
 </script>
+<script src="station-loader.js"></script>
+<script src="config-loader.js"></script>
+<script src="pages/programacao.js"></script>
 <script src="script.js"></script>
-<script src="programacao-publica.js"></script>
-  <script src="config-loader.js"></script>
 </body></html>
