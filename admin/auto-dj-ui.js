@@ -1,175 +1,246 @@
-"use strict";
+/* =========================================================
+   NTP RADIO OS — AUTO DJ UI
+   Interface do Auto DJ
+   ========================================================= */
 
-/*
-=========================================================
- NTP RADIO OS
- INTERFACE DO AUTO-DJ
-=========================================================
-*/
+(function () {
 
-function updateAutoDJInterface(state) {
+  "use strict";
 
-  if (!state) {
-    return;
-  }
+  const programEl = document.querySelector("#currentProgram");
+  const playlistEl = document.querySelector("#currentPlaylist");
+  const musicEl = document.querySelector("#currentMusic");
+  const statusEl = document.querySelector("#autoDjStatus");
+  const refreshBtn = document.querySelector("#refreshAutoDj");
 
-  const program = state.program;
-  const playlist = state.playlist;
-  const music = state.music;
+  /* =========================================================
+     ATUALIZA INTERFACE
+  ========================================================= */
 
-  const statusEl =
-    document.querySelector("#systemStatus");
+  function atualizarInterface(data) {
 
-  const programName =
-    document.querySelector("#programName");
-
-  const programPresenter =
-    document.querySelector("#programPresenter");
-
-  const programTime =
-    document.querySelector("#programTime");
-
-  const playlistName =
-    document.querySelector("#playlistName");
-
-  const playlistMode =
-    document.querySelector("#playlistMode");
-
-  const musicTitle =
-    document.querySelector("#musicTitle");
-
-  const musicArtist =
-    document.querySelector("#musicArtist");
-
-
-  if (statusEl) {
-
-    statusEl.textContent =
-      program
-        ? "AUTO-DJ OPERACIONAL"
-        : "SEM PROGRAMA ATIVO";
-
-  }
-
-
-  if (programName) {
-
-    programName.textContent =
-      program?.name ||
-      "Nenhum programa";
-
-  }
-
-
-  if (programPresenter) {
-
-    programPresenter.textContent =
-      program?.presenter
-        ? "Apresentador: " + program.presenter
-        : "—";
-
-  }
-
-
-  if (programTime) {
-
-    programTime.textContent =
-      program
-        ? `${program.startTime} → ${program.endTime}`
-        : "—";
-
-  }
-
-
-  if (playlistName) {
-
-    playlistName.textContent =
-      playlist?.name ||
-      "Nenhuma playlist";
-
-  }
-
-
-  if (playlistMode) {
-
-    playlistMode.textContent =
-      playlist
-        ? `Modo: ${playlist.mode || "sequencial"}`
-        : "—";
-
-  }
-
-
-  if (musicTitle) {
-
-    musicTitle.textContent =
-      music?.title ||
-      "Nenhuma música";
-
-  }
-
-
-  if (musicArtist) {
-
-    musicArtist.textContent =
-      music?.artist ||
-      "—";
-
-  }
-
-}
-
-
-/*
-=========================================================
- RECEBE ATUALIZAÇÕES DO AUTO-DJ
-=========================================================
-*/
-
-document.addEventListener(
-  "ntp-auto-dj-update",
-  event => {
-
-    updateAutoDJInterface(
-      event.detail
-    );
-
-  }
-);
-
-
-/*
-=========================================================
- BOTÃO ATUALIZAR
-=========================================================
-*/
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    const refreshBtn =
-      document.querySelector("#refreshBtn");
-
-    if (!refreshBtn) {
+    if (!data) {
+      mostrarVazio();
       return;
     }
 
+    if (programEl) {
+      programEl.textContent =
+        data.program?.name ||
+        "Nenhum programa";
+    }
+
+    if (playlistEl) {
+      playlistEl.textContent =
+        data.playlist?.name ||
+        "Nenhuma playlist";
+    }
+
+    if (musicEl) {
+      const music = data.music;
+
+      if (music) {
+
+        const title = music.title || "Sem título";
+        const artist = music.artist || "";
+
+        musicEl.textContent =
+          artist
+            ? `${title} — ${artist}`
+            : title;
+
+      } else {
+
+        musicEl.textContent =
+          "Nenhuma música";
+
+      }
+    }
+
+    if (statusEl) {
+
+      if (data.program) {
+
+        statusEl.textContent =
+          "PROGRAMA ATIVO";
+
+        statusEl.classList.add("active");
+        statusEl.classList.remove("inactive");
+
+      } else {
+
+        statusEl.textContent =
+          "SEM PROGRAMA ATIVO";
+
+        statusEl.classList.remove("active");
+        statusEl.classList.add("inactive");
+
+      }
+
+    }
+
+  }
+
+
+  /* =========================================================
+     ESTADO VAZIO
+  ========================================================= */
+
+  function mostrarVazio() {
+
+    if (programEl) {
+      programEl.textContent =
+        "Nenhum programa";
+    }
+
+    if (playlistEl) {
+      playlistEl.textContent =
+        "Nenhuma playlist";
+    }
+
+    if (musicEl) {
+      musicEl.textContent =
+        "Nenhuma música";
+    }
+
+    if (statusEl) {
+
+      statusEl.textContent =
+        "SEM PROGRAMA ATIVO";
+
+      statusEl.classList.remove("active");
+      statusEl.classList.add("inactive");
+
+    }
+
+  }
+
+
+  /* =========================================================
+     EXECUTAR AUTO DJ
+  ========================================================= */
+
+  function executarAutoDJ() {
+
+    console.log(
+      "[AUTO-DJ UI] Atualizando interface..."
+    );
+
+    if (
+      !window.NTP_AUTO_DJ ||
+      typeof window.NTP_AUTO_DJ.executar !== "function"
+    ) {
+
+      console.error(
+        "[AUTO-DJ UI] Motor Auto DJ não encontrado."
+      );
+
+      mostrarVazio();
+
+      return;
+
+    }
+
+    const resultado =
+      window.NTP_AUTO_DJ.executar();
+
+    console.log(
+      "[AUTO-DJ UI] Resultado:",
+      resultado
+    );
+
+    atualizarInterface(resultado);
+
+  }
+
+
+  /* =========================================================
+     BOTÃO ATUALIZAR
+  ========================================================= */
+
+  if (refreshBtn) {
+
     refreshBtn.addEventListener(
       "click",
-      () => {
+      function () {
 
-        if (
-          window.NTP_AUTO_DJ &&
-          typeof window.NTP_AUTO_DJ.refresh === "function"
-        ) {
+        refreshBtn.disabled = true;
 
-          window.NTP_AUTO_DJ.refresh();
+        const textoOriginal =
+          refreshBtn.textContent;
 
-        }
+        refreshBtn.textContent =
+          "⏳ Atualizando...";
+
+        executarAutoDJ();
+
+        setTimeout(
+          function () {
+
+            refreshBtn.disabled = false;
+
+            refreshBtn.textContent =
+              textoOriginal;
+
+          },
+          500
+        );
 
       }
     );
 
   }
-);
+
+
+  /* =========================================================
+     EVENTO DO MOTOR
+  ========================================================= */
+
+  window.addEventListener(
+    "ntp-auto-dj-update",
+    function (event) {
+
+      console.log(
+        "[AUTO-DJ UI] Evento recebido:",
+        event.detail
+      );
+
+      atualizarInterface(
+        event.detail
+      );
+
+    }
+  );
+
+
+  /* =========================================================
+     INICIALIZAÇÃO
+  ========================================================= */
+
+  function init() {
+
+    console.log(
+      "[AUTO-DJ UI] Interface carregada."
+    );
+
+    executarAutoDJ();
+
+  }
+
+
+  if (
+    document.readyState === "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+
+  } else {
+
+    init();
+
+  }
+
+})();
