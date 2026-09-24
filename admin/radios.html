@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Rádios — NTP RADIO OS</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+</head>
+
+<body>
+
+<div class="admin-app">
+
+  <!-- SIDEBAR -->
+  <aside
+    class="sidebar"
+    id="sidebar"
+  >
+
+    <div class="sidebar-brand">
+      <strong>NTP RADIO OS</strong>
+      <span>Painel administrativo</span>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+
+        <div class="nav-title">
+          PRINCIPAL
+        </div>
+
+        <a
+          class="nav-link"
+          href="index.html"
+        >
+          📊 Dashboard
+        </a>
+
+        <a
+          class="nav-link active"
+          href="radios.html"
+        >
+          📻 Rádios
+        </a>
+
+      </div>
+
+      <div class="nav-section">
+
+        <div class="nav-title">
+          CONTEÚDO
+        </div>
+
+        <a
+          class="nav-link"
+          href="noticias.html"
+        >
+          📰 Notícias
+        </a>
+
+        <a
+          class="nav-link"
+          href="promocoes.html"
+        >
+          🎁 Promoções
+        </a>
+
+        <a
+          class="nav-link"
+          href="eventos.html"
+        >
+          📅 Eventos
+        </a>
+
+        <a
+          class="nav-link"
+          href="programacao.html"
+        >
+          🎙️ Programação
+        </a>
+
+      </div>
+
+      <div class="nav-section">
+
+        <div class="nav-title">
+          SISTEMA
+        </div>
+
+        <a
+          class="nav-link"
+          href="configuracoes.html"
+        >
+          ⚙️ Configurações
+        </a>
+
+      </div>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- OVERLAY MOBILE -->
+  <div
+    class="sidebar-overlay"
+    id="overlay"
+  ></div>
+
+
+  <!-- CONTEÚDO -->
+  <main class="main-content">
+
+    <header class="topbar">
+
+      <button
+        class="menu-button"
+        id="menuBtn"
+        type="button"
+      >
+        ☰
+      </button>
+
+      <div class="topbar-title">
+        Rádios
+      </div>
+
+      <a
+        class="topbar-radio"
+        href="../index.html"
+      >
+        ← Voltar para a Rádio
+      </a>
+
+    </header>
+
+
+    <section class="page">
+
+      <div class="page-head">
+
+        <div>
+
+          <div class="breadcrumb">
+            Dashboard / Rádios
+          </div>
+
+          <h1>
+            Rádios
+          </h1>
+
+          <p>
+            Gerencie as rádios cadastradas na plataforma.
+          </p>
+
+        </div>
+
+        <button
+          class="btn btn-primary"
+          id="newRadioBtn"
+          type="button"
+        >
+          + Nova rádio
+        </button>
+
+      </div>
+
+
+      <!-- AVISO -->
+      <div
+        id="radioNotice"
+        class="notice"
+        hidden
+      ></div>
+
+
+      <!-- LISTA -->
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+            <h2>
+              Rádios cadastradas
+            </h2>
+
+            <p>
+              <strong id="radioTotal">0</strong>
+              rádio(s)
+            </p>
+          </div>
+
+        </div>
+
+
+        <div
+          id="radioList"
+          class="radio-list"
+        >
+
+          <div class="empty-state">
+            Nenhuma rádio cadastrada.
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- FORMULÁRIO -->
+      <section
+        class="panel radio-editor"
+        id="radioEditor"
+        hidden
+      >
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2 id="formTitle">
+              Nova rádio
+            </h2>
+
+            <p>
+              Configure os dados da estação.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form id="radioForm">
+
+          <input
+            type="hidden"
+            id="radioId"
+          >
+
+
+          <div class="form-grid">
+
+            <div class="form-field">
+
+              <label for="radioName">
+                Nome da rádio
+              </label>
+
+              <input
+                id="radioName"
+                type="text"
+                placeholder="Ex.: NTP RÁDIO WEB"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioShortName">
+                Nome curto
+              </label>
+
+              <input
+                id="radioShortName"
+                type="text"
+                placeholder="Ex.: NTP"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioDescription">
+                Descrição
+              </label>
+
+              <input
+                id="radioDescription"
+                type="text"
+                placeholder="Sua rádio online ao vivo"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioCountry">
+                País
+              </label>
+
+              <input
+                id="radioCountry"
+                type="text"
+                value="Brasil"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioLanguage">
+                Idioma
+              </label>
+
+              <input
+                id="radioLanguage"
+                type="text"
+                value="pt-BR"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioTimezone">
+                Fuso horário
+              </label>
+
+              <input
+                id="radioTimezone"
+                type="text"
+                value="America/Sao_Paulo"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioProvider">
+                Provedor do streaming
+              </label>
+
+              <input
+                id="radioProvider"
+                type="text"
+                placeholder="Ex.: Zeno.FM"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioStream">
+                URL do streaming
+              </label>
+
+              <input
+                id="radioStream"
+                type="url"
+                placeholder="https://..."
+                required
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioMetadata">
+                URL de metadata
+              </label>
+
+              <input
+                id="radioMetadata"
+                type="url"
+                placeholder="https://..."
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioPrimary">
+                Cor principal
+              </label>
+
+              <input
+                id="radioPrimary"
+                type="text"
+                value="#6d28ff"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioSecondary">
+                Cor secundária
+              </label>
+
+              <input
+                id="radioSecondary"
+                type="text"
+                value="#a66bff"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioBackground">
+                Fundo
+              </label>
+
+              <input
+                id="radioBackground"
+                type="text"
+                value="#02030a"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="checkbox-field">
+
+            <label>
+
+              <input
+                id="radioActive"
+                type="checkbox"
+                checked
+              >
+
+              <span>
+                Rádio ativa
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <div class="program-footer">
+
+            <button
+              class="btn btn-primary"
+              type="submit"
+            >
+              Salvar rádio
+            </button>
+
+            <button
+              class="btn"
+              id="cancelRadioBtn"
+              type="button"
+            >
+              Cancelar
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+(function () {
+
+  const menuBtn =
+    document.getElementById("menuBtn");
+
+  const sidebar =
+    document.getElementById("sidebar");
+
+  const overlay =
+    document.getElementById("overlay");
+
+
+  function openMenu() {
+
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+
+  }
+
+
+  function closeMenu() {
+
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+
+  }
+
+
+  if (menuBtn) {
+
+    menuBtn.addEventListener(
+      "click",
+      openMenu
+    );
+
+  }
+
+
+  if (overlay) {
+
+    overlay.addEventListener(
+      "click",
+      closeMenu
+    );
+
+  }
+
+})();
+
+</script>
+
+
+<script src="radios.js?v=1"></script>
+
+</body>
+
+</html>
