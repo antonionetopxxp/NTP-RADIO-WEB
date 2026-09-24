@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>NTP RADIO OS — Auto DJ</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #fff;
+
+      background:
+        radial-gradient(
+          circle at 20% 10%,
+          rgba(109, 40, 255, .18),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 80% 80%,
+          rgba(90, 30, 200, .15),
+          transparent 35%
+        ),
+        #02030a;
+    }
+
+    header {
+      padding: 25px;
+      border-bottom: 1px solid #2a1d55;
+      background: rgba(8, 5, 20, .8);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    header p {
+      color: #a79bc4;
+      margin-bottom: 0;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px;
+    }
+
+    .status {
+      padding: 15px;
+      border-radius: 12px;
+      background: #0b0718;
+      border: 1px solid #2a1d55;
+      margin-bottom: 20px;
+    }
+
+    .status strong {
+      color: #a66bff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+
+      gap: 18px;
+    }
+
+    .card {
+      padding: 22px;
+      border-radius: 16px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #120a26,
+          #080511
+        );
+
+      border: 1px solid #2a1d55;
+
+      box-shadow:
+        0 15px 40px rgba(0,0,0,.25);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 16px;
+      color: #a66bff;
+    }
+
+    .value {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .muted {
+      color: #a79bc4;
+      margin-top: 8px;
+    }
+
+    .button {
+      margin-top: 25px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+
+      background: #6d28ff;
+      color: white;
+      font-weight: bold;
+    }
+
+    .button:hover {
+      background: #7c3cff;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🎧 NTP RADIO OS — Auto DJ</h1>
+
+  <p>
+    Central de automação da programação da rádio
+  </p>
+</header>
+
+<main>
+
+  <div class="status">
+
+    Status:
+
+    <strong id="systemStatus">
+      Inicializando...
+    </strong>
+
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+
+      <h2>📻 Programa atual</h2>
+
+      <div
+        id="programName"
+        class="value"
+      >
+        —
+      </div>
+
+      <div
+        id="programPresenter"
+        class="muted"
+      >
+        —
+      </div>
+
+      <div
+        id="programTime"
+        class="muted"
+      >
+        —
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>🎵 Playlist</h2>
+
+      <div
+        id="playlistName"
+        class="value"
+      >
+        —
+      </div>
+
+      <div
+        id="playlistMode"
+        class="muted"
+      >
+        —
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <h2>🎶 Música selecionada</h2>
+
+      <div
+        id="musicTitle"
+        class="value"
+      >
+        —
+      </div>
+
+      <div
+        id="musicArtist"
+        class="muted"
+      >
+        —
+      </div>
+
+    </div>
+
+  </div>
+
+  <button
+    id="refreshBtn"
+    class="button"
+  >
+    🔄 Atualizar Auto DJ
+  </button>
+
+</main>
+
+<script src="auto-dj.js"></script>
+
+<script>
+
+  function updateInterface(event) {
+
+    const state = event.detail;
+
+    const program = state.program;
+    const playlist = state.playlist;
+    const music = state.music;
+
+    document.querySelector("#systemStatus")
+      .textContent =
+      program
+        ? "AUTO-DJ OPERACIONAL"
+        : "SEM PROGRAMA ATIVO";
+
+    document.querySelector("#programName")
+      .textContent =
+      program?.name || "Nenhum programa";
+
+    document.querySelector("#programPresenter")
+      .textContent =
+      program?.presenter
+        ? "Apresentador: " + program.presenter
+        : "—";
+
+    document.querySelector("#programTime")
+      .textContent =
+      program
+        ? `${program.startTime} → ${program.endTime}`
+        : "—";
+
+    document.querySelector("#playlistName")
+      .textContent =
+      playlist?.name || "Nenhuma playlist";
+
+    document.querySelector("#playlistMode")
+      .textContent =
+      playlist
+        ? `Modo: ${playlist.mode || "sequencial"}`
+        : "—";
+
+    document.querySelector("#musicTitle")
+      .textContent =
+      music?.title || "Nenhuma música";
+
+    document.querySelector("#musicArtist")
+      .textContent =
+      music?.artist || "—";
+  }
+
+  document.addEventListener(
+    "ntp-auto-dj-update",
+    updateInterface
+  );
+
+  document.querySelector("#refreshBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (
+          window.NTP_AUTO_DJ &&
+          typeof window.NTP_AUTO_DJ.refresh === "function"
+        ) {
+
+          window.NTP_AUTO_DJ.refresh();
+
+        }
+
+      }
+    );
+
+</script>
+
+</body>
+
+</html>
