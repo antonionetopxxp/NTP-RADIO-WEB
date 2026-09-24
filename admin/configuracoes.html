@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Configurações — NTP RADIO OS
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+
+<body>
+
+<div class="admin-app">
+
+
+  <!-- SIDEBAR -->
+
+  <aside
+    class="sidebar"
+    id="sidebar"
+  >
+
+    <div class="sidebar-brand">
+
+      <strong>
+        NTP RADIO OS
+      </strong>
+
+      <span>
+        Painel administrativo
+      </span>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+
+        <span class="nav-title">
+          PRINCIPAL
+        </span>
+
+        <a
+          href="index.html"
+          class="nav-link"
+        >
+          📊 Dashboard
+        </a>
+
+      </div>
+
+
+      <div class="nav-section">
+
+        <span class="nav-title">
+          CONTEÚDO
+        </span>
+
+        <a
+          href="noticias.html"
+          class="nav-link"
+        >
+          📰 Notícias
+        </a>
+
+        <a
+          href="eventos.html"
+          class="nav-link"
+        >
+          📅 Eventos
+        </a>
+
+        <a
+          href="promocoes.html"
+          class="nav-link"
+        >
+          🎁 Promoções
+        </a>
+
+        <a
+          href="programacao.html"
+          class="nav-link"
+        >
+          🎙️ Programação
+        </a>
+
+      </div>
+
+
+      <div class="nav-section">
+
+        <span class="nav-title">
+          RÁDIO
+        </span>
+
+        <a
+          href="../index.html#programacao"
+          class="nav-link"
+        >
+          📻 Ver programação
+        </a>
+
+        <a
+          href="../index.html"
+          class="nav-link"
+        >
+          🔴 Rádio ao vivo
+        </a>
+
+      </div>
+
+
+      <div class="nav-section">
+
+        <span class="nav-title">
+          SISTEMA
+        </span>
+
+        <a
+          href="configuracoes.html"
+          class="nav-link active"
+        >
+          ⚙️ Configurações
+        </a>
+
+      </div>
+
+    </nav>
+
+  </aside>
+
+
+  <div
+    class="sidebar-overlay"
+    id="overlay"
+  ></div>
+
+
+  <!-- CONTEÚDO -->
+
+  <main class="main-content">
+
+
+    <header class="topbar">
+
+      <button
+        class="menu-button"
+        id="menuBtn"
+        type="button"
+      >
+        ☰
+      </button>
+
+
+      <div>
+
+        <span class="breadcrumb">
+          Sistema / Configurações
+        </span>
+
+        <h1>
+          Configurações
+        </h1>
+
+      </div>
+
+
+      <a
+        href="../index.html"
+        class="topbar-radio"
+      >
+        ← Rádio
+      </a>
+
+    </header>
+
+
+    <section class="page">
+
+
+      <div
+        id="configNotice"
+        class="program-notice"
+        style="display:none;"
+      ></div>
+
+
+      <!-- IDENTIDADE -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2>
+              🎙️ Identidade da rádio
+            </h2>
+
+            <p>
+              Informações básicas da sua emissora.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <form id="radioForm">
+
+          <div class="form-grid">
+
+
+            <div class="form-field">
+
+              <label for="radioName">
+                Nome da rádio
+              </label>
+
+              <input
+                id="radioName"
+                type="text"
+                placeholder="NTP RÁDIO WEB"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioShortName">
+                Nome curto
+              </label>
+
+              <input
+                id="radioShortName"
+                type="text"
+                placeholder="NTP"
+              >
+
+            </div>
+
+
+            <div class="form-field form-field-full">
+
+              <label for="radioDescription">
+                Descrição
+              </label>
+
+              <textarea
+                id="radioDescription"
+                rows="3"
+                placeholder="Sua rádio online ao vivo"
+              ></textarea>
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioCountry">
+                País
+              </label>
+
+              <input
+                id="radioCountry"
+                type="text"
+                value="Brasil"
+              >
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label for="radioLanguage">
+                Idioma
+              </label>
+
+              <input
+                id="radioLanguage"
+                type="text"
+                value="pt-BR"
+              >
+
+            </div>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- STREAM -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2>
+              📻 Streaming
+            </h2>
+
+            <p>
+              Configuração do servidor da rádio.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <div class="form-field">
+
+            <label for="streamProvider">
+              Provedor
+            </label>
+
+            <input
+              id="streamProvider"
+              type="text"
+              placeholder="Zeno.FM"
+            >
+
+          </div>
+
+
+          <div class="form-field form-field-full">
+
+            <label for="streamUrl">
+              URL do streaming
+            </label>
+
+            <input
+              id="streamUrl"
+              type="url"
+              placeholder="https://stream.zeno.fm/..."
+            >
+
+          </div>
+
+
+          <div class="form-field form-field-full">
+
+            <label for="metadataUrl">
+              URL da metadata
+            </label>
+
+            <input
+              id="metadataUrl"
+              type="url"
+              placeholder="https://api.zeno.fm/..."
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- APARÊNCIA -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2>
+              🎨 Aparência
+            </h2>
+
+            <p>
+              Identidade visual da rádio.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <div class="form-field">
+
+            <label for="primaryColor">
+              Cor principal
+            </label>
+
+            <input
+              id="primaryColor"
+              type="text"
+              value="#6d28ff"
+              placeholder="#6d28ff"
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="secondaryColor">
+              Cor secundária
+            </label>
+
+            <input
+              id="secondaryColor"
+              type="text"
+              value="#a66bff"
+              placeholder="#a66bff"
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="backgroundColor">
+              Fundo
+            </label>
+
+            <input
+              id="backgroundColor"
+              type="text"
+              value="#02030a"
+              placeholder="#02030a"
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="theme">
+              Tema
+            </label>
+
+            <select id="theme">
+
+              <option value="galaxy">
+                Galaxy
+              </option>
+
+              <option value="dark">
+                Dark
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- REDES SOCIAIS -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2>
+              🌐 Redes sociais
+            </h2>
+
+            <p>
+              Links oficiais da rádio.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <div class="form-field">
+
+            <label for="instagram">
+              Instagram
+            </label>
+
+            <input
+              id="instagram"
+              type="url"
+              placeholder="https://instagram.com/..."
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="facebook">
+              Facebook
+            </label>
+
+            <input
+              id="facebook"
+              type="url"
+              placeholder="https://facebook.com/..."
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="youtube">
+              YouTube
+            </label>
+
+            <input
+              id="youtube"
+              type="url"
+              placeholder="https://youtube.com/..."
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="tiktok">
+              TikTok
+            </label>
+
+            <input
+              id="tiktok"
+              type="url"
+              placeholder="https://tiktok.com/@..."
+            >
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="whatsapp">
+              WhatsApp
+            </label>
+
+            <input
+              id="whatsapp"
+              type="url"
+              placeholder="https://wa.me/..."
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- RECURSOS -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+
+          <div>
+
+            <h2>
+              ⚙️ Recursos
+            </h2>
+
+            <p>
+              Ative ou desative funcionalidades.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featurePlayer"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Player ao vivo
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featureMetadata"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Metadata
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featureHistory"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Histórico
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featureSchedule"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Programação
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featureNews"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Notícias
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featureEvents"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              Eventos
+            </span>
+
+          </label>
+
+
+          <label class="checkbox-field">
+
+            <input
+              id="featurePWA"
+              type="checkbox"
+              checked
+            >
+
+            <span>
+              PWA
+            </span>
+
+          </label>
+
+        </div>
+
+      </section>
+
+
+      <!-- BOTÕES -->
+
+      <div class="form-footer">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="saveConfig"
+        >
+          💾 Salvar configurações
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-ghost"
+          id="resetConfig"
+        >
+          ↺ Restaurar padrão
+        </button>
+
+      </div>
+
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+(() => {
+
+  "use strict";
+
+
+  const CONFIG_KEY =
+    "ntp_radio_config";
+
+
+  const DEFAULT_CONFIG = {
+
+    station: {
+      name: "NTP RÁDIO WEB",
+      shortName: "NTP",
+      description:
+        "Sua rádio online ao vivo",
+      country: "Brasil",
+      language: "pt-BR",
+      timezone:
+        "America/Sao_Paulo"
+    },
+
+    stream: {
+      provider: "Zeno.FM",
+      url:
+        "https://stream.zeno.fm/elhz4znig9wuv",
+      metadata:
+        "https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv"
+    },
+
+    branding: {
+      theme: "galaxy",
+      primaryColor: "#6d28ff",
+      secondaryColor: "#a66bff",
+      background: "#02030a"
+    },
+
+    social: {
+      instagram: "",
+      facebook: "",
+      youtube: "",
+      tiktok: "",
+      whatsapp: ""
+    },
+
+    features: {
+      livePlayer: true,
+      metadata: true,
+      history: true,
+      schedule: true,
+      news: true,
+      events: true,
+      pwa: true,
+      mediaSession: true
+    }
+
+  };
+
+
+  function loadConfig() {
+
+    try {
+
+      const data =
+        JSON.parse(
+          localStorage.getItem(
+            CONFIG_KEY
+          ) || "null"
+        );
+
+      return data
+        ? mergeConfig(
+            DEFAULT_CONFIG,
+            data
+          )
+        : structuredClone(
+            DEFAULT_CONFIG
+          );
+
+    } catch {
+
+      return structuredClone(
+        DEFAULT_CONFIG
+      );
+
+    }
+
+  }
+
+
+  function mergeConfig(base, custom) {
+
+    return {
+
+      ...base,
+
+      ...custom,
+
+      station: {
+        ...base.station,
+        ...(custom.station || {})
+      },
+
+      stream: {
+        ...base.stream,
+        ...(custom.stream || {})
+      },
+
+      branding: {
+        ...base.branding,
+        ...(custom.branding || {})
+      },
+
+      social: {
+        ...base.social,
+        ...(custom.social || {})
+      },
+
+      features: {
+        ...base.features,
+        ...(custom.features || {})
+      }
+
+    };
+
+  }
+
+
+  function $(id) {
+
+    return document.getElementById(id);
+
+  }
+
+
+  function setForm(config) {
+
+    $("radioName").value =
+      config.station.name;
+
+    $("radioShortName").value =
+      config.station.shortName;
+
+    $("radioDescription").value =
+      config.station.description;
+
+    $("radioCountry").value =
+      config.station.country;
+
+    $("radioLanguage").value =
+      config.station.language;
+
+
+    $("streamProvider").value =
+      config.stream.provider;
+
+    $("streamUrl").value =
+      config.stream.url;
+
+    $("metadataUrl").value =
+      config.stream.metadata;
+
+
+    $("primaryColor").value =
+      config.branding.primaryColor;
+
+    $("secondaryColor").value =
+      config.branding.secondaryColor;
+
+    $("backgroundColor").value =
+      config.branding.background;
+
+    $("theme").value =
+      config.branding.theme;
+
+
+    $("instagram").value =
+      config.social.instagram;
+
+    $("facebook").value =
+      config.social.facebook;
+
+    $("youtube").value =
+      config.social.youtube;
+
+    $("tiktok").value =
+      config.social.tiktok;
+
+    $("whatsapp").value =
+      config.social.whatsapp;
+
+
+    $("featurePlayer").checked =
+      config.features.livePlayer;
+
+    $("featureMetadata").checked =
+      config.features.metadata;
+
+    $("featureHistory").checked =
+      config.features.history;
+
+    $("featureSchedule").checked =
+      config.features.schedule;
+
+    $("featureNews").checked =
+      config.features.news;
+
+    $("featureEvents").checked =
+      config.features.events;
+
+    $("featurePWA").checked =
+      config.features.pwa;
+
+  }
+
+
+  function getForm() {
+
+    return {
+
+      station: {
+
+        name:
+          $("radioName").value.trim(),
+
+        shortName:
+          $("radioShortName").value.trim(),
+
+        description:
+          $("radioDescription").value.trim(),
+
+        country:
+          $("radioCountry").value.trim(),
+
+        language:
+          $("radioLanguage").value.trim(),
+
+        timezone:
+          "America/Sao_Paulo"
+
+      },
+
+      stream: {
+
+        provider:
+          $("streamProvider").value.trim(),
+
+        url:
+          $("streamUrl").value.trim(),
+
+        metadata:
+          $("metadataUrl").value.trim()
+
+      },
+
+      branding: {
+
+        theme:
+          $("theme").value,
+
+        primaryColor:
+          $("primaryColor").value.trim(),
+
+        secondaryColor:
+          $("secondaryColor").value.trim(),
+
+        background:
+          $("backgroundColor").value.trim()
+
+      },
+
+      social: {
+
+        instagram:
+          $("instagram").value.trim(),
+
+        facebook:
+          $("facebook").value.trim(),
+
+        youtube:
+          $("youtube").value.trim(),
+
+        tiktok:
+          $("tiktok").value.trim(),
+
+        whatsapp:
+          $("whatsapp").value.trim()
+
+      },
+
+      features: {
+
+        livePlayer:
+          $("featurePlayer").checked,
+
+        metadata:
+          $("featureMetadata").checked,
+
+        history:
+          $("featureHistory").checked,
+
+        schedule:
+          $("featureSchedule").checked,
+
+        news:
+          $("featureNews").checked,
+
+        events:
+          $("featureEvents").checked,
+
+        pwa:
+          $("featurePWA").checked,
+
+        mediaSession: true
+
+      }
+
+    };
+
+  }
+
+
+  function notice(
+    message,
+    error = false
+  ) {
+
+    const element =
+      $("configNotice");
+
+    element.textContent =
+      message;
+
+    element.style.display =
+      "block";
+
+    element.style.color =
+      error
+        ? "#ff7585"
+        : "#32d583";
+
+    setTimeout(() => {
+
+      element.style.display =
+        "none";
+
+    }, 3500);
+
+  }
+
+
+  $("saveConfig")
+    .addEventListener(
+      "click",
+      () => {
+
+        const config =
+          getForm();
+
+        localStorage.setItem(
+          CONFIG_KEY,
+          JSON.stringify(
+            config
+          )
+        );
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "ntp-config-updated"
+          )
+        );
+
+        notice(
+          "Configurações salvas com sucesso."
+        );
+
+      }
+    );
+
+
+  $("resetConfig")
+    .addEventListener(
+      "click",
+      () => {
+
+        const confirmed =
+          window.confirm(
+            "Restaurar todas as configurações padrão?"
+          );
+
+        if (!confirmed) return;
+
+        localStorage.removeItem(
+          CONFIG_KEY
+        );
+
+        setForm(
+          structuredClone(
+            DEFAULT_CONFIG
+          )
+        );
+
+        notice(
+          "Configurações restauradas."
+        );
+
+      }
+    );
+
+
+  const menuButton =
+    $("menuBtn");
+
+  const sidebar =
+    $("sidebar");
+
+  const overlay =
+    $("overlay");
+
+
+  if (
+    menuButton &&
+    sidebar
+  ) {
+
+    menuButton.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.toggle(
+          "open"
+        );
+
+        if (overlay) {
+
+          overlay.classList.toggle(
+            "active"
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  if (overlay) {
+
+    overlay.addEventListener(
+      "click",
+      () => {
+
+        sidebar.classList.remove(
+          "open"
+        );
+
+        overlay.classList.remove(
+          "active"
+        );
+
+      }
+    );
+
+  }
+
+
+  setForm(
+    loadConfig()
+  );
+
+})();
+
+</script>
+
+</body>
+</html>
