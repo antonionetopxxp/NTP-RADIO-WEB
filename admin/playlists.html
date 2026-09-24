@@ -1,1 +1,643 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#02030a"
+  >
+
+  <title>Playlists | NTP RADIO OS</title>
+
+  <link
+    rel="stylesheet"
+    href="playlists.css"
+  >
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-mark">
+        N
+      </div>
+
+      <div class="brand-text">
+
+        <strong>
+          NTP RADIO OS
+        </strong>
+
+        <span>
+          Painel administrativo
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <a href="index.html">
+        <span>▣</span>
+        Dashboard
+      </a>
+
+      <a href="radios.html">
+        <span>📻</span>
+        Rádios
+      </a>
+
+      <a href="musicas.html">
+        <span>🎵</span>
+        Músicas
+      </a>
+
+      <a
+        href="playlists.html"
+        class="active"
+      >
+        <span>🎶</span>
+        Playlists
+      </a>
+
+      <a href="programacao.html">
+        <span>🗓️</span>
+        Programação
+      </a>
+
+      <a href="noticias.html">
+        <span>📰</span>
+        Notícias
+      </a>
+
+      <a href="eventos.html">
+        <span>📅</span>
+        Eventos
+      </a>
+
+      <a href="promocoes.html">
+        <span>🎁</span>
+        Promoções
+      </a>
+
+      <a href="configuracoes.html">
+        <span>⚙️</span>
+        Configurações
+      </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+      <a
+        href="../index.html"
+        target="_blank"
+      >
+        ↗ Abrir site
+      </a>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTEÚDO -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div>
+
+        <span class="eyebrow">
+          AUTOMAÇÃO MUSICAL
+        </span>
+
+        <h1>
+          Playlists
+        </h1>
+
+        <p>
+          Organize as músicas que cada rádio deve tocar.
+        </p>
+
+      </div>
+
+
+      <button
+        class="btn primary"
+        id="newPlaylistBtn"
+      >
+        ＋ Nova playlist
+      </button>
+
+    </header>
+
+
+    <!-- ESTATÍSTICAS -->
+
+    <section class="stats">
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          🎶
+        </div>
+
+        <div>
+
+          <span>
+            Playlists
+          </span>
+
+          <strong id="totalCount">
+            0
+          </strong>
+
+          <small>
+            cadastradas
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          ▶
+        </div>
+
+        <div>
+
+          <span>
+            Ativas
+          </span>
+
+          <strong id="activeCount">
+            0
+          </strong>
+
+          <small>
+            em funcionamento
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          📻
+        </div>
+
+        <div>
+
+          <span>
+            Rádios
+          </span>
+
+          <strong id="radioCount">
+            0
+          </strong>
+
+          <small>
+            com playlists
+          </small>
+
+        </div>
+
+      </article>
+
+
+      <article class="stat-card">
+
+        <div class="stat-icon">
+          🎵
+        </div>
+
+        <div>
+
+          <span>
+            Faixas
+          </span>
+
+          <strong id="trackCount">
+            0
+          </strong>
+
+          <small>
+            utilizadas
+          </small>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- FILTROS -->
+
+    <section class="toolbar">
+
+      <div class="search-box">
+
+        <span>
+          ⌕
+        </span>
+
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Buscar playlist..."
+        >
+
+      </div>
+
+
+      <select id="radioFilter">
+
+        <option value="all">
+          Todas as rádios
+        </option>
+
+      </select>
+
+    </section>
+
+
+    <!-- PLAYLISTS -->
+
+    <section
+      id="playlistGrid"
+      class="playlist-grid"
+    ></section>
+
+
+    <!-- ESTADO VAZIO -->
+
+    <section
+      id="emptyState"
+      class="empty-state"
+      hidden
+    >
+
+      <div class="empty-icon">
+        🎶
+      </div>
+
+      <h2>
+        Nenhuma playlist cadastrada
+      </h2>
+
+      <p>
+        Crie uma playlist para organizar as músicas da sua rádio.
+      </p>
+
+      <button
+        class="btn primary"
+        id="emptyNewBtn"
+      >
+        ＋ Criar playlist
+      </button>
+
+    </section>
+
+  </main>
+
+
+  <!-- MODAL -->
+
+  <div
+    id="playlistModal"
+    class="modal"
+    hidden
+  >
+
+    <div
+      class="modal-backdrop"
+      data-close
+    ></div>
+
+
+    <section class="modal-card">
+
+      <header class="modal-header">
+
+        <div>
+
+          <span class="eyebrow">
+            AUTOMAÇÃO
+          </span>
+
+          <h2 id="modalTitle">
+            Nova playlist
+          </h2>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="close-btn"
+          data-close
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <form id="playlistForm">
+
+        <input
+          type="hidden"
+          id="editingId"
+        >
+
+
+        <!-- IDENTIFICAÇÃO -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>
+              01
+            </span>
+
+            <div>
+
+              <h3>
+                Identificação
+              </h3>
+
+              <p>
+                Defina os dados básicos da playlist.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-grid">
+
+            <label>
+
+              <span>
+                Nome da playlist
+              </span>
+
+              <input
+                id="name"
+                type="text"
+                required
+                placeholder="Ex.: Manhã NTP"
+              >
+
+            </label>
+
+
+            <label>
+
+              <span>
+                Rádio
+              </span>
+
+              <select
+                id="stationId"
+                required
+              >
+
+                <option value="">
+                  Selecione uma rádio
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label>
+
+              <span>
+                Tipo
+              </span>
+
+              <select id="type">
+
+                <option value="rotation">
+                  Rotação musical
+                </option>
+
+                <option value="jingles">
+                  Vinhetas
+                </option>
+
+                <option value="commercial">
+                  Comerciais
+                </option>
+
+                <option value="special">
+                  Especial
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label>
+
+              <span>
+                Modo de reprodução
+              </span>
+
+              <select id="mode">
+
+                <option value="sequential">
+                  ▶ Sequencial
+                </option>
+
+                <option value="random">
+                  🔀 Aleatório
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="full">
+
+              <span>
+                Descrição
+              </span>
+
+              <textarea
+                id="description"
+                rows="3"
+                placeholder="Ex.: Playlist para programação da manhã."
+              ></textarea>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+        <!-- MÚSICAS -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>
+              02
+            </span>
+
+            <div>
+
+              <h3>
+                Músicas da playlist
+              </h3>
+
+              <p>
+                Selecione as faixas que esta rádio poderá tocar.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="musicSelector"
+            class="music-selector"
+          ></div>
+
+
+          <p class="helper">
+            Somente músicas ativas da rádio selecionada aparecem aqui.
+          </p>
+
+        </div>
+
+
+        <!-- CONFIGURAÇÕES -->
+
+        <div class="form-section">
+
+          <div class="section-title">
+
+            <span>
+              03
+            </span>
+
+            <div>
+
+              <h3>
+                Configurações
+              </h3>
+
+              <p>
+                Controle o estado da playlist.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <label class="switch-row">
+
+            <span>
+
+              <strong>
+                Playlist ativa
+              </strong>
+
+              <small>
+                Permitir que a playlist seja usada na programação.
+              </small>
+
+            </span>
+
+
+            <input
+              id="active"
+              type="checkbox"
+              checked
+            >
+
+            <span class="switch"></span>
+
+          </label>
+
+        </div>
+
+
+        <!-- AÇÕES -->
+
+        <footer class="modal-actions">
+
+          <button
+            type="button"
+            class="btn ghost"
+            data-close
+          >
+            Cancelar
+          </button>
+
+
+          <button
+            type="submit"
+            class="btn primary"
+          >
+            Salvar playlist
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <!-- TOAST -->
+
+  <div
+    id="toast"
+    class="toast"
+  ></div>
+
+
+  <script src="playlists.js"></script>
+
+</body>
+
+</html>
