@@ -53,10 +53,8 @@ async function loadRadioConfig() {
         name: "NTP RÁDIO WEB"
       },
 
-     let ACTIVE_STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
-let ACTIVE_META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
-
-let metadataSource = null;
+    const STREAM_URL = 'https://stream.zeno.fm/elhz4znig9wuv';
+const META_URL = 'https://api.zeno.fm/mounts/metadata/subscribe/elhz4znig9wuv';
 
     initializeRadio();
   }
