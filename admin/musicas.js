@@ -134,25 +134,29 @@ function abrirBancoAudio() {
    SALVAR ARQUIVO NO INDEXEDDB
    ========================================================= */
 
-function salvarArquivoAudio(
-  id,
-  file
-) {
+function salvarArquivoAudio(id, file) {
 
-  return new Promise(
-    (resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
-      if (!audioDatabase) {
+    if (!audioDatabase) {
+      reject(
+        new Error(
+          "Banco de áudio não inicializado."
+        )
+      );
+      return;
+    }
 
-        reject(
-          new Error(
-            "Banco de áudio não inicializado."
-          )
-        );
+    if (!(file instanceof Blob)) {
+      reject(
+        new Error(
+          "O arquivo selecionado é inválido."
+        )
+      );
+      return;
+    }
 
-        return;
-
-      }
+    try {
 
       const transaction =
         audioDatabase.transaction(
@@ -165,22 +169,64 @@ function salvarArquivoAudio(
           AUDIO_STORE
         );
 
-      const request =
-        store.put(
-          file,
-          id
+      store.put(file, id);
+
+      transaction.oncomplete = () => {
+
+        console.log(
+          "[MÚSICAS] Upload concluído:",
+          file.name,
+          file.size
         );
 
-      request.onsuccess =
-        () => resolve(id);
+        resolve(id);
 
-      request.onerror =
-        () => reject(
-          request.error
+      };
+
+      transaction.onerror = () => {
+
+        console.error(
+          "[MÚSICAS] Erro IndexedDB:",
+          transaction.error
         );
+
+        reject(
+          transaction.error ||
+          new Error(
+            "Erro ao salvar o arquivo."
+          )
+        );
+
+      };
+
+      transaction.onabort = () => {
+
+        console.error(
+          "[MÚSICAS] Transação abortada:",
+          transaction.error
+        );
+
+        reject(
+          transaction.error ||
+          new Error(
+            "A gravação do arquivo foi abortada."
+          )
+        );
+
+      };
+
+    } catch (error) {
+
+      console.error(
+        "[MÚSICAS] Erro ao iniciar upload:",
+        error
+      );
+
+      reject(error);
 
     }
-  );
+
+  });
 
 }
 
