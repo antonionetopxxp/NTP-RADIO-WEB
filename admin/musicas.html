@@ -562,44 +562,54 @@
             </label>
 
 
-     <!-- =================================================
+   <!-- =================================================
      UPLOAD DE ÁUDIO
      ================================================= -->
 
-<div class="form-field full upload-box">
+<div class="form-section">
 
-  <span class="upload-title">
-    🎵 Arquivo de áudio
-  </span>
+  <h3>
+    Arquivo de áudio
+  </h3>
 
-  <button
-    type="button"
-    id="selectAudioBtn"
-    class="btn primary upload-button">
-    📁 Selecionar música
-  </button>
+  <div class="upload-box">
 
-  <input
-    id="audioFile"
-    type="file"
-    accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
-    hidden>
+    <span class="upload-title">
+      🎵 Arquivo de áudio
+    </span>
 
-  <small class="field-help">
-    Selecione uma música para adicionar à biblioteca.
-    Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
-    Limite máximo: 100 MB.
-  </small>
+    <button
+      type="button"
+      id="uploadButton"
+      class="btn primary upload-button">
 
-  <div
-    id="audioFileInfo"
-    class="audio-file-info"
-    hidden>
+      📁 Procurar arquivo
+
+    </button>
+
+    <input
+      id="audioFile"
+      type="file"
+      accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
+      style="display:none;">
+
+    <small class="field-help">
+      Selecione uma música para adicionar à biblioteca.
+      Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
+      Limite máximo: 100 MB.
+    </small>
+
+    <div
+      id="audioFileInfo"
+      class="audio-file-info"
+      hidden>
+    </div>
+
+    <input
+      type="hidden"
+      id="audioUrl">
+
   </div>
-
-  <input
-    type="hidden"
-    id="audioUrl">
 
 </div>
 
