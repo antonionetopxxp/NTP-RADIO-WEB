@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,24 +13,39 @@
 
 <body>
 
+  <!-- =====================================================
+       SIDEBAR
+       ===================================================== -->
+
   <aside class="sidebar">
 
     <div class="brand">
-      <div class="brand-mark">N</div>
+
+      <div class="brand-mark">
+        N
+      </div>
 
       <div>
         <strong>NTP RADIO OS</strong>
         <span>Painel administrativo</span>
       </div>
+
     </div>
+
 
     <nav>
 
-      <a href="index.html">Dashboard</a>
+      <a href="index.html">
+        Dashboard
+      </a>
 
-      <a href="radios.html">📻 Rádios</a>
+      <a href="radios.html">
+        📻 Rádios
+      </a>
 
-      <a href="musicas.html" class="active">
+      <a
+        href="musicas.html"
+        class="active">
         🎵 Músicas
       </a>
 
@@ -55,9 +71,12 @@
 
     </nav>
 
+
     <div class="sidebar-bottom">
 
-      <a href="../index.html" target="_blank">
+      <a
+        href="../index.html"
+        target="_blank">
         ↗ Abrir site
       </a>
 
@@ -66,7 +85,16 @@
   </aside>
 
 
+  <!-- =====================================================
+       CONTEÚDO PRINCIPAL
+       ===================================================== -->
+
   <main class="main">
+
+
+    <!-- ===================================================
+         CABEÇALHO
+         =================================================== -->
 
     <header class="topbar">
 
@@ -86,7 +114,11 @@
 
       </div>
 
+
+      <!-- BOTÃO PRINCIPAL -->
+
       <button
+        type="button"
         class="btn primary"
         id="newMusicBtn">
 
@@ -97,7 +129,12 @@
     </header>
 
 
+    <!-- ===================================================
+         ESTATÍSTICAS
+         =================================================== -->
+
     <section class="stats">
+
 
       <article class="stat">
 
@@ -169,11 +206,18 @@
     </section>
 
 
+    <!-- ===================================================
+         FILTROS
+         =================================================== -->
+
     <section class="toolbar">
+
 
       <div class="search">
 
-        <span>⌕</span>
+        <span>
+          ⌕
+        </span>
 
         <input
           id="searchInput"
@@ -218,88 +262,136 @@
 
     </section>
 
-<section class="music-search-panel">
 
-  <div class="section-title">
-    <div>
-      <span class="eyebrow">CATÁLOGO MUSICAL</span>
-      <h2>🔎 Pesquisar música</h2>
-      <p>Pesquise por música, artista ou álbum.</p>
-    </div>
-  </div>
+    <!-- ===================================================
+         PESQUISA EXTERNA
+         =================================================== -->
 
-  <div class="external-search">
+    <section class="music-search-panel">
 
-    <input
-      type="search"
-      id="externalMusicSearch"
-      placeholder="Ex.: Evidências, Gusttavo Lima, etc."
-      autocomplete="off"
-    >
 
-    <button
-      type="button"
-      class="btn primary"
-      id="externalSearchBtn">
-      🔎 Pesquisar
-    </button>
+      <div class="section-title">
 
-  </div>
+        <div>
 
-  <div
-    id="externalSearchStatus"
-    class="search-status"
-    hidden>
-  </div>
+          <span class="eyebrow">
+            CATÁLOGO MUSICAL
+          </span>
 
-  <div
-    id="externalMusicResults"
-    class="external-results">
-  </div>
+          <h2>
+            🔎 Pesquisar música
+          </h2>
 
-</section>
+          <p>
+            Pesquise por música, artista ou álbum.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="external-search">
+
+
+        <input
+          type="search"
+          id="externalMusicSearch"
+          placeholder="Ex.: Evidências, Gusttavo Lima, etc."
+          autocomplete="off">
+
+
+        <button
+          type="button"
+          class="btn primary"
+          id="externalSearchBtn">
+
+          🔎 Pesquisar
+
+        </button>
+
+      </div>
+
+
+      <div
+        id="externalSearchStatus"
+        class="search-status"
+        hidden>
+      </div>
+
+
+      <div
+        id="externalMusicResults"
+        class="external-results">
+      </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         GRID DE MÚSICAS
+         =================================================== -->
+
     <section
       id="musicGrid"
       class="music-grid">
     </section>
 
 
+    <!-- ===================================================
+         ESTADO VAZIO
+         =================================================== -->
+
     <section
       id="emptyState"
       class="empty"
       hidden>
 
+
       <div class="empty-icon">
         🎵
       </div>
+
 
       <h2>
         Nenhuma música cadastrada
       </h2>
 
+
       <p>
         Adicione a primeira música à biblioteca.
       </p>
 
- <button
-  type="button"
-  class="btn primary"
-  id="newMusicBtn"
-  onclick="abrirModal()"
->
-  ＋ Adicionar música
-</button>
+
+      <!-- IMPORTANTE:
+           este botão NÃO pode usar newMusicBtn.
+           O JavaScript espera emptyNewBtn. -->
+
+      <button
+        type="button"
+        class="btn primary"
+        id="emptyNewBtn">
+
+        ＋ Adicionar música
+
+      </button>
 
     </section>
 
   </main>
 
 
-  <!-- MODAL -->
+  <!-- =====================================================
+       MODAL DE MÚSICA
+       ===================================================== -->
 
   <div
     id="musicModal"
-    class="modal">
+    class="modal"
+    hidden>
+
+
+    <!-- FUNDO -->
 
     <div
       class="modal-backdrop"
@@ -307,9 +399,15 @@
     </div>
 
 
+    <!-- CARTÃO -->
+
     <section class="modal-card">
 
+
+      <!-- CABEÇALHO DO MODAL -->
+
       <header class="modal-head">
+
 
         <div>
 
@@ -325,8 +423,10 @@
 
 
         <button
+          type="button"
           class="icon-btn"
-          data-close>
+          data-close
+          aria-label="Fechar">
 
           ×
 
@@ -335,14 +435,26 @@
       </header>
 
 
+      <!-- =================================================
+           FORMULÁRIO
+           ================================================= -->
+
       <form id="musicForm">
+
+
+        <!-- ID OCULTO -->
 
         <input
           type="hidden"
           id="editingId">
 
 
+        <!-- =================================================
+             INFORMAÇÕES
+             ================================================= -->
+
         <div class="form-section">
+
 
           <h3>
             Informações
@@ -350,6 +462,9 @@
 
 
           <div class="form-grid">
+
+
+            <!-- NOME -->
 
             <label>
 
@@ -363,6 +478,8 @@
             </label>
 
 
+            <!-- ARTISTA -->
+
             <label>
 
               Artista
@@ -375,6 +492,8 @@
             </label>
 
 
+            <!-- ÁLBUM -->
+
             <label>
 
               Álbum
@@ -385,6 +504,8 @@
 
             </label>
 
+
+            <!-- CATEGORIA -->
 
             <label>
 
@@ -413,6 +534,8 @@
             </label>
 
 
+            <!-- RÁDIO -->
+
             <label>
 
               Rádio
@@ -426,6 +549,8 @@
             </label>
 
 
+            <!-- DURAÇÃO -->
+
             <label>
 
               Duração
@@ -437,38 +562,85 @@
             </label>
 
 
-            <label class="full">
+            <!-- =================================================
+                 UPLOAD DE ÁUDIO
+                 ================================================= -->
 
-  <span>Arquivo de áudio</span>
+            <label class="full upload-box">
 
-  <input
-    id="audioFile"
-    type="file"
-    accept="audio/*">
 
-  <small class="field-help">
-    Selecione uma música do seu computador ou celular.
-    Formatos aceitos: MP3, WAV, OGG, M4A e AAC.
-  </small>
+              <span class="upload-title">
+                🎵 Arquivo de áudio
+              </span>
 
-</label>
 
-<div
-  id="audioFileInfo"
-  class="audio-file-info"
-  hidden>
-</div>
+              <!-- BOTÃO VISUAL DO UPLOAD -->
 
-<input
-  type="hidden"
-  id="audioUrl">
+              <label
+                for="audioFile"
+                class="btn primary upload-button">
+
+                📁 Selecionar música
+
+              </label>
+
+
+              <!-- INPUT REAL -->
+
+              <input
+                id="audioFile"
+                type="file"
+                accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
+                hidden>
+
+
+              <small class="field-help">
+
+                Selecione uma música do seu computador
+                ou celular.
+
+                <br>
+
+                Formatos aceitos:
+                MP3, WAV, OGG, M4A e AAC.
+
+                <br>
+
+                Limite máximo:
+                100 MB.
+
+              </small>
+
+
+            </label>
+
+
+            <!-- INFORMAÇÕES DO ARQUIVO -->
+
+            <div
+              id="audioFileInfo"
+              class="audio-file-info"
+              hidden>
+            </div>
+
+
+            <!-- URL OCULTA -->
+
+            <input
+              type="hidden"
+              id="audioUrl">
 
           </div>
 
         </div>
 
 
+        <!-- =================================================
+             PUBLICAÇÃO
+             ================================================= -->
+
         <div class="form-section">
+
 
           <h3>
             Publicação
@@ -477,10 +649,12 @@
 
           <label class="active-row">
 
+
             <input
               id="active"
               type="checkbox"
               checked>
+
 
             Música disponível para playlists
 
@@ -489,7 +663,12 @@
         </div>
 
 
+        <!-- =================================================
+             AÇÕES
+             ================================================= -->
+
         <footer class="modal-actions">
+
 
           <button
             type="button"
@@ -511,6 +690,7 @@
 
         </footer>
 
+
       </form>
 
     </section>
@@ -518,14 +698,25 @@
   </div>
 
 
+  <!-- =====================================================
+       TOAST
+       ===================================================== -->
+
   <div
     id="toast"
     class="toast">
   </div>
 
 
-<script src="musicas.js"></script>
-<script src="musicas-teste.js"></script>
+  <!-- =====================================================
+       JAVASCRIPT
+       ===================================================== -->
+
+  <script src="musicas.js"></script>
+
+  <script src="musicas-teste.js"></script>
+
 
 </body>
+
 </html>
