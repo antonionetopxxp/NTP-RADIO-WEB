@@ -1898,40 +1898,84 @@ function alternarMusica(
 }
 
 
-TOCAR MÚSICA
-
 /* =========================================================
-   LIMPAR ARQUIVO
+   TOCAR MÚSICA
    ========================================================= */
 
-function limparArquivoSelecionado() {
+async function tocarMusica(id) {
 
-  const fileInput =
-    $("#audioFile");
+  try {
 
-  if (fileInput) {
+    const file = await obterArquivoAudio(id);
 
-    fileInput.value =
-      "";
+    if (!file) {
 
-  }
+      mostrarToast(
+        "O arquivo de áudio não foi encontrado.",
+        "error"
+      );
 
+      return;
 
-  const info =
-    $("#audioFileInfo");
+    }
 
-  if (info) {
+    const url = URL.createObjectURL(file);
 
-    info.hidden =
-      true;
+    let player = document.getElementById("ntpAudioPlayer");
 
-    info.innerHTML =
-      "";
+    if (!player) {
+
+      player = document.createElement("audio");
+
+      player.id = "ntpAudioPlayer";
+
+      player.controls = true;
+
+      player.style.position = "fixed";
+      player.style.left = "20px";
+      player.style.bottom = "20px";
+      player.style.zIndex = "99999";
+      player.style.width = "320px";
+
+      document.body.appendChild(player);
+
+    }
+
+    player.src = url;
+
+    await player.play();
+
+    mostrarToast(
+      "▶ Reproduzindo: " + file.name,
+      "success"
+    );
+
+    player.onended = () => {
+
+      URL.revokeObjectURL(url);
+
+    };
+
+  } catch (error) {
+
+    console.error(
+      "[MÚSICAS] Erro ao reproduzir:",
+      error
+    );
+
+    mostrarToast(
+      "Não foi possível reproduzir este áudio.",
+      "error"
+    );
 
   }
 
 }
 
+
+/* =========================================================
+   LIMPAR ARQUIVO
+   ========================================================= */
 
 /* =========================================================
    FECHAR MODAL
