@@ -526,7 +526,21 @@ if (audioFile) {
   );
 
 }
+const uploadButton =
+  $("#uploadButton");
 
+if (uploadButton && audioFile) {
+
+  uploadButton.addEventListener(
+    "click",
+    () => {
+
+      audioFile.click();
+
+    }
+  );
+
+}
   document.addEventListener(
     "click",
     tratarClique
@@ -1976,6 +1990,45 @@ async function tocarMusica(id) {
    LIMPAR ARQUIVO
    ========================================================= */
 
+function limparArquivoSelecionado() {
+
+  const input =
+    $("#audioFile");
+
+  if (input) {
+
+    input.value = "";
+
+  }
+
+
+  const info =
+    $("#audioFileInfo");
+
+  if (info) {
+
+    info.hidden = true;
+
+    info.innerHTML = "";
+
+  }
+
+
+  const duration =
+    $("#duration");
+
+  if (duration) {
+
+    duration.value = "";
+
+  }
+
+}
+
+
+/* =========================================================
+   FECHAR MODAL
+   ========================================================= */
 /* =========================================================
    FECHAR MODAL
    ========================================================= */
