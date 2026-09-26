@@ -8,7 +8,7 @@ const STORAGE_KEY = "ntp_radio_music";
 const STATIONS_URL = "../config/stations.json";
 
 const DB_NAME = "ntp_radio_os_audio";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const AUDIO_STORE = "audioFiles";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
