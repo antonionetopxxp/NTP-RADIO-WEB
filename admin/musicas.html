@@ -32,7 +32,6 @@
 
     </div>
 
-
     <nav>
 
       <a href="index.html">
@@ -43,9 +42,7 @@
         📻 Rádios
       </a>
 
-      <a
-        href="musicas.html"
-        class="active">
+      <a href="musicas.html" class="active">
         🎵 Músicas
       </a>
 
@@ -71,7 +68,6 @@
 
     </nav>
 
-
     <div class="sidebar-bottom">
 
       <a
@@ -91,10 +87,7 @@
 
   <main class="main">
 
-
-    <!-- ===================================================
-         CABEÇALHO
-         =================================================== -->
+    <!-- CABEÇALHO -->
 
     <header class="topbar">
 
@@ -114,9 +107,6 @@
 
       </div>
 
-
-      <!-- BOTÃO PRINCIPAL -->
-
       <button
         type="button"
         class="btn primary"
@@ -134,7 +124,6 @@
          =================================================== -->
 
     <section class="stats">
-
 
       <article class="stat">
 
@@ -212,7 +201,6 @@
 
     <section class="toolbar">
 
-
       <div class="search">
 
         <span>
@@ -269,7 +257,6 @@
 
     <section class="music-search-panel">
 
-
       <div class="section-title">
 
         <div>
@@ -293,13 +280,11 @@
 
       <div class="external-search">
 
-
         <input
           type="search"
           id="externalMusicSearch"
           placeholder="Ex.: Evidências, Gusttavo Lima, etc."
           autocomplete="off">
-
 
         <button
           type="button"
@@ -347,25 +332,17 @@
       class="empty"
       hidden>
 
-
       <div class="empty-icon">
         🎵
       </div>
-
 
       <h2>
         Nenhuma música cadastrada
       </h2>
 
-
       <p>
         Adicione a primeira música à biblioteca.
       </p>
-
-
-      <!-- IMPORTANTE:
-           este botão NÃO pode usar newMusicBtn.
-           O JavaScript espera emptyNewBtn. -->
 
       <button
         type="button"
@@ -390,24 +367,18 @@
     class="modal"
     hidden>
 
-
-    <!-- FUNDO -->
-
     <div
       class="modal-backdrop"
       data-close>
     </div>
 
 
-    <!-- CARTÃO -->
-
     <section class="modal-card">
 
 
-      <!-- CABEÇALHO DO MODAL -->
+      <!-- CABEÇALHO -->
 
       <header class="modal-head">
-
 
         <div>
 
@@ -441,9 +412,6 @@
 
       <form id="musicForm">
 
-
-        <!-- ID OCULTO -->
-
         <input
           type="hidden"
           id="editingId">
@@ -454,7 +422,6 @@
              ================================================= -->
 
         <div class="form-section">
-
 
           <h3>
             Informações
@@ -561,64 +528,95 @@
 
             </label>
 
+          </div>
 
-   <!-- =================================================
-     UPLOAD DE ÁUDIO
-     ================================================= -->
+        </div>
 
-<div class="form-section">
 
-  <h3>
-    Arquivo de áudio
-  </h3>
+        <!-- =================================================
+             UPLOAD DE ÁUDIO
+             ================================================= -->
 
-  <div class="upload-box">
+        <div class="form-section">
 
-    <span class="upload-title">
-      🎵 Arquivo de áudio
-    </span>
+          <h3>
+            Arquivo de áudio
+          </h3>
 
-    <button
-      type="button"
-      id="uploadButton"
-      class="btn primary upload-button">
 
-      📁 Procurar arquivo
+          <div class="upload-box">
 
-    </button>
 
-    <input
-      id="audioFile"
-      type="file"
-      accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
-      style="display:none;">
+            <span class="upload-title">
+              🎵 Arquivo de áudio
+            </span>
 
-    <small class="field-help">
-      Selecione uma música para adicionar à biblioteca.
-      Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
-      Limite máximo: 100 MB.
-    </small>
 
-    <div
-      id="audioFileInfo"
-      class="audio-file-info"
-      hidden>
-    </div>
+            <!--
+              IMPORTANTE:
+              É um LABEL ligado diretamente ao input.
+              Ao clicar, o navegador abre a janela
+              para escolher o arquivo.
+            -->
 
-    <input
-      type="hidden"
-      id="audioUrl">
+            <label
+              for="audioFile"
+              id="uploadButton"
+              class="btn primary upload-button">
 
-  </div>
+              📁 Procurar arquivo
 
-</div>
+            </label>
+
+
+            <!-- INPUT REAL DO ARQUIVO -->
+
+            <input
+              id="audioFile"
+              name="audioFile"
+              type="file"
+              accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
+              style="display:none;">
+
+
+            <small class="field-help">
+
+              Selecione uma música para adicionar à biblioteca.
+
+              Formatos aceitos:
+              MP3, WAV, OGG, AAC e M4A.
+
+              Limite máximo:
+              100 MB.
+
+            </small>
+
+
+            <!-- INFORMAÇÕES DO ARQUIVO -->
+
+            <div
+              id="audioFileInfo"
+              class="audio-file-info"
+              hidden>
+            </div>
+
+
+            <!-- URL OPCIONAL -->
+
+            <input
+              type="hidden"
+              id="audioUrl">
+
+          </div>
+
+        </div>
+
 
         <!-- =================================================
              PUBLICAÇÃO
              ================================================= -->
 
         <div class="form-section">
-
 
           <h3>
             Publicação
@@ -627,12 +625,10 @@
 
           <label class="active-row">
 
-
             <input
               id="active"
               type="checkbox"
               checked>
-
 
             Música disponível para playlists
 
@@ -646,7 +642,6 @@
              ================================================= -->
 
         <footer class="modal-actions">
-
 
           <button
             type="button"
