@@ -515,18 +515,17 @@ function configurarEventos() {
   }
 
 
-  const audioFile =
-    $("#audioFile");
+const audioFile =
+  $("#audioFile");
 
-  if (audioFile) {
+if (audioFile) {
 
-    audioFile.addEventListener(
-      "change",
-      analisarArquivoSelecionado
-    );
+  audioFile.addEventListener(
+    "change",
+    analisarArquivoSelecionado
+  );
 
-  }
-
+}
 
   document.addEventListener(
     "click",
