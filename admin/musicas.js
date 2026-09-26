@@ -140,43 +140,36 @@ function salvarArquivoAudio(id, file) {
 
     if (!audioDatabase) {
       reject(
-        new Error(
-          "Banco de áudio não inicializado."
-        )
+        new Error("Banco de áudio não inicializado.")
       );
       return;
     }
 
-    if (!(file instanceof Blob)) {
+    if (!file || !(file instanceof File)) {
       reject(
-        new Error(
-          "O arquivo selecionado é inválido."
-        )
+        new Error("Nenhum arquivo de áudio válido foi selecionado.")
       );
       return;
     }
 
     try {
 
-      const transaction =
-        audioDatabase.transaction(
-          AUDIO_STORE,
-          "readwrite"
-        );
+      const transaction = audioDatabase.transaction(
+        [AUDIO_STORE],
+        "readwrite"
+      );
 
-      const store =
-        transaction.objectStore(
-          AUDIO_STORE
-        );
+      const store = transaction.objectStore(
+        AUDIO_STORE
+      );
 
       store.put(file, id);
 
       transaction.oncomplete = () => {
 
         console.log(
-          "[MÚSICAS] Upload concluído:",
-          file.name,
-          file.size
+          "[NTP RADIO OS] Áudio salvo:",
+          file.name
         );
 
         resolve(id);
@@ -186,15 +179,13 @@ function salvarArquivoAudio(id, file) {
       transaction.onerror = () => {
 
         console.error(
-          "[MÚSICAS] Erro IndexedDB:",
+          "[NTP RADIO OS] Erro ao salvar áudio:",
           transaction.error
         );
 
         reject(
           transaction.error ||
-          new Error(
-            "Erro ao salvar o arquivo."
-          )
+          new Error("Erro ao salvar o arquivo de áudio.")
         );
 
       };
@@ -202,15 +193,13 @@ function salvarArquivoAudio(id, file) {
       transaction.onabort = () => {
 
         console.error(
-          "[MÚSICAS] Transação abortada:",
+          "[NTP RADIO OS] Upload abortado:",
           transaction.error
         );
 
         reject(
           transaction.error ||
-          new Error(
-            "A gravação do arquivo foi abortada."
-          )
+          new Error("Upload do áudio foi abortado.")
         );
 
       };
@@ -218,7 +207,7 @@ function salvarArquivoAudio(id, file) {
     } catch (error) {
 
       console.error(
-        "[MÚSICAS] Erro ao iniciar upload:",
+        "[NTP RADIO OS] Erro IndexedDB:",
         error
       );
 
@@ -229,7 +218,6 @@ function salvarArquivoAudio(id, file) {
   });
 
 }
-
 
 /* =========================================================
    OBTER ARQUIVO
@@ -565,49 +553,34 @@ function configurarEventos() {
    ARQUIVO SELECIONADO
    ========================================================= */
 
-async function analisarArquivoSelecionado(
-  event
-) {
+async function analisarArquivoSelecionado(event) {
 
-  const file =
-    event.target.files?.[0];
+  const input = event.target;
+
+  const file = input.files && input.files[0];
 
   if (!file) {
-
     return;
-
   }
 
+  console.log(
+    "[NTP RADIO OS] Arquivo selecionado:",
+    file.name,
+    file.type,
+    file.size
+  );
 
-  if (
-    file.size >
-    MAX_FILE_SIZE
-  ) {
+  if (file.size > MAX_FILE_SIZE) {
 
     mostrarToast(
       "O arquivo ultrapassa o limite de 100 MB.",
       "error"
     );
 
-    event.target.value = "";
-
+    input.value = "";
     return;
 
   }
-
-
-  const permitido =
-    [
-      "audio/mpeg",
-      "audio/mp3",
-      "audio/wav",
-      "audio/x-wav",
-      "audio/ogg",
-      "audio/aac",
-      "audio/mp4",
-      "audio/x-m4a"
-    ];
-
 
   const extensao =
     file.name
@@ -615,49 +588,31 @@ async function analisarArquivoSelecionado(
       .pop()
       .toLowerCase();
 
+  const extensoesPermitidas = [
+    "mp3",
+    "wav",
+    "ogg",
+    "oga",
+    "aac",
+    "m4a"
+  ];
 
-  const extensoesPermitidas =
-    [
-      "mp3",
-      "wav",
-      "ogg",
-      "oga",
-      "aac",
-      "m4a"
-    ];
-
-
-  if (
-    !permitido.includes(
-      file.type
-    ) &&
-    !extensoesPermitidas.includes(
-      extensao
-    )
-  ) {
+  if (!extensoesPermitidas.includes(extensao)) {
 
     mostrarToast(
-      "Formato de áudio não suportado.",
+      "Formato não suportado. Use MP3, WAV, OGG, AAC ou M4A.",
       "error"
     );
 
-    event.target.value = "";
-
+    input.value = "";
     return;
 
   }
 
-
-  mostrarInformacoesArquivo(
-    file
-  );
-
+  mostrarInformacoesArquivo(file);
 
   const duracao =
-    await obterDuracaoAudio(
-      file
-    );
-
+    await obterDuracaoAudio(file);
 
   if (duracao) {
 
@@ -670,13 +625,16 @@ async function analisarArquivoSelecionado(
     ) {
 
       durationInput.value =
-        formatarDuracao(
-          duracao
-        );
+        formatarDuracao(duracao);
 
     }
 
   }
+
+  mostrarToast(
+    `Arquivo selecionado: ${file.name}`,
+    "success"
+  );
 
 }
 
