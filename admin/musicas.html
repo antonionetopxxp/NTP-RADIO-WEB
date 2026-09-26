@@ -562,48 +562,46 @@
             </label>
 
 
-            <!-- =================================================
-             UPLOAD DE ÁUDIO
-             ================================================= -->
+     <!-- =================================================
+     UPLOAD DE ÁUDIO
+     ================================================= -->
 
-            <div class="form-field full upload-box">
+<div class="form-field full upload-box">
 
-              <span class="upload-title">
-                🎵 Arquivo de áudio
-              </span>
+  <span class="upload-title">
+    🎵 Arquivo de áudio
+  </span>
 
-              <label
-                for="audioFile"
-                class="btn primary upload-button">
-                📁 Selecionar música
-              </label>
+  <button
+    type="button"
+    id="selectAudioBtn"
+    class="btn primary upload-button">
+    📁 Selecionar música
+  </button>
 
-              <input
-                id="audioFile"
-                type="file"
-                accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
-                hidden>
+  <input
+    id="audioFile"
+    type="file"
+    accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
+    hidden>
 
-              <small class="field-help">
-                Selecione uma música para adicionar à biblioteca.
-                Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
-                Limite máximo: 100 MB.
-              </small>
+  <small class="field-help">
+    Selecione uma música para adicionar à biblioteca.
+    Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
+    Limite máximo: 100 MB.
+  </small>
 
-            </div>
+  <div
+    id="audioFileInfo"
+    class="audio-file-info"
+    hidden>
+  </div>
 
-            <div
-              id="audioFileInfo"
-              class="audio-file-info"
-              hidden>
-            </div>
+  <input
+    type="hidden"
+    id="audioUrl">
 
-            <input
-              type="hidden"
-              id="audioUrl">
-
-          </div>
-        </div>
+</div>
 
         <!-- =================================================
              PUBLICAÇÃO
