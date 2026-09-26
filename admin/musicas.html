@@ -576,43 +576,30 @@
 
               <!-- BOTÃO VISUAL DO UPLOAD -->
 
-              <label
-                for="audioFile"
-                class="btn primary upload-button">
+            <div class="full upload-box">
+  <span class="upload-title">🎵 Arquivo de áudio</span>
 
-                📁 Selecionar música
+  <label for="audioFile" class="btn primary upload-button">
+    📁 Selecionar música
+  </label>
 
-              </label>
+  <input
+    id="audioFile"
+    type="file"
+    accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
+    hidden
+  >
 
+  <small class="field-help">
+    Selecione uma música para adicionar à biblioteca.
+    Formatos aceitos: MP3, WAV, OGG, AAC e M4A.
+    Limite máximo: 100 MB.
+  </small>
+</div>
 
-              <!-- INPUT REAL -->
+<div id="audioFileInfo" class="audio-file-info" hidden></div>
 
-              <input
-                id="audioFile"
-                type="file"
-                accept=".mp3,.wav,.ogg,.oga,.aac,.m4a,audio/*"
-                hidden>
-
-
-              <small class="field-help">
-
-                Selecione uma música do seu computador
-                ou celular.
-
-                <br>
-
-                Formatos aceitos:
-                MP3, WAV, OGG, M4A e AAC.
-
-                <br>
-
-                Limite máximo:
-                100 MB.
-
-              </small>
-
-
-            </label>
+<input type="hidden" id="audioUrl">
 
 
             <!-- INFORMAÇÕES DO ARQUIVO -->
